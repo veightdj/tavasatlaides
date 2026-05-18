@@ -9,38 +9,295 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as MapRouteImport } from './routes/map'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as DealsRouteImport } from './routes/deals'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoresIdRouteImport } from './routes/stores.$id'
+import { Route as DealsIdRouteImport } from './routes/deals.$id'
+import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdsIndexRouteImport } from './routes/_authenticated/ads.index'
+import { Route as AuthenticatedAdsNewRouteImport } from './routes/_authenticated/ads.new'
+import { Route as AuthenticatedAdsIdRouteImport } from './routes/_authenticated/ads.$id'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForMerchantsRoute = ForMerchantsRouteImport.update({
+  id: '/for-merchants',
+  path: '/for-merchants',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoresIdRoute = StoresIdRouteImport.update({
+  id: '/stores/$id',
+  path: '/stores/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsIdRoute = DealsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DealsRoute,
+} as any)
+const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
+  id: '/categories/$slug',
+  path: '/categories/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedStoreRoute = AuthenticatedStoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdsIndexRoute = AuthenticatedAdsIndexRouteImport.update({
+  id: '/ads/',
+  path: '/ads/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdsNewRoute = AuthenticatedAdsNewRouteImport.update({
+  id: '/ads/new',
+  path: '/ads/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdsIdRoute = AuthenticatedAdsIdRouteImport.update({
+  id: '/ads/$id',
+  path: '/ads/$id',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/favorites': typeof FavoritesRoute
+  '/for-merchants': typeof ForMerchantsRoute
+  '/login': typeof LoginRoute
+  '/map': typeof MapRoute
+  '/signup': typeof SignupRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/store': typeof AuthenticatedStoreRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/stores/$id': typeof StoresIdRoute
+  '/ads/$id': typeof AuthenticatedAdsIdRoute
+  '/ads/new': typeof AuthenticatedAdsNewRoute
+  '/ads/': typeof AuthenticatedAdsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/favorites': typeof FavoritesRoute
+  '/for-merchants': typeof ForMerchantsRoute
+  '/login': typeof LoginRoute
+  '/map': typeof MapRoute
+  '/signup': typeof SignupRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/store': typeof AuthenticatedStoreRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/stores/$id': typeof StoresIdRoute
+  '/ads/$id': typeof AuthenticatedAdsIdRoute
+  '/ads/new': typeof AuthenticatedAdsNewRoute
+  '/ads': typeof AuthenticatedAdsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/about': typeof AboutRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/favorites': typeof FavoritesRoute
+  '/for-merchants': typeof ForMerchantsRoute
+  '/login': typeof LoginRoute
+  '/map': typeof MapRoute
+  '/signup': typeof SignupRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/store': typeof AuthenticatedStoreRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/stores/$id': typeof StoresIdRoute
+  '/_authenticated/ads/$id': typeof AuthenticatedAdsIdRoute
+  '/_authenticated/ads/new': typeof AuthenticatedAdsNewRoute
+  '/_authenticated/ads/': typeof AuthenticatedAdsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/deals'
+    | '/favorites'
+    | '/for-merchants'
+    | '/login'
+    | '/map'
+    | '/signup'
+    | '/dashboard'
+    | '/store'
+    | '/categories/$slug'
+    | '/deals/$id'
+    | '/stores/$id'
+    | '/ads/$id'
+    | '/ads/new'
+    | '/ads/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/deals'
+    | '/favorites'
+    | '/for-merchants'
+    | '/login'
+    | '/map'
+    | '/signup'
+    | '/dashboard'
+    | '/store'
+    | '/categories/$slug'
+    | '/deals/$id'
+    | '/stores/$id'
+    | '/ads/$id'
+    | '/ads/new'
+    | '/ads'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/about'
+    | '/deals'
+    | '/favorites'
+    | '/for-merchants'
+    | '/login'
+    | '/map'
+    | '/signup'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/store'
+    | '/categories/$slug'
+    | '/deals/$id'
+    | '/stores/$id'
+    | '/_authenticated/ads/$id'
+    | '/_authenticated/ads/new'
+    | '/_authenticated/ads/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  DealsRoute: typeof DealsRouteWithChildren
+  FavoritesRoute: typeof FavoritesRoute
+  ForMerchantsRoute: typeof ForMerchantsRoute
+  LoginRoute: typeof LoginRoute
+  MapRoute: typeof MapRoute
+  SignupRoute: typeof SignupRoute
+  CategoriesSlugRoute: typeof CategoriesSlugRoute
+  StoresIdRoute: typeof StoresIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-merchants': {
+      id: '/for-merchants'
+      path: '/for-merchants'
+      fullPath: '/for-merchants'
+      preLoaderRoute: typeof ForMerchantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +305,108 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stores/$id': {
+      id: '/stores/$id'
+      path: '/stores/$id'
+      fullPath: '/stores/$id'
+      preLoaderRoute: typeof StoresIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals/$id': {
+      id: '/deals/$id'
+      path: '/$id'
+      fullPath: '/deals/$id'
+      preLoaderRoute: typeof DealsIdRouteImport
+      parentRoute: typeof DealsRoute
+    }
+    '/categories/$slug': {
+      id: '/categories/$slug'
+      path: '/categories/$slug'
+      fullPath: '/categories/$slug'
+      preLoaderRoute: typeof CategoriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/store': {
+      id: '/_authenticated/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof AuthenticatedStoreRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/ads/': {
+      id: '/_authenticated/ads/'
+      path: '/ads'
+      fullPath: '/ads/'
+      preLoaderRoute: typeof AuthenticatedAdsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/ads/new': {
+      id: '/_authenticated/ads/new'
+      path: '/ads/new'
+      fullPath: '/ads/new'
+      preLoaderRoute: typeof AuthenticatedAdsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/ads/$id': {
+      id: '/_authenticated/ads/$id'
+      path: '/ads/$id'
+      fullPath: '/ads/$id'
+      preLoaderRoute: typeof AuthenticatedAdsIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedStoreRoute: typeof AuthenticatedStoreRoute
+  AuthenticatedAdsIdRoute: typeof AuthenticatedAdsIdRoute
+  AuthenticatedAdsNewRoute: typeof AuthenticatedAdsNewRoute
+  AuthenticatedAdsIndexRoute: typeof AuthenticatedAdsIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedStoreRoute: AuthenticatedStoreRoute,
+  AuthenticatedAdsIdRoute: AuthenticatedAdsIdRoute,
+  AuthenticatedAdsNewRoute: AuthenticatedAdsNewRoute,
+  AuthenticatedAdsIndexRoute: AuthenticatedAdsIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+interface DealsRouteChildren {
+  DealsIdRoute: typeof DealsIdRoute
+}
+
+const DealsRouteChildren: DealsRouteChildren = {
+  DealsIdRoute: DealsIdRoute,
+}
+
+const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AboutRoute: AboutRoute,
+  DealsRoute: DealsRouteWithChildren,
+  FavoritesRoute: FavoritesRoute,
+  ForMerchantsRoute: ForMerchantsRoute,
+  LoginRoute: LoginRoute,
+  MapRoute: MapRoute,
+  SignupRoute: SignupRoute,
+  CategoriesSlugRoute: CategoriesSlugRoute,
+  StoresIdRoute: StoresIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
