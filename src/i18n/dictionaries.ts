@@ -163,6 +163,6 @@ export const dict = {
     forMerchants: { title: "Магазинам", body: "Размещайте свои акции бесплатно и привлекайте местных покупателей на карте.", cta: "Регистрация бесплатно" },
     common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка" },
   },
-} as const;
+};
 
 export type Dict = typeof dict["en"];
