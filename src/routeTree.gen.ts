@@ -9,38 +9,160 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as DealsRouteImport } from './routes/deals'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoresIdRouteImport } from './routes/stores.$id'
+import { Route as DealsIdRouteImport } from './routes/deals.$id'
+import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 
+const ForMerchantsRoute = ForMerchantsRouteImport.update({
+  id: '/for-merchants',
+  path: '/for-merchants',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoresIdRoute = StoresIdRouteImport.update({
+  id: '/stores/$id',
+  path: '/stores/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsIdRoute = DealsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DealsRoute,
+} as any)
+const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
+  id: '/categories/$slug',
+  path: '/categories/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/favorites': typeof FavoritesRoute
+  '/for-merchants': typeof ForMerchantsRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/stores/$id': typeof StoresIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/favorites': typeof FavoritesRoute
+  '/for-merchants': typeof ForMerchantsRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/stores/$id': typeof StoresIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/favorites': typeof FavoritesRoute
+  '/for-merchants': typeof ForMerchantsRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/stores/$id': typeof StoresIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/deals'
+    | '/favorites'
+    | '/for-merchants'
+    | '/categories/$slug'
+    | '/deals/$id'
+    | '/stores/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/deals'
+    | '/favorites'
+    | '/for-merchants'
+    | '/categories/$slug'
+    | '/deals/$id'
+    | '/stores/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/deals'
+    | '/favorites'
+    | '/for-merchants'
+    | '/categories/$slug'
+    | '/deals/$id'
+    | '/stores/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  DealsRoute: typeof DealsRouteWithChildren
+  FavoritesRoute: typeof FavoritesRoute
+  ForMerchantsRoute: typeof ForMerchantsRoute
+  CategoriesSlugRoute: typeof CategoriesSlugRoute
+  StoresIdRoute: typeof StoresIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/for-merchants': {
+      id: '/for-merchants'
+      path: '/for-merchants'
+      fullPath: '/for-merchants'
+      preLoaderRoute: typeof ForMerchantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +170,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stores/$id': {
+      id: '/stores/$id'
+      path: '/stores/$id'
+      fullPath: '/stores/$id'
+      preLoaderRoute: typeof StoresIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals/$id': {
+      id: '/deals/$id'
+      path: '/$id'
+      fullPath: '/deals/$id'
+      preLoaderRoute: typeof DealsIdRouteImport
+      parentRoute: typeof DealsRoute
+    }
+    '/categories/$slug': {
+      id: '/categories/$slug'
+      path: '/categories/$slug'
+      fullPath: '/categories/$slug'
+      preLoaderRoute: typeof CategoriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface DealsRouteChildren {
+  DealsIdRoute: typeof DealsIdRoute
+}
+
+const DealsRouteChildren: DealsRouteChildren = {
+  DealsIdRoute: DealsIdRoute,
+}
+
+const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  DealsRoute: DealsRouteWithChildren,
+  FavoritesRoute: FavoritesRoute,
+  ForMerchantsRoute: ForMerchantsRoute,
+  CategoriesSlugRoute: CategoriesSlugRoute,
+  StoresIdRoute: StoresIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
