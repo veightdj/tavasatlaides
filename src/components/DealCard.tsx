@@ -63,9 +63,9 @@ export function DealCard({ deal }: { deal: Deal }) {
         {deal.stores?.name && <p className="text-sm text-muted-foreground line-clamp-1">{deal.stores.name}</p>}
         {(deal.price_sale || deal.price_original) && (
           <div className="flex items-baseline gap-2 pt-1">
-            {deal.price_sale != null && <span className="text-lg font-bold text-primary">€{deal.price_sale}</span>}
+            {deal.price_sale != null && <span className="text-lg font-bold text-primary">€{formatPrice(deal.price_sale)}</span>}
             {deal.price_original != null && (
-              <span className="text-sm text-muted-foreground line-through">€{deal.price_original}</span>
+              <span className="text-sm text-muted-foreground line-through">€{formatPrice(deal.price_original)}</span>
             )}
           </div>
         )}
