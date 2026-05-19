@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
 import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
-import { uploadImage } from "@/lib/upload";
+import { LogoUploader } from "@/components/merchant/LogoUploader";
+
 
 export const Route = createFileRoute("/_authenticated/store")({
   component: StoreEditor,
@@ -67,28 +68,25 @@ function StoreEditor() {
     onError: (e: any) => toast.error(e.message),
   });
 
-  const onLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-    try {
-      const url = await uploadImage(file, user.id, "logo");
-      setForm((f) => ({ ...f, logo_url: url }));
-    } catch (err: any) { toast.error(err.message); }
-  };
-
   if (isLoading) return <div>{t.common.loading}</div>;
 
   return (
     <div className="max-w-2xl space-y-6">
       <h1 className="text-3xl font-bold tracking-tight">{t.merchant.store}</h1>
 
-      <div className="flex items-center gap-4">
-        {form.logo_url ? <img src={form.logo_url} alt="" className="h-20 w-20 rounded-xl object-cover" /> : <div className="h-20 w-20 rounded-xl bg-muted" />}
-        <label className="text-sm cursor-pointer">
-          <span className="rounded-md bg-secondary px-3 py-2 text-secondary-foreground hover:bg-secondary/80">{t.merchant.logo}</span>
-          <input type="file" accept="image/*" className="hidden" onChange={onLogo} />
-        </label>
+      <div className="space-y-2">
+        <Label>{t.merchant.logo}</Label>
+        {user && (
+          <LogoUploader
+            value={form.logo_url}
+            userId={user.id}
+            prefix="logo"
+            shape="round"
+            onChange={(url) => setForm((f) => ({ ...f, logo_url: url }))}
+          />
+        )}
       </div>
+
 
       <Field label={t.merchant.storeName}><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></Field>
       <Field label={t.merchant.category}>
