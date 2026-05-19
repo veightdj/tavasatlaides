@@ -127,14 +127,14 @@ export function LogoUploader({
   );
 }
 
-async function renderCrop(src: string, area: Area, size: number): Promise<Blob> {
+async function renderCrop(src: string, area: Area, outW: number, outH: number): Promise<Blob> {
   const img = await loadImage(src);
   const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
+  canvas.width = outW;
+  canvas.height = outH;
   const ctx = canvas.getContext("2d")!;
   ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(img, area.x, area.y, area.width, area.height, 0, 0, size, size);
+  ctx.drawImage(img, area.x, area.y, area.width, area.height, 0, 0, outW, outH);
   return new Promise((resolve, reject) =>
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Canvas empty"))), "image/jpeg", 0.9)
   );
