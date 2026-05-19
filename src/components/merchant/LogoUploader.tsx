@@ -106,7 +106,7 @@ export function LogoUploader({
                 image={srcImage}
                 crop={crop}
                 zoom={zoom}
-                aspect={1}
+                aspect={effectiveAspect}
                 cropShape={shape === "round" ? "round" : "rect"}
                 showGrid={false}
                 onCropChange={setCrop}
