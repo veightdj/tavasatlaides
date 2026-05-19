@@ -3,6 +3,7 @@ import { Heart, MapPin } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
 import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/lib/utils";
 
 type Deal = {
   id: string;
