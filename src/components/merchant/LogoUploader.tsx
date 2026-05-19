@@ -58,7 +58,7 @@ export function LogoUploader({
     if (!srcImage || !croppedArea) return;
     setUploading(true);
     try {
-      const blob = await renderCrop(srcImage, croppedArea, size);
+      const blob = await renderCrop(srcImage, croppedArea, outW, outH);
       const file = new File([blob], `${prefix}.jpg`, { type: "image/jpeg" });
       const url = await uploadImage(file, userId, prefix);
       onChange(url);
