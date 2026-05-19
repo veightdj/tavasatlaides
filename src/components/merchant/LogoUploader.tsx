@@ -72,14 +72,17 @@ export function LogoUploader({
   };
 
   const roundedClass = shape === "round" ? "rounded-full" : "rounded-xl";
+  const previewClass = shape === "wide"
+    ? `w-full max-w-md aspect-video ${roundedClass}`
+    : `h-20 w-20 ${roundedClass}`;
 
   return (
     <>
-      <div className="flex items-center gap-4">
+      <div className={shape === "wide" ? "space-y-3" : "flex items-center gap-4"}>
         {value ? (
-          <img src={value} alt="" className={`h-20 w-20 object-cover border ${roundedClass}`} />
+          <img src={value} alt="" className={`object-cover border ${previewClass}`} />
         ) : (
-          <div className={`h-20 w-20 bg-muted grid place-items-center text-muted-foreground ${roundedClass}`}>
+          <div className={`bg-muted grid place-items-center text-muted-foreground ${previewClass}`}>
             <Upload className="h-6 w-6" />
           </div>
         )}
@@ -89,6 +92,7 @@ export function LogoUploader({
         </Button>
         <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
       </div>
+
 
       <Dialog open={!!srcImage} onOpenChange={(o) => !o && setSrcImage(null)}>
         <DialogContent className="max-w-lg">
