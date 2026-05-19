@@ -11,13 +11,22 @@ import { useI18n } from "@/i18n/use-i18n";
 type Props = {
   value: string;
   userId: string;
-  prefix?: string; // "logo" | "ad"
-  shape?: "round" | "square";
-  size?: number; // output px (square)
+  prefix?: string; // "logo" | "ad" | "cover"
+  shape?: "round" | "square" | "wide";
+  aspect?: number; // override aspect ratio
+  outputWidth?: number;
+  outputHeight?: number;
   onChange: (url: string) => void;
 };
 
-export function LogoUploader({ value, userId, prefix = "logo", shape = "round", size = 512, onChange }: Props) {
+export function LogoUploader({
+  value, userId, prefix = "logo", shape = "round",
+  aspect, outputWidth, outputHeight, onChange,
+}: Props) {
+  const effectiveAspect = aspect ?? (shape === "wide" ? 16 / 9 : 1);
+  const outW = outputWidth ?? (shape === "wide" ? 1600 : 512);
+  const outH = outputHeight ?? Math.round(outW / effectiveAspect);
+
   const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const [srcImage, setSrcImage] = useState<string | null>(null);
