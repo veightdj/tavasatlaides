@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
+import { formatPrice } from "@/lib/utils";
 
 export const Route = createFileRoute("/deals/$id")({
   component: DealDetail,
@@ -77,8 +78,8 @@ function DealDetail() {
 
           {(deal.price_sale || deal.price_original) && (
             <div className="mt-4 flex items-baseline gap-3">
-              {deal.price_sale != null && <span className="text-3xl font-bold text-primary">€{deal.price_sale}</span>}
-              {deal.price_original != null && <span className="text-lg text-muted-foreground line-through">€{deal.price_original}</span>}
+              {deal.price_sale != null && <span className="text-3xl font-bold text-primary">€{formatPrice(deal.price_sale)}</span>}
+              {deal.price_original != null && <span className="text-lg text-muted-foreground line-through">€{formatPrice(deal.price_original)}</span>}
             </div>
           )}
 
