@@ -35,7 +35,7 @@ function StoreEditor() {
 
   const [form, setForm] = useState({
     name: "", category: "food", address: "", city: "Riga",
-    phone: "", website: "", description: "", logo_url: "",
+    phone: "", website: "", description: "", logo_url: "", cover_image_url: "",
   });
 
   useEffect(() => {
@@ -43,8 +43,10 @@ function StoreEditor() {
       name: store.name, category: store.category, address: store.address, city: store.city,
       phone: store.phone ?? "", website: store.website ?? "",
       description: store.description ?? "", logo_url: store.logo_url ?? "",
+      cover_image_url: (store as any).cover_image_url ?? "",
     });
   }, [store]);
+
 
   const save = useMutation({
     mutationFn: async () => {
