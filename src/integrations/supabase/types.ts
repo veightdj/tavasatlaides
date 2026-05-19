@@ -160,6 +160,7 @@ export type Database = {
           address: string
           category: string
           city: string
+          cover_image_url: string | null
           created_at: string
           description: string | null
           hours_json: Json | null
@@ -178,6 +179,7 @@ export type Database = {
           address: string
           category: string
           city: string
+          cover_image_url?: string | null
           created_at?: string
           description?: string | null
           hours_json?: Json | null
@@ -196,6 +198,7 @@ export type Database = {
           address?: string
           category?: string
           city?: string
+          cover_image_url?: string | null
           created_at?: string
           description?: string | null
           hours_json?: Json | null
