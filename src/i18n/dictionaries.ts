@@ -62,7 +62,7 @@ export const dict = {
   en: {
     appName: "DealsLV",
     tagline: "Local store deals & discounts",
-    nav: { deals: "Deals", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants" },
+    nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants" },
     cta: { browse: "Browse deals", postAd: "Post a deal", signIn: "Sign in", signUp: "Sign up", signOut: "Sign out", dashboard: "My store" },
     city: { all: "All cities", jurmala: "Jurmala", riga: "Riga" },
     home: {
