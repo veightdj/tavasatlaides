@@ -10,7 +10,7 @@ export const dict = {
   lv: {
     appName: "DealsLV",
     tagline: "Atlaides un piedāvājumi tuvākajos veikalos",
-    nav: { deals: "Piedāvājumi", map: "Karte", favorites: "Saglabātie", about: "Par mums", forMerchants: "Veikaliem" },
+    nav: { deals: "Piedāvājumi", stores: "Veikali", map: "Karte", favorites: "Saglabātie", about: "Par mums", forMerchants: "Veikaliem" },
     cta: { browse: "Skatīt piedāvājumus", postAd: "Ievietot sludinājumu", signIn: "Ienākt", signUp: "Reģistrēties", signOut: "Iziet", dashboard: "Mans veikals" },
     city: { all: "Visas pilsētas", jurmala: "Jūrmala", riga: "Rīga" },
     home: {
@@ -62,7 +62,7 @@ export const dict = {
   en: {
     appName: "DealsLV",
     tagline: "Local store deals & discounts",
-    nav: { deals: "Deals", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants" },
+    nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants" },
     cta: { browse: "Browse deals", postAd: "Post a deal", signIn: "Sign in", signUp: "Sign up", signOut: "Sign out", dashboard: "My store" },
     city: { all: "All cities", jurmala: "Jurmala", riga: "Riga" },
     home: {
@@ -114,7 +114,7 @@ export const dict = {
   ru: {
     appName: "DealsLV",
     tagline: "Скидки и акции местных магазинов",
-    nav: { deals: "Акции", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам" },
+    nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам" },
     cta: { browse: "Смотреть акции", postAd: "Разместить", signIn: "Войти", signUp: "Регистрация", signOut: "Выйти", dashboard: "Мой магазин" },
     city: { all: "Все города", jurmala: "Юрмала", riga: "Рига" },
     home: {
