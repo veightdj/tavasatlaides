@@ -1,0 +1,150 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { MapPin, Phone, Globe, ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { DealCard } from "@/components/DealCard";
+import { useI18n } from "@/i18n/use-i18n";
+
+export const Route = createFileRoute("/stores/")({
+  head: () => ({
+    meta: [
+      { title: "Stores — DealsLV" },
+      { name: "description", content: "Browse local stores in Riga & Jurmala and see all their active deals." },
+    ],
+  }),
+  component: StoresIndex,
+});
+
+type Store = {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  address: string;
+  description: string | null;
+  logo_url: string | null;
+  cover_image_url: string | null;
+  phone: string | null;
+  website: string | null;
+};
+
+type Ad = {
+  id: string;
+  title: string;
+  category: string;
+  discount_pct: number | null;
+  price_original: number | null;
+  price_sale: number | null;
+  cover_image_url: string | null;
+  ends_at: string | null;
+  store_id: string;
+};
+
+function StoresIndex() {
+  const { t } = useI18n();
+
+  const { data: stores = [], isLoading } = useQuery({
+    queryKey: ["stores-with-ads"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("stores")
+        .select("id,name,slug,city,address,description,logo_url,cover_image_url,phone,website")
+        .order("name");
+      if (error) throw error;
+      return (data ?? []) as Store[];
+    },
+  });
+
+  const { data: adsByStore = {} } = useQuery({
+    queryKey: ["all-active-ads-by-store"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ads")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,store_id")
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const grouped: Record<string, Ad[]> = {};
+      for (const ad of (data ?? []) as Ad[]) {
+        (grouped[ad.store_id] ||= []).push(ad);
+      }
+      return grouped;
+    },
+  });
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-10">
+      <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{t.nav.deals}</h1>
+      <p className="mt-2 text-muted-foreground">{t.home.heroSub}</p>
+
+      {isLoading && <p className="mt-10 text-center text-muted-foreground">{t.common.loading}</p>}
+
+      <div className="mt-8 space-y-8">
+        {stores.map((s) => {
+          const ads = adsByStore[s.id] ?? [];
+          return (
+            <section key={s.id} className="rounded-3xl border border-border bg-card overflow-hidden">
+              {s.cover_image_url && (
+                <div className="aspect-[16/5] w-full overflow-hidden bg-muted">
+                  <img src={s.cover_image_url} alt={s.name} className="h-full w-full object-cover" loading="lazy" />
+                </div>
+              )}
+              <div className="p-5 md:p-6">
+                <div className="flex items-start gap-4">
+                  {s.logo_url ? (
+                    <img src={s.logo_url} alt={s.name} className="h-16 w-16 rounded-2xl object-cover shrink-0" />
+                  ) : (
+                    <div className="h-16 w-16 rounded-2xl bg-gradient-warm grid place-items-center text-primary-foreground font-bold text-xl shrink-0">
+                      {s.name[0]}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <Link to="/stores/$id" params={{ id: s.id }} className="text-xl md:text-2xl font-bold hover:text-primary transition">
+                          {s.name}
+                        </Link>
+                        <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                          <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{s.address}, {s.city}</span>
+                          {s.phone && <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4" />{s.phone}</span>}
+                          {s.website && (
+                            <a href={s.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-primary">
+                              <Globe className="h-4 w-4" />{s.website.replace(/^https?:\/\//, "")}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      <Link
+                        to="/stores/$id"
+                        params={{ id: s.id }}
+                        className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
+                      >
+                        {t.home.seeAll} <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </div>
+                    {s.description && (
+                      <p className="mt-3 text-foreground/80 max-w-3xl">{s.description}</p>
+                    )}
+                  </div>
+                </div>
+
+                {ads.length > 0 ? (
+                  <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {ads.map((a) => (
+                      <DealCard
+                        key={a.id}
+                        deal={{ ...a, stores: { id: s.id, name: s.name, city: s.city, slug: s.slug } }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-6 text-sm text-muted-foreground">{t.deals.empty}</p>
+                )}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

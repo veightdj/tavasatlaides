@@ -18,6 +18,7 @@ import { Route as DealsRouteImport } from './routes/deals'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as StoresIdRouteImport } from './routes/stores.$id'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
@@ -69,6 +70,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoresIndexRoute = StoresIndexRouteImport.update({
+  id: '/stores/',
+  path: '/stores/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StoresIdRoute = StoresIdRouteImport.update({
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/stores/$id': typeof StoresIdRoute
+  '/stores/': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/ads/': typeof AuthenticatedAdsIndexRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/stores/$id': typeof StoresIdRoute
+  '/stores': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/ads': typeof AuthenticatedAdsIndexRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/stores/$id': typeof StoresIdRoute
+  '/stores/': typeof StoresIndexRoute
   '/_authenticated/ads/$id': typeof AuthenticatedAdsIdRoute
   '/_authenticated/ads/new': typeof AuthenticatedAdsNewRoute
   '/_authenticated/ads/': typeof AuthenticatedAdsIndexRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/categories/$slug'
     | '/deals/$id'
     | '/stores/$id'
+    | '/stores/'
     | '/ads/$id'
     | '/ads/new'
     | '/ads/'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/categories/$slug'
     | '/deals/$id'
     | '/stores/$id'
+    | '/stores'
     | '/ads/$id'
     | '/ads/new'
     | '/ads'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/categories/$slug'
     | '/deals/$id'
     | '/stores/$id'
+    | '/stores/'
     | '/_authenticated/ads/$id'
     | '/_authenticated/ads/new'
     | '/_authenticated/ads/'
@@ -238,6 +250,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   StoresIdRoute: typeof StoresIdRoute
+  StoresIndexRoute: typeof StoresIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -303,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stores/': {
+      id: '/stores/'
+      path: '/stores'
+      fullPath: '/stores/'
+      preLoaderRoute: typeof StoresIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stores/$id': {
@@ -406,6 +426,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   StoresIdRoute: StoresIdRoute,
+  StoresIndexRoute: StoresIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
