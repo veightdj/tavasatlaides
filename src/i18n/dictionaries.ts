@@ -114,7 +114,7 @@ export const dict = {
   ru: {
     appName: "DealsLV",
     tagline: "Скидки и акции местных магазинов",
-    nav: { deals: "Акции", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам" },
+    nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам" },
     cta: { browse: "Смотреть акции", postAd: "Разместить", signIn: "Войти", signUp: "Регистрация", signOut: "Выйти", dashboard: "Мой магазин" },
     city: { all: "Все города", jurmala: "Юрмала", riga: "Рига" },
     home: {
