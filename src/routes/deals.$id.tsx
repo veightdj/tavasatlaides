@@ -110,40 +110,7 @@ function DealDetail() {
           </div>
 
           {/* Validity / offer time */}
-          {(deal.starts_at || deal.ends_at) && (() => {
-            const fmt = (d: string) =>
-              new Date(d).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
-            const daysLeft = deal.ends_at
-              ? Math.ceil((new Date(deal.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-              : null;
-            const expired = daysLeft != null && daysLeft < 0;
-            const endingSoon = daysLeft != null && daysLeft >= 0 && daysLeft <= 3;
-            return (
-              <div className="mt-6 rounded-2xl border border-border bg-brand-soft/40 p-4">
-                <div className="flex items-center gap-2 text-sm font-semibold">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  <span>
-                    {deal.starts_at && fmt(deal.starts_at)}
-                    {deal.starts_at && deal.ends_at && " — "}
-                    {deal.ends_at && fmt(deal.ends_at)}
-                  </span>
-                </div>
-                {daysLeft != null && (
-                  <div className="mt-2">
-                    {expired ? (
-                      <Badge variant="secondary">{t.deals.validUntil}: —</Badge>
-                    ) : (
-                      <Badge variant={endingSoon ? "destructive" : "secondary"}>
-                        {daysLeft === 0
-                          ? `⏱ ${t.deals.validUntil}: ${fmt(deal.ends_at!)}`
-                          : `⏱ ${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+          <ValidityCard startsAt={deal.starts_at} endsAt={deal.ends_at} />
 
 
           {/* Store */}
