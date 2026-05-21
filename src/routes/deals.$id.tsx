@@ -1,13 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Heart, MapPin, Share2, Calendar, ExternalLink } from "lucide-react";
+import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useI18n } from "@/i18n/use-i18n";
+import { useI18n } from "@/i18n/useI18n";
 import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
+import { useCountdown } from "@/hooks/useCountdown";
 
 export const Route = createFileRoute("/deals/$id")({
   component: DealDetail,
