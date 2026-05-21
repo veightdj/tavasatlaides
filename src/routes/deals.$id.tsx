@@ -10,6 +10,53 @@ import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
 import { useCountdown } from "@/hooks/useCountdown";
 
+function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: string | null }) {
+  const { t } = useI18n();
+  const countdown = useCountdown(endsAt);
+
+  const fmt = (d: string) =>
+    new Date(d).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+
+  const unit = (key: "day" | "hour" | "minute" | "second", value: number) =>
+    (t.time as any)[value === 1 ? key : `${key}s`] ?? key;
+
+  return (
+    <div className="mt-6 rounded-2xl border border-border bg-brand-soft/40 p-4">
+      <div className="flex items-center gap-2 text-sm font-semibold">
+        <Calendar className="h-4 w-4 text-primary" />
+        <span>
+          {startsAt && fmt(startsAt)}
+          {startsAt && endsAt && " — "}
+          {endsAt && fmt(endsAt)}
+        </span>
+      </d>
+
+      {countdown && (
+        <div className="mt-3">
+          {countdown.expired ? (
+            <Badge variant="secondary">{t.time.ended}</Badge>
+          ) : (
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={countdown.endingSoon ? "destructive" : "secondary"} className="gap-1">
+                <Clock className="h-3 w-3" />
+                {countdown.days > 1 && (
+                  <span>{countdown.days} {unit("day", countdown.days)}</span>
+                )}
+              </Badge>
+              <div className="flex items-center gap-1.5 text-xs font-mono tabular-nums text-muted-foreground">
+                {countdown.days > 0 ? (
+                  <span>{countdown.days}{unit("day", countdown.days).charAt(1)}</span>
+                ) : null}
+                <span>{String(countdown.hours).padStart(2, "0")}:{String(countdown.minutes).padStart(2, "0")}:{String(countdown.seconds).padStart(2, "0")}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/deals/$id")({
   component: DealDetail,
 });
