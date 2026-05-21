@@ -29,7 +29,7 @@ function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: s
           {startsAt && endsAt && " — "}
           {endsAt && fmt(endsAt)}
         </span>
-      </d>
+      </div>
 
       {countdown && (
         <div className="mt-3">
