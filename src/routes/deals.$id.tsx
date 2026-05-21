@@ -20,6 +20,21 @@ function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: s
   const unit = (key: "day" | "hour" | "minute" | "second", value: number) =>
     (t.time as any)[value === 1 ? key : `${key}s`] ?? key;
 
+  if (!countdown) {
+    return (
+      <div className="mt-6 rounded-2xl border border-border bg-brand-soft/40 p-4">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Calendar className="h-4 w-4 text-primary" />
+          <span>
+            {startsAt && fmt(startsAt)}
+            {startsAt && endsAt && " — "}
+            {endsAt && fmt(endsAt)}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-6 rounded-2xl border border-border bg-brand-soft/40 p-4">
       <div className="flex items-center gap-2 text-sm font-semibold">
@@ -31,28 +46,35 @@ function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: s
         </span>
       </div>
 
-      {countdown && (
-        <div className="mt-3">
-          {countdown.expired ? (
-            <Badge variant="secondary">{t.time.ended}</Badge>
-          ) : (
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={countdown.endingSoon ? "destructive" : "secondary"} className="gap-1">
-                <Clock className="h-3 w-3" />
-                {countdown.days > 1 && (
-                  <span>{countdown.days} {unit("day", countdown.days)}</span>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {countdown.expired ? (
+          <Badge variant="secondary">{t.time.ended}</Badge>
+        ) : (
+          <>
+            <Badge variant={countdown.endingSoon ? "destructive" : "secondary"} className="gap-1">
+              <Clock className="h-3 w-3" />
+              <span>
+                {countdown.days > 0 && (
+                  <>{countdown.days} {unit("day", countdown.days)} </>
                 )}
-              </Badge>
-              <div className="flex items-center gap-1.5 text-xs font-mono tabular-nums text-muted-foreground">
-                {countdown.days > 0 ? (
-                  <span>{countdown.days}{unit("day", countdown.days).charAt(1)}</span>
-                ) : null}
-                <span>{String(countdown.hours).padStart(2, "0")}:{String(countdown.minutes).padStart(2, "0")}:{String(countdown.seconds).padStart(2, "0")}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+                {countdown.hours > 0 && (
+                  <>{countdown.hours} {unit("hour", countdown.hours)} </>
+                )}
+                {countdown.minutes > 1 && (
+                  <>{countdown.minutes} {unit("minute", countdown.minutes)} </>
+                )}
+                {countdown.days === 1 && countdown.totalMs < 86400000 && (
+                  <>{countdown.minutes} {unit("minute", countdown.minutes)} </>
+                )}
+                {countdown.days < 1 && (
+                  <span className="font-mono tabular-nums">{String(countdown.hours).padStart(2, "0")}:{String(countdown.minutes).padStart(2, "0")}:{String(countdown.seconds).padStart(2, "0")}</span>
+                )}
+                <span className="opacity-70">{t.time.left}</span>
+              </span>
+            </Badge>
+          </>
+        )}
+      </div>
     </div>
   );
 }
