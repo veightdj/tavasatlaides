@@ -58,6 +58,7 @@ export const dict = {
     about: { title: "Par DealsLV", body: "DealsLV ir vietējais piedāvājumu marketplace Jūrmalā un Rīgā. Mēs savienojam pircējus ar tuvāko veikalu akcijām." },
     forMerchants: { title: "Veikaliem", body: "Ievieto savas akcijas bez maksas un sasniedzi vietējos pircējus uz kartes.", cta: "Reģistrēties bez maksas" },
     common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide" },
+    time: { day: "diena", days: "dienas", hour: "stunda", hours: "stundas", minute: "minūte", minutes: "minūtes", second: "sekunde", seconds: "sekundes", left: "atlicis", ended: "Beidzies" },
   },
   en: {
     appName: "DealsLV",
@@ -110,6 +111,7 @@ export const dict = {
     about: { title: "About DealsLV", body: "DealsLV is a local deals marketplace for Jurmala and Riga. We connect shoppers with discounts from nearby stores." },
     forMerchants: { title: "For merchants", body: "Post your promotions for free and reach local shoppers on the map.", cta: "Sign up free" },
     common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off" },
+    time: { day: "day", days: "days", hour: "hour", hours: "hours", minute: "minute", minutes: "minutes", second: "second", seconds: "seconds", left: "left", ended: "Ended" },
   },
   ru: {
     appName: "DealsLV",
@@ -162,6 +164,7 @@ export const dict = {
     about: { title: "О DealsLV", body: "DealsLV — местный маркетплейс скидок в Юрмале и Риге. Мы соединяем покупателей с акциями ближайших магазинов." },
     forMerchants: { title: "Магазинам", body: "Размещайте свои акции бесплатно и привлекайте местных покупателей на карте.", cta: "Регистрация бесплатно" },
     common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка" },
+    time: { day: "день", days: "дня", hours: "часа", hour: "час", minute: "минута", minutes: "минуты", second: "секунда", seconds: "секунды", left: "осталось", ended: "Закончилось" },
   },
 };
 
