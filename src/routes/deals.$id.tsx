@@ -1,13 +1,83 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Heart, MapPin, Share2, Calendar, ExternalLink } from "lucide-react";
+import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
+import { useCountdown } from "@/hooks/useCountdown";
+
+function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: string | null }) {
+  const { t } = useI18n();
+  const countdown = useCountdown(endsAt);
+
+  const fmt = (d: string) =>
+    new Date(d).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+
+  const unit = (key: "day" | "hour" | "minute" | "second", value: number) =>
+    (t.time as any)[value === 1 ? key : `${key}s`] ?? key;
+
+  if (!countdown) {
+    return (
+      <div className="mt-6 rounded-2xl border border-border bg-brand-soft/40 p-4">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <Calendar className="h-4 w-4 text-primary" />
+          <span>
+            {startsAt && fmt(startsAt)}
+            {startsAt && endsAt && " — "}
+            {endsAt && fmt(endsAt)}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-6 rounded-2xl border border-border bg-brand-soft/40 p-4">
+      <div className="flex items-center gap-2 text-sm font-semibold">
+        <Calendar className="h-4 w-4 text-primary" />
+        <span>
+          {startsAt && fmt(startsAt)}
+          {startsAt && endsAt && " — "}
+          {endsAt && fmt(endsAt)}
+        </span>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {countdown.expired ? (
+          <Badge variant="secondary">{t.time.ended}</Badge>
+        ) : (
+          <>
+            <Badge variant={countdown.endingSoon ? "destructive" : "secondary"} className="gap-1">
+              <Clock className="h-3 w-3" />
+              <span>
+                {countdown.days > 0 && (
+                  <>{countdown.days} {unit("day", countdown.days)} </>
+                )}
+                {countdown.hours > 0 && (
+                  <>{countdown.hours} {unit("hour", countdown.hours)} </>
+                )}
+                {countdown.minutes > 1 && (
+                  <>{countdown.minutes} {unit("minute", countdown.minutes)} </>
+                )}
+                {countdown.days === 1 && countdown.totalMs < 86400000 && (
+                  <>{countdown.minutes} {unit("minute", countdown.minutes)} </>
+                )}
+                {countdown.days < 1 && (
+                  <span className="font-mono tabular-nums">{String(countdown.hours).padStart(2, "0")}:{String(countdown.minutes).padStart(2, "0")}:{String(countdown.seconds).padStart(2, "0")}</span>
+                )}
+                <span className="opacity-70">{t.time.left}</span>
+              </span>
+            </Badge>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/deals/$id")({
   component: DealDetail,
@@ -109,40 +179,7 @@ function DealDetail() {
           </div>
 
           {/* Validity / offer time */}
-          {(deal.starts_at || deal.ends_at) && (() => {
-            const fmt = (d: string) =>
-              new Date(d).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
-            const daysLeft = deal.ends_at
-              ? Math.ceil((new Date(deal.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-              : null;
-            const expired = daysLeft != null && daysLeft < 0;
-            const endingSoon = daysLeft != null && daysLeft >= 0 && daysLeft <= 3;
-            return (
-              <div className="mt-6 rounded-2xl border border-border bg-brand-soft/40 p-4">
-                <div className="flex items-center gap-2 text-sm font-semibold">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  <span>
-                    {deal.starts_at && fmt(deal.starts_at)}
-                    {deal.starts_at && deal.ends_at && " — "}
-                    {deal.ends_at && fmt(deal.ends_at)}
-                  </span>
-                </div>
-                {daysLeft != null && (
-                  <div className="mt-2">
-                    {expired ? (
-                      <Badge variant="secondary">{t.deals.validUntil}: —</Badge>
-                    ) : (
-                      <Badge variant={endingSoon ? "destructive" : "secondary"}>
-                        {daysLeft === 0
-                          ? `⏱ ${t.deals.validUntil}: ${fmt(deal.ends_at!)}`
-                          : `⏱ ${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+          <ValidityCard startsAt={deal.starts_at} endsAt={deal.ends_at} />
 
 
           {/* Store */}
