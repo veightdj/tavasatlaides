@@ -5,7 +5,7 @@ import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock } from "lucide-rea
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useI18n } from "@/i18n/useI18n";
+import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
 import { useCountdown } from "@/hooks/useCountdown";
