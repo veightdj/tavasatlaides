@@ -80,6 +80,43 @@ function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: s
 }
 
 export const Route = createFileRoute("/deals/$id")({
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("ads")
+      .select("title,description,cover_image_url,discount_pct,price_sale,stores(name,city)")
+      .eq("id", params.id)
+      .maybeSingle();
+    return { deal: data };
+  },
+  head: ({ params, loaderData }) => {
+    const d: any = loaderData?.deal;
+    const storeName = d?.stores?.name;
+    const title = d ? `${d.title}${storeName ? ` — ${storeName}` : ""} — DealsLV` : "Deal — DealsLV";
+    const baseDesc = d?.description?.slice(0, 160);
+    const fallbackDesc = d
+      ? `${d.discount_pct ? `${d.discount_pct}% off — ` : ""}${d.title}${storeName ? ` at ${storeName}` : ""}${d?.stores?.city ? ` in ${d.stores.city}` : ""}.`
+      : "Local deal on DealsLV.";
+    const desc = baseDesc || fallbackDesc;
+    const url = `https://superatlaides.lovable.app/deals/${params.id}`;
+    const image = d?.cover_image_url || undefined;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "product" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(image ? [
+          { property: "og:image", content: image },
+          { name: "twitter:image", content: image },
+        ] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: DealDetail,
 });
 

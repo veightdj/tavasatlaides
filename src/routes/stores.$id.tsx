@@ -6,6 +6,38 @@ import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/stores/$id")({
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("stores")
+      .select("name,city,description,logo_url,cover_image_url")
+      .eq("id", params.id)
+      .maybeSingle();
+    return { store: data };
+  },
+  head: ({ params, loaderData }) => {
+    const s = loaderData?.store;
+    const title = s ? `${s.name} — Deals in ${s.city ?? "Latvia"} — DealsLV` : "Store — DealsLV";
+    const desc = s?.description?.slice(0, 160) || (s ? `See all active deals from ${s.name}${s.city ? ` in ${s.city}` : ""}.` : "Local store on DealsLV.");
+    const url = `https://superatlaides.lovable.app/stores/${params.id}`;
+    const image = s?.cover_image_url || s?.logo_url || undefined;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "profile" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(image ? [
+          { property: "og:image", content: image },
+          { name: "twitter:image", content: image },
+        ] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: StorePage,
 });
 
