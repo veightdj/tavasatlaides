@@ -5,7 +5,37 @@ import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
 import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/categories";
 
+const CATEGORY_LABEL: Record<string, string> = {
+  food: "Food & drinks",
+  groceries: "Groceries",
+  clothing: "Clothing",
+  beauty: "Beauty",
+  home: "Home",
+  services: "Services",
+  entertainment: "Entertainment",
+  health: "Health",
+  other: "Other",
+};
+
 export const Route = createFileRoute("/categories/$slug")({
+  head: ({ params }) => {
+    const label = CATEGORY_LABEL[params.slug] ?? params.slug;
+    const title = `${label} deals — DealsLV`;
+    const desc = `Active ${label.toLowerCase()} discounts and promotions in Riga & Jurmala.`;
+    const url = `https://superatlaides.lovable.app/categories/${params.slug}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: CategoryPage,
 });
 

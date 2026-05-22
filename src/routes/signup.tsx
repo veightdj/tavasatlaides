@@ -10,7 +10,17 @@ import { useI18n } from "@/i18n/use-i18n";
 import { AuthShell, Divider, GoogleIcon } from "./login";
 
 export const Route = createFileRoute("/signup")({
-  head: () => ({ meta: [{ title: "Sign up — DealsLV" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign up — DealsLV" },
+      { name: "description", content: "Create a free DealsLV account and start publishing your store's deals." },
+      { property: "og:title", content: "Sign up — DealsLV" },
+      { property: "og:description", content: "Create a free DealsLV account and start publishing your store's deals." },
+      { property: "og:url", content: "https://superatlaides.lovable.app/signup" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/signup" }],
+  }),
   component: SignupPage,
 });
 

@@ -15,7 +15,13 @@ export const Route = createFileRoute("/deals")({
     meta: [
       { title: "All deals — DealsLV" },
       { name: "description", content: "Browse all active discounts in Riga and Jurmala by category, city or expiring soon." },
+      { property: "og:title", content: "All deals — DealsLV" },
+      { property: "og:description", content: "Browse all active discounts in Riga and Jurmala by category, city or expiring soon." },
+      { property: "og:url", content: "https://superatlaides.lovable.app/deals" },
+      { name: "twitter:title", content: "All deals — DealsLV" },
+      { name: "twitter:description", content: "Browse all active discounts in Riga and Jurmala by category, city or expiring soon." },
     ],
+    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/deals" }],
   }),
   component: DealsPage,
 });

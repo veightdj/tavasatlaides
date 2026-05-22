@@ -6,6 +6,17 @@ import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
 
 export const Route = createFileRoute("/favorites")({
+  head: () => ({
+    meta: [
+      { title: "Favorites — DealsLV" },
+      { name: "description", content: "Your saved deals on DealsLV." },
+      { property: "og:title", content: "Favorites — DealsLV" },
+      { property: "og:description", content: "Your saved deals on DealsLV." },
+      { property: "og:url", content: "https://superatlaides.lovable.app/favorites" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/favorites" }],
+  }),
   component: Favorites,
 });
 
