@@ -66,24 +66,24 @@ function Home() {
 
       {/* Featured */}
       <section className="mx-auto max-w-6xl px-4 py-8 md:py-14">
-        <div className="flex items-end justify-between mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
-          <Link to="/deals" className="text-sm text-primary font-medium hover:underline">{t.home.seeAll} →</Link>
+        <div className="flex items-end justify-between mb-5 md:mb-6 gap-3">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
+          <Link to="/deals" className="text-sm text-primary font-medium hover:underline shrink-0">{t.home.seeAll} →</Link>
         </div>
         {featured.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-border p-6 md:p-12 text-center text-muted-foreground">
             {t.deals.empty}
           </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {featured.map((d) => <DealCard key={d.id} deal={d as any} />)}
           </div>
         )}
       </section>
 
       {/* Categories */}
-      <section className="mx-auto max-w-6xl px-4 py-10">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-6">{t.home.browseCategory}</h2>
+      <section className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-5 md:mb-6">{t.home.browseCategory}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {CATEGORY_SLUGS.map((slug) => (
             <Link
