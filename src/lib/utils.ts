@@ -9,5 +9,5 @@ export function formatPrice(value: number | string | null | undefined): string {
   if (value == null || value === "") return "";
   const n = typeof value === "string" ? Number(value) : value;
   if (!Number.isFinite(n)) return "";
-  return Number.isInteger(n) ? n.toString() : n.toFixed(2).replace(/\.?0+$/, "");
+  return n.toFixed(2);
 }
