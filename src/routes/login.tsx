@@ -9,7 +9,17 @@ import { Label } from "@/components/ui/label";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — DealsLV" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — DealsLV" },
+      { name: "description", content: "Sign in to your DealsLV account to manage your store and deals." },
+      { property: "og:title", content: "Sign in — DealsLV" },
+      { property: "og:description", content: "Sign in to your DealsLV account to manage your store and deals." },
+      { property: "og:url", content: "https://superatlaides.lovable.app/login" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/login" }],
+  }),
   component: LoginPage,
 });
 

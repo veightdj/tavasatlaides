@@ -12,7 +12,13 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "DealsLV — Local store deals in Riga & Jurmala" },
       { name: "description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga & Jurmala." },
+      { property: "og:title", content: "DealsLV — Local store deals in Riga & Jurmala" },
+      { property: "og:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga & Jurmala." },
+      { property: "og:url", content: "https://superatlaides.lovable.app/" },
+      { name: "twitter:title", content: "DealsLV — Local store deals in Riga & Jurmala" },
+      { name: "twitter:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga & Jurmala." },
     ],
+    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/" }],
   }),
   component: Home,
 });

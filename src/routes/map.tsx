@@ -6,7 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/map")({
-  head: () => ({ meta: [{ title: "Deals map — DealsLV" }] }),
+  head: () => ({
+    meta: [
+      { title: "Deals map — DealsLV" },
+      { name: "description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
+      { property: "og:title", content: "Deals map — DealsLV" },
+      { property: "og:description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
+      { property: "og:url", content: "https://superatlaides.lovable.app/map" },
+      { name: "twitter:title", content: "Deals map — DealsLV" },
+      { name: "twitter:description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
+    ],
+    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/map" }],
+  }),
   component: MapPage,
 });
 

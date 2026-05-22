@@ -4,7 +4,18 @@ import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/for-merchants")({
-  head: () => ({ meta: [{ title: "For merchants — DealsLV" }] }),
+  head: () => ({
+    meta: [
+      { title: "For merchants — DealsLV" },
+      { name: "description", content: "Publish your store deals for free on DealsLV and reach local customers in Riga & Jurmala." },
+      { property: "og:title", content: "For merchants — DealsLV" },
+      { property: "og:description", content: "Publish your store deals for free on DealsLV and reach local customers in Riga & Jurmala." },
+      { property: "og:url", content: "https://superatlaides.lovable.app/for-merchants" },
+      { name: "twitter:title", content: "For merchants — DealsLV" },
+      { name: "twitter:description", content: "Publish your store deals for free on DealsLV and reach local customers in Riga & Jurmala." },
+    ],
+    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/for-merchants" }],
+  }),
   component: ForMerchants,
 });
 
