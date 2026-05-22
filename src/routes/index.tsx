@@ -99,16 +99,16 @@ function Home() {
       </section>
 
       {/* Merchant CTA */}
-      <section className="mx-auto max-w-6xl px-4 py-14">
-        <div className="rounded-3xl bg-gradient-warm p-8 md:p-12 text-primary-foreground flex flex-col md:flex-row items-start md:items-center gap-6 justify-between">
+      <section className="mx-auto max-w-6xl px-4 py-8 md:py-14">
+        <div className="rounded-2xl md:rounded-3xl bg-gradient-warm p-6 md:p-12 text-primary-foreground flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-6 justify-between">
           <div className="flex items-start gap-4">
-            <Store className="h-10 w-10 shrink-0" />
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold">{t.home.merchantsCta}</h3>
-              <p className="text-primary-foreground/80 mt-1">{t.forMerchants.body}</p>
+            <Store className="h-8 w-8 md:h-10 md:w-10 shrink-0" />
+            <div className="min-w-0">
+              <h3 className="text-lg md:text-2xl font-bold">{t.home.merchantsCta}</h3>
+              <p className="text-primary-foreground/80 mt-1 text-sm md:text-base">{t.forMerchants.body}</p>
             </div>
           </div>
-          <Button asChild size="lg" variant="secondary" className="rounded-full shrink-0">
+          <Button asChild size="lg" variant="secondary" className="rounded-full shrink-0 w-full md:w-auto">
             <Link to="/signup">{t.forMerchants.cta} <ArrowRight className="h-4 w-4 ml-1" /></Link>
           </Button>
         </div>
