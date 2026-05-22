@@ -41,22 +41,22 @@ function Home() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-soft via-background to-background" />
         <div className="absolute -top-40 -right-40 -z-10 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
 
-        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 py-12 md:py-28">
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" /> Rīga · Jūrmala
             </span>
-            <h1 className="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.05]">
+            <h1 className="mt-4 text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.1] md:leading-[1.05] break-words">
               {t.home.heroTitle}
             </h1>
-            <p className="mt-5 text-lg text-muted-foreground max-w-2xl text-balance">
+            <p className="mt-4 md:mt-5 text-base md:text-lg text-muted-foreground max-w-2xl text-balance">
               {t.home.heroSub}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="rounded-full">
+            <div className="mt-6 md:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+              <Button asChild size="lg" className="rounded-full w-full sm:w-auto">
                 <Link to="/deals">{t.cta.browse} <ArrowRight className="h-4 w-4 ml-1" /></Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full">
+              <Button asChild size="lg" variant="outline" className="rounded-full w-full sm:w-auto">
                 <Link to="/map"><MapPin className="h-4 w-4 mr-1" />{t.nav.map}</Link>
               </Button>
             </div>
@@ -65,7 +65,7 @@ function Home() {
       </section>
 
       {/* Featured */}
-      <section className="mx-auto max-w-6xl px-4 py-14">
+      <section className="mx-auto max-w-6xl px-4 py-8 md:py-14">
         <div className="flex items-end justify-between mb-6">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
           <Link to="/deals" className="text-sm text-primary font-medium hover:underline">{t.home.seeAll} →</Link>
