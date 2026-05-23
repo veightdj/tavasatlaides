@@ -42,6 +42,8 @@ export function AdEditor({ adId }: { adId?: string }) {
     cover_image_url: "",
   });
 
+  const draftKey = isNew ? "draft:new-ad" : `draft:ad:${adId}`;
+
   useEffect(() => {
     if (!isNew && ad) {
       setForm({
@@ -55,10 +57,29 @@ export function AdEditor({ adId }: { adId?: string }) {
         status: ad.status,
         cover_image_url: ad.cover_image_url ?? "",
       });
-    } else if (isNew && store && !form.category) {
-      setForm((f) => ({ ...f, category: store.category }));
+    } else if (isNew && store) {
+      // Restore draft from localStorage if present
+      try {
+        const raw = localStorage.getItem(draftKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setForm((f) => ({ ...f, ...parsed, category: parsed.category || store.category }));
+          return;
+        }
+      } catch {}
+      if (!form.category) setForm((f) => ({ ...f, category: store.category }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ad, isNew, store]);
+
+  // Auto-save draft (new ad only) — debounced
+  useEffect(() => {
+    if (!isNew) return;
+    const id = setTimeout(() => {
+      try { localStorage.setItem(draftKey, JSON.stringify(form)); } catch {}
+    }, 400);
+    return () => clearTimeout(id);
+  }, [form, isNew, draftKey]);
 
   const save = useMutation({
     mutationFn: async () => {
