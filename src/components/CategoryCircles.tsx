@@ -73,7 +73,7 @@ export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug }) {
   return (
     <div className="mx-auto max-w-6xl">
       {/* Mobile: horizontal scroll */}
-      <div className="flex gap-4 overflow-x-auto px-4 pb-2 pt-1 md:hidden snap-x snap-mandatory scrollbar-hide">
+      <div className="flex gap-4 overflow-x-auto px-4 pb-2 pt-1 md:hidden snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {CATEGORY_SLUGS.map((slug) => {
           const meta = CATEGORY_META[slug];
           const Icon = meta.icon;
