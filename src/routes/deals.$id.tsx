@@ -229,6 +229,16 @@ function DealDetail() {
             />
           </div>
 
+          {/* Viral share & save card */}
+          <ShareSaveCard
+            title={deal.title}
+            discountPct={deal.discount_pct}
+            storeName={store?.name}
+            saved={saved}
+            onSaveToggle={() => { if (!saved) trackSave.mutate(); toggle(deal.id); }}
+            onShare={() => trackShare.mutate()}
+          />
+
           {/* Validity / offer time */}
           <ValidityCard startsAt={deal.starts_at} endsAt={deal.ends_at} />
 
