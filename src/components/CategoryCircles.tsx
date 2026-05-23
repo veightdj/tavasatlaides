@@ -4,9 +4,9 @@ import {
   CalendarDays,
   Car,
   Coffee,
+  Gem,
   Home,
   Smartphone,
-  Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
@@ -30,7 +30,7 @@ const CATEGORY_META: Record<
     ring: "ring-[oklch(0.6_0.12_245)]/40",
   },
   beauty: {
-    icon: Sparkles,
+    icon: Gem,
     bg: "bg-[oklch(0.7_0.14_345)]",
     iconColor: "text-white",
     ring: "ring-[oklch(0.7_0.14_345)]/40",
