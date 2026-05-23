@@ -296,7 +296,7 @@ function ShareMenu({
     return `${pct}${title}${at}`;
   };
 
-  const getUrl = () => (typeof window !== "undefined" ? window.location.href : "");
+  const getUrl = () => (typeof window !== "undefined" ? buildShareUrl(window.location.href) : "");
 
   const openShare = (href: string) => {
     onShare();
