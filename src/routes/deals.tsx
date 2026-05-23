@@ -122,7 +122,7 @@ function DealsPage() {
   }, [deals, q, origin]);
 
   const clearNear = () =>
-    navigate({ search: (prev) => ({ ...prev, near: undefined }), replace: true });
+    navigate({ search: (prev: DealsSearch) => ({ ...prev, near: undefined }), replace: true });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -215,7 +215,7 @@ function NearMeButton() {
         setLoading(false);
         const lat = pos.coords.latitude.toFixed(5);
         const lng = pos.coords.longitude.toFixed(5);
-        navigate({ search: (prev) => ({ ...prev, near: `${lat},${lng}` }), replace: true });
+        navigate({ search: (prev: DealsSearch) => ({ ...prev, near: `${lat},${lng}` }), replace: true });
       },
       () => {
         toast.dismiss(toastId);
