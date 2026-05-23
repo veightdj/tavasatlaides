@@ -5,9 +5,9 @@ import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store } from "luc
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
+import { CategoryCircles } from "@/components/CategoryCircles";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS } from "@/lib/categories";
 
 export const Route = createFileRoute("/")({
   head: () => ({
