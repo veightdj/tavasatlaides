@@ -5,9 +5,9 @@ import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store } from "luc
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
+import { CategoryCircles } from "@/components/CategoryCircles";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS } from "@/lib/categories";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -144,8 +144,13 @@ function Home() {
         </div>
       </section>
 
+      {/* Categories */}
+      <section className="py-4 md:py-6">
+        <CategoryCircles />
+      </section>
+
       {/* Featured */}
-      <section className="mx-auto max-w-6xl px-4 py-8 md:py-14">
+      <section className="mx-auto max-w-6xl px-4 py-6 md:py-10">
         <div className="flex items-end justify-between mb-5 md:mb-6 gap-3">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
           <Link to="/deals" className="text-sm text-primary font-medium hover:underline shrink-0">{t.home.seeAll} →</Link>
@@ -159,23 +164,6 @@ function Home() {
             {featured.map((d) => <DealCard key={d.id} deal={d as any} />)}
           </div>
         )}
-      </section>
-
-      {/* Categories */}
-      <section className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-5 md:mb-6">{t.home.browseCategory}</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {CATEGORY_SLUGS.map((slug) => (
-            <Link
-              key={slug}
-              to="/categories/$slug"
-              params={{ slug }}
-              className="rounded-xl border border-border bg-card p-4 text-center hover:border-primary hover:bg-brand-soft transition"
-            >
-              <span className="text-sm font-medium">{(t.cat as any)[slug]}</span>
-            </Link>
-          ))}
-        </div>
       </section>
 
       {/* Merchant CTA */}

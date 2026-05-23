@@ -4,17 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
 import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/categories";
+import { CategoryCircles } from "@/components/CategoryCircles";
 
 const CATEGORY_LABEL: Record<string, string> = {
-  food: "Food & drinks",
-  groceries: "Groceries",
-  clothing: "Clothing",
+  food: "Food",
+  auto: "Auto",
   beauty: "Beauty",
+  electronics: "Electronics",
   home: "Home",
-  services: "Services",
-  entertainment: "Entertainment",
-  health: "Health",
-  other: "Other",
+  kids: "Kids",
+  cafes: "Cafes",
+  events: "Events",
 };
 
 export const Route = createFileRoute("/categories/$slug")({
@@ -63,13 +63,18 @@ function CategoryPage() {
   if (!valid) return <div className="p-10 text-center">404</div>;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{(t.cat as any)[slug as CategorySlug]}</h1>
-      <p className="mt-2 text-muted-foreground">{t.deals.title}</p>
+    <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight px-4">{(t.cat as any)[slug as CategorySlug]}</h1>
+      <p className="mt-1 text-muted-foreground px-4">{t.deals.title}</p>
+
+      <div className="mt-6 mb-8">
+        <CategoryCircles activeSlug={slug as CategorySlug} />
+      </div>
+
       {ads.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-dashed p-12 text-center text-muted-foreground">{t.deals.empty}</div>
+        <div className="mt-6 rounded-2xl border border-dashed p-12 text-center text-muted-foreground">{t.deals.empty}</div>
       ) : (
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {ads.map((a: any) => <DealCard key={a.id} deal={a} />)}
         </div>
       )}

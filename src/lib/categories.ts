@@ -1,13 +1,12 @@
 export const CATEGORY_SLUGS = [
   "food",
-  "grocery",
-  "fashion",
+  "auto",
   "beauty",
+  "electronics",
   "home",
-  "services",
-  "entertainment",
-  "health",
-  "other",
+  "kids",
+  "cafes",
+  "events",
 ] as const;
 
 export type CategorySlug = typeof CATEGORY_SLUGS[number];

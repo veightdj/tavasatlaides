@@ -59,7 +59,7 @@ export const dict = {
       nearError: "Nevarējām noteikt tavu atrašanās vietu. Pārbaudi atļaujas pārlūkā.",
       distanceKm: "km",
     },
-    cat: { all: "Visas", food: "Ēdiens un dzērieni", grocery: "Pārtika", fashion: "Apģērbs", beauty: "Skaistums", home: "Mājai", services: "Pakalpojumi", entertainment: "Izklaide", health: "Veselība", other: "Citi" },
+    cat: { all: "Visas", food: "Ēdiens", auto: "Auto", beauty: "Skaistums", electronics: "Elektronika", home: "Mājai", kids: "Bērniem", cafes: "Kafejnīcas", events: "Notikumi" },
     auth: { email: "E-pasts", password: "Parole", fullName: "Vārds, uzvārds", signIn: "Ienākt", signUp: "Reģistrēties", continueGoogle: "Turpināt ar Google", or: "vai", haveAccount: "Jau ir konts?", noAccount: "Nav konta?", forgot: "Aizmirsi paroli?" },
     merchant: {
       dashboard: "Pārskats", store: "Veikala profils", ads: "Sludinājumi", newAd: "Jauns sludinājums", logout: "Iziet",
@@ -129,7 +129,7 @@ export const dict = {
       nearError: "Couldn't get your location. Check browser permissions.",
       distanceKm: "km",
     },
-    cat: { all: "All", food: "Food & drinks", grocery: "Grocery", fashion: "Fashion", beauty: "Beauty", home: "Home", services: "Services", entertainment: "Entertainment", health: "Health", other: "Other" },
+    cat: { all: "All", food: "Food", auto: "Auto", beauty: "Beauty", electronics: "Electronics", home: "Home", kids: "Kids", cafes: "Cafes", events: "Events" },
     auth: { email: "Email", password: "Password", fullName: "Full name", signIn: "Sign in", signUp: "Sign up", continueGoogle: "Continue with Google", or: "or", haveAccount: "Already have an account?", noAccount: "No account?", forgot: "Forgot password?" },
     merchant: {
       dashboard: "Overview", store: "Store profile", ads: "Ads", newAd: "New ad", logout: "Sign out",
@@ -199,7 +199,7 @@ export const dict = {
       nearError: "Не удалось определить местоположение. Проверьте разрешения браузера.",
       distanceKm: "км",
     },
-    cat: { all: "Все", food: "Еда и напитки", grocery: "Продукты", fashion: "Одежда", beauty: "Красота", home: "Для дома", services: "Услуги", entertainment: "Развлечения", health: "Здоровье", other: "Прочее" },
+    cat: { all: "Все", food: "Еда", auto: "Авто", beauty: "Красота", electronics: "Электроника", home: "Для дома", kids: "Детям", cafes: "Кафе", events: "События" },
     auth: { email: "Эл. почта", password: "Пароль", fullName: "Имя", signIn: "Войти", signUp: "Регистрация", continueGoogle: "Войти через Google", or: "или", haveAccount: "Уже есть аккаунт?", noAccount: "Нет аккаунта?", forgot: "Забыли пароль?" },
     merchant: {
       dashboard: "Обзор", store: "Профиль магазина", ads: "Объявления", newAd: "Новое", logout: "Выйти",
