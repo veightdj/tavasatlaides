@@ -43,61 +43,65 @@ function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Background image with gradient overlay */}
-        <div className="absolute inset-1 rounded-2xl md:rounded-3xl overflow-hidden -z-10 mx-3 md:mx-0">
+      <section className="px-3 md:px-6 pt-3 md:pt-5 pb-3 md:pb-5">
+        <div className="relative overflow-hidden rounded-2xl md:rounded-3xl shadow-xl shadow-black/10">
+          {/* Background image */}
           <img
             src="/hero-riga.jpg"
             alt="Riga cityscape"
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
             width={1920}
             height={1080}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
-          <div className="absolute inset-2 rounded-xl md:rounded-2xl border border-white/10 pointer-events-none" />
-        </div>
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          {/* Subtle inner border */}
+          <div className="absolute inset-1.5 rounded-xl md:rounded-2xl border border-white/8 pointer-events-none" />
 
-        <div className="mx-auto max-w-6xl px-5 md:px-4 py-16 sm:py-20 md:py-28">
-          <div className="max-w-2xl">
-            {/* Location pill */}
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-3.5 py-1.5 text-xs font-medium text-white/90">
-              <Sparkles className="h-3.5 w-3.5" /> Rīga · Jūrmala · Latvia
-            </span>
-
-            {/* Headline */}
-            <h1 className="mt-5 text-[2rem] sm:text-5xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.08] text-white">
-              {t.home.heroTitle}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mt-4 md:mt-5 text-base md:text-lg text-white/80 max-w-xl text-balance leading-relaxed">
-              {t.home.heroSub}
-            </p>
-
-            {/* CTAs */}
-            <div className="mt-7 md:mt-9 flex flex-col sm:flex-row flex-wrap gap-3">
-              <Button asChild size="lg" className="rounded-full bg-white text-foreground hover:bg-white/90 w-full sm:w-auto shadow-lg shadow-black/20 font-semibold">
-                <Link to="/deals">{t.home.heroCtaPrimary} <ArrowRight className="h-4 w-4 ml-1.5" /></Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm w-full sm:w-auto font-semibold">
-                <Link to="/map"><Compass className="h-4 w-4 mr-1.5" />{t.home.heroCtaSecondary}</Link>
-              </Button>
-            </div>
-
-            {/* Trust indicators */}
-            <div className="mt-8 md:mt-10 flex flex-wrap items-center gap-4 md:gap-6">
-              <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
-                <Store className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
-                {t.home.trustLocal}
+          {/* Content */}
+          <div className="relative z-10 mx-auto max-w-6xl px-5 md:px-4 py-16 sm:py-20 md:py-28">
+            <div className="max-w-2xl">
+              {/* Location pill */}
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-3.5 py-1.5 text-xs font-medium text-white/90">
+                <Sparkles className="h-3.5 w-3.5" /> Rīga · Jūrmala · Latvia
               </span>
-              <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
-                <RefreshCw className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
-                {t.home.trustDaily}
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
-                <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
-                {t.home.trustNearby}
-              </span>
+
+              {/* Headline */}
+              <h1 className="mt-5 text-[2rem] sm:text-5xl md:text-[3.5rem] font-extrabold tracking-tight text-balance leading-[1.08] text-white">
+                {t.home.heroTitle}
+              </h1>
+
+              {/* Subtitle */}
+              <p className="mt-4 md:mt-5 text-base md:text-lg text-white/80 max-w-xl text-balance leading-relaxed">
+                {t.home.heroSub}
+              </p>
+
+              {/* CTAs */}
+              <div className="mt-7 md:mt-9 flex flex-col sm:flex-row flex-wrap gap-3">
+                <Button asChild size="lg" className="rounded-full bg-white text-foreground hover:bg-white/90 w-full sm:w-auto shadow-lg shadow-black/20 font-semibold">
+                  <Link to="/deals">{t.home.heroCtaPrimary} <ArrowRight className="h-4 w-4 ml-1.5" /></Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm w-full sm:w-auto font-semibold">
+                  <Link to="/map"><Compass className="h-4 w-4 mr-1.5" />{t.home.heroCtaSecondary}</Link>
+                </Button>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="mt-8 md:mt-10 flex flex-wrap items-center gap-4 md:gap-6">
+                <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
+                  <Store className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
+                  {t.home.trustLocal}
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
+                  <RefreshCw className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
+                  {t.home.trustDaily}
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
+                  <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
+                  {t.home.trustNearby}
+                </span>
+              </div>
             </div>
           </div>
         </div>
