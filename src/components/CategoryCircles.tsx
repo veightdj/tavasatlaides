@@ -4,9 +4,9 @@ import {
   CalendarDays,
   Car,
   Coffee,
+  Gem,
   Home,
   Smartphone,
-  Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
