@@ -48,7 +48,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "DealsLV — Local store deals in Riga & Jurmala" },
+      { title: "Tavasatlaides - Atlaides kas ir tūvu" },
       { name: "description", content: "Discover the best discounts and promotions from local stores in Riga and Jurmala. Browse on the map or by category." },
       { name: "theme-color", content: "#FF7A1A" },
       { property: "og:site_name", content: "DealsLV" },
@@ -56,6 +56,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "lv_LV" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@dealslv" },
+      { property: "og:title", content: "Tavasatlaides - Atlaides kas ir tūvu" },
+      { name: "twitter:title", content: "Tavasatlaides - Atlaides kas ir tūvu" },
+      { property: "og:description", content: "Discover the best discounts and promotions from local stores in Riga and Jurmala. Browse on the map or by category." },
+      { name: "twitter:description", content: "Discover the best discounts and promotions from local stores in Riga and Jurmala. Browse on the map or by category." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/36e9f464-b24c-4e32-9db3-98339d96225e/id-preview-7a020e75--1623bc5b-8cb1-4231-bb1c-eb9187116f21.lovable.app-1779425508131.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/36e9f464-b24c-4e32-9db3-98339d96225e/id-preview-7a020e75--1623bc5b-8cb1-4231-bb1c-eb9187116f21.lovable.app-1779425508131.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
