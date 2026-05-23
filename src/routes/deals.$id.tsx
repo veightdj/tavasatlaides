@@ -364,3 +364,124 @@ function ShareMenu({
     </DropdownMenu>
   );
 }
+
+function ShareSaveCard({
+  title,
+  discountPct,
+  storeName,
+  saved,
+  onSaveToggle,
+  onShare,
+}: {
+  title: string;
+  discountPct: number | null;
+  storeName?: string;
+  saved: boolean;
+  onSaveToggle: () => void;
+  onShare: () => void;
+}) {
+  const { t } = useI18n();
+  const [copied, setCopied] = useState(false);
+
+  const buildText = () => {
+    const pct = discountPct ? `-${discountPct}% ` : "";
+    const at = storeName ? ` @ ${storeName}` : "";
+    return `${pct}${title}${at}`;
+  };
+  const getUrl = () => (typeof window !== "undefined" ? buildShareUrl(window.location.href) : "");
+
+  const handleCopy = async () => {
+    onShare();
+    try {
+      await navigator.clipboard.writeText(getUrl());
+      setCopied(true);
+      toast.success(t.deals.sharedToast);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error(t.common.error);
+    }
+  };
+
+  const handleWhatsapp = () => {
+    onShare();
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(`${buildText()} — ${getUrl()}`)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
+  };
+  const handleFacebook = () => {
+    onShare();
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getUrl())}&quote=${encodeURIComponent(buildText())}`,
+      "_blank",
+      "noopener,noreferrer,width=600,height=600",
+    );
+  };
+  const canNative = typeof navigator !== "undefined" && typeof navigator.share === "function";
+  const handleNative = async () => {
+    onShare();
+    try {
+      await navigator.share({ title, text: buildText(), url: getUrl() });
+      toast.success(t.deals.sharedToast);
+    } catch {
+      /* cancelled */
+    }
+  };
+
+  return (
+    <div className="mt-6 rounded-2xl border border-primary/20 bg-gradient-to-br from-brand-soft/70 via-background to-background p-5 shadow-sm">
+      <div className="flex items-start gap-3">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+          <Sparkles className="h-5 w-5" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-base font-semibold leading-tight">{t.deals.shareCardTitle}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{t.deals.shareCardSub}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <Button onClick={handleCopy} className="flex-1 justify-center" size="lg">
+          {copied ? (
+            <>
+              <Check className="h-4 w-4 mr-2" />
+              {t.deals.shareCopied}
+            </>
+          ) : (
+            <>
+              <LinkIcon className="h-4 w-4 mr-2" />
+              {t.deals.shareCopyCta}
+            </>
+          )}
+        </Button>
+        <Button onClick={onSaveToggle} variant={saved ? "secondary" : "outline"} size="lg" className="sm:w-auto">
+          <Heart className={`h-4 w-4 mr-2 ${saved ? "fill-current text-primary" : ""}`} />
+          {saved ? t.deals.saved : t.deals.save}
+        </Button>
+      </div>
+
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <Button onClick={handleWhatsapp} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+          <Send className="h-4 w-4 mr-2 text-green-600" />
+          <span className="text-sm">WhatsApp</span>
+        </Button>
+        <Button onClick={handleFacebook} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+          <Facebook className="h-4 w-4 mr-2 text-blue-600" />
+          <span className="text-sm">Facebook</span>
+        </Button>
+        {canNative ? (
+          <Button onClick={handleNative} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+            <Smartphone className="h-4 w-4 mr-2" />
+            <span className="text-sm">{t.deals.shareNative}</span>
+          </Button>
+        ) : (
+          <Button onClick={handleCopy} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+            <Share2 className="h-4 w-4 mr-2" />
+            <span className="text-sm">{t.deals.shareTitle}</span>
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
