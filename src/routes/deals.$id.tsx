@@ -93,7 +93,8 @@ export const Route = createFileRoute("/deals/$id")({
   head: ({ params, loaderData }) => {
     const d: any = loaderData?.deal;
     const storeName = d?.stores?.name;
-    const title = d ? `${d.title}${storeName ? ` — ${storeName}` : ""} — DealsLV` : "Deal — DealsLV";
+    const pctTag = d?.discount_pct ? `-${d.discount_pct}% ` : "";
+    const title = d ? `${pctTag}${d.title}${storeName ? ` — ${storeName}` : ""} — DealsLV` : "Deal — DealsLV";
     const baseDesc = d?.description?.slice(0, 160);
     const fallbackDesc = d
       ? `${d.discount_pct ? `${d.discount_pct}% off — ` : ""}${d.title}${storeName ? ` at ${storeName}` : ""}${d?.stores?.city ? ` in ${d.stores.city}` : ""}.`
@@ -101,6 +102,7 @@ export const Route = createFileRoute("/deals/$id")({
     const desc = baseDesc || fallbackDesc;
     const url = `https://superatlaides.lovable.app/deals/${params.id}`;
     const image = d?.cover_image_url || undefined;
+    const imageAlt = d ? `${d.title}${storeName ? ` — ${storeName}` : ""}` : "Deal";
     return {
       meta: [
         { title },
@@ -109,11 +111,16 @@ export const Route = createFileRoute("/deals/$id")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "product" },
+        { property: "og:site_name", content: "DealsLV" },
+        ...(d?.discount_pct ? [{ name: "product:discount", content: `${d.discount_pct}%` }] : []),
+        { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: desc },
         ...(image ? [
           { property: "og:image", content: image },
+          { property: "og:image:alt", content: imageAlt },
           { name: "twitter:image", content: image },
+          { name: "twitter:image:alt", content: imageAlt },
         ] : []),
       ],
       links: [{ rel: "canonical", href: url }],
@@ -213,16 +220,12 @@ function DealDetail() {
               <Heart className={`h-4 w-4 mr-2 ${saved ? "fill-current" : ""}`} />
               {saved ? t.deals.saved : t.deals.save}
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                trackShare.mutate();
-                if (navigator.share) navigator.share({ title: deal.title, url: window.location.href });
-                else navigator.clipboard.writeText(window.location.href);
-              }}
-            >
-              <Share2 className="h-4 w-4 mr-2" />{t.deals.shareTitle}
-            </Button>
+            <ShareMenu
+              title={deal.title}
+              discountPct={deal.discount_pct}
+              storeName={store?.name}
+              onShare={() => trackShare.mutate()}
+            />
           </div>
 
           {/* Validity / offer time */}
