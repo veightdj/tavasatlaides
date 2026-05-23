@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, MapPin, Sparkles, Store } from "lucide-react";
+import { ArrowRight, Compass, MapPin, RefreshCw, Sparkles, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { Button } from "@/components/ui/button";
