@@ -104,6 +104,7 @@ export function AdEditor({ adId }: { adId?: string }) {
     },
     onSuccess: () => {
       toast.success(t.common.saved);
+      try { localStorage.removeItem(draftKey); } catch {}
       qc.invalidateQueries({ queryKey: ["my-ads"] });
       navigate({ to: "/ads" });
     },
