@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Compass, MapPin, RefreshCw, Sparkles, Store } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { Button } from "@/components/ui/button";
@@ -25,6 +27,33 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const [locating, setLocating] = useState(false);
+
+  const handleNearMe = () => {
+    if (!("geolocation" in navigator)) {
+      toast.error(t.deals.nearError);
+      return;
+    }
+    setLocating(true);
+    const toastId = toast.loading(t.deals.nearLocating);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        toast.dismiss(toastId);
+        setLocating(false);
+        const lat = pos.coords.latitude.toFixed(5);
+        const lng = pos.coords.longitude.toFixed(5);
+        navigate({ to: "/deals", search: { near: `${lat},${lng}` } });
+      },
+      () => {
+        toast.dismiss(toastId);
+        setLocating(false);
+        toast.error(t.deals.nearError);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
 
   const { data: featured = [] } = useQuery({
     queryKey: ["featured-deals"],
@@ -82,8 +111,16 @@ function Home() {
                 <Button asChild size="lg" className="rounded-full bg-white text-foreground hover:bg-white/90 w-full sm:w-auto shadow-lg shadow-black/20 font-semibold">
                   <Link to="/deals">{t.home.heroCtaPrimary} <ArrowRight className="h-4 w-4 ml-1.5" /></Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm w-full sm:w-auto font-semibold">
-                  <Link to="/map"><Compass className="h-4 w-4 mr-1.5" />{t.home.heroCtaSecondary}</Link>
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  onClick={handleNearMe}
+                  disabled={locating}
+                  className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm w-full sm:w-auto font-semibold"
+                >
+                  <LocateFixed className={`h-4 w-4 mr-1.5 ${locating ? "animate-pulse" : ""}`} />
+                  {locating ? t.deals.nearLocating : t.home.heroCtaSecondary}
                 </Button>
               </div>
 
