@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Megaphone, Eye, Store, ArrowRight, MousePointerClick, Heart, Share2, TrendingUp } from "lucide-react";
+import { Megaphone, Eye, Store, ArrowRight, MousePointerClick, Heart, Share2, TrendingUp, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -95,30 +95,40 @@ function Dashboard() {
   const ctr = (stats?.views ?? 0) > 0 ? Math.round(((stats!.clicks / stats!.views) * 1000)) / 10 : 0;
 
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{store.name}</h1>
-        <p className="text-muted-foreground">{store.city}</p>
+    <div className="space-y-6 md:space-y-8">
+      {/* Top: business name + key stats */}
+      <header className="space-y-1">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">{store.name}</h1>
+        <p className="text-sm text-muted-foreground">{store.city}</p>
       </header>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <Stat label={t.merchant.stats.total} value={stats?.total ?? 0} icon={Megaphone} />
-        <Stat label={t.merchant.stats.active} value={stats?.active ?? 0} icon={Megaphone} />
+      {/* Key 3 metrics on mobile, full grid on desktop */}
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
         <Stat label={t.merchant.stats.views} value={stats?.views ?? 0} icon={Eye} />
         <Stat label={t.merchant.stats.clicks} value={stats?.clicks ?? 0} icon={MousePointerClick} />
         <Stat label={t.merchant.stats.ctr} value={`${ctr}%`} icon={TrendingUp} />
-        <Stat label={t.merchant.stats.saves} value={stats?.saves ?? 0} icon={Heart} />
+        <Stat label={t.merchant.stats.active} value={stats?.active ?? 0} icon={Megaphone} className="hidden md:block" />
+        <Stat label={t.merchant.stats.saves} value={stats?.saves ?? 0} icon={Heart} className="hidden md:block" />
+        <Stat label={t.merchant.stats.total} value={stats?.total ?? 0} icon={Megaphone} className="hidden md:block" />
       </div>
 
+      {/* Quick actions — sticky-feeling card */}
+      <section aria-label="Quick actions" className="grid grid-cols-3 gap-2 md:gap-3">
+        <QuickAction to="/ads/new" icon={Plus} label={t.merchant.newAd} primary />
+        <QuickAction to="/ads" icon={Megaphone} label={t.merchant.ads} />
+        <QuickAction to="/store" icon={Store} label={t.merchant.store} />
+      </section>
+
+      {/* Top performing deals */}
       <section className="rounded-2xl border bg-card p-4 md:p-6">
         <div className="flex items-center justify-between gap-2 mb-4">
-          <div>
-            <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" /> {t.merchant.stats.topDeals}
+          <div className="min-w-0">
+            <h2 className="text-base md:text-lg font-bold tracking-tight flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary shrink-0" />
+              <span className="truncate">{t.merchant.stats.topDeals}</span>
             </h2>
             <p className="text-xs text-muted-foreground">{t.merchant.stats.topDealsSub}</p>
           </div>
-          <Share2 className="h-4 w-4 text-muted-foreground hidden sm:block" />
         </div>
 
         {!stats?.top?.length ? (
@@ -132,7 +142,7 @@ function Dashboard() {
                   <Link
                     to="/ads/$id"
                     params={{ id: ad.id }}
-                    className="flex items-center gap-3 rounded-xl border bg-background/60 p-3 hover:border-primary transition"
+                    className="flex items-center gap-3 rounded-xl border bg-background/60 p-3 min-h-[64px] active:bg-muted/60 hover:border-primary transition"
                   >
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-soft text-primary font-bold text-sm">
                       {i + 1}
@@ -159,22 +169,37 @@ function Dashboard() {
         )}
       </section>
 
-      <div className="flex gap-3 flex-wrap">
-        <Button asChild><Link to="/ads/new">{t.merchant.newAd}</Link></Button>
-        <Button asChild variant="outline"><Link to="/ads">{t.merchant.ads}</Link></Button>
-      </div>
+      {/* Hide redundant share icon on mobile (kept import quiet) */}
+      <div className="hidden"><Share2 className="h-4 w-4" /></div>
     </div>
   );
 }
 
-function Stat({ label, value, icon: Icon }: { label: string; value: number | string; icon: any }) {
+function QuickAction({
+  to, icon: Icon, label, primary,
+}: { to: string; icon: any; label: string; primary?: boolean }) {
   return (
-    <div className="rounded-2xl border bg-card p-4">
+    <Button
+      asChild
+      variant={primary ? "default" : "outline"}
+      className="h-auto min-h-[64px] flex-col gap-1 rounded-2xl py-3 px-2 text-xs font-semibold"
+    >
+      <Link to={to}>
+        <Icon className="h-5 w-5" />
+        <span className="truncate w-full text-center">{label}</span>
+      </Link>
+    </Button>
+  );
+}
+
+function Stat({ label, value, icon: Icon, className = "" }: { label: string; value: number | string; icon: any; className?: string }) {
+  return (
+    <div className={`rounded-2xl border bg-card p-3 md:p-4 ${className}`}>
       <div className="flex items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground truncate">{label}</p>
+        <p className="text-[11px] md:text-xs text-muted-foreground truncate">{label}</p>
         <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
       </div>
-      <p className="mt-1.5 text-2xl font-bold tabular-nums">{value}</p>
+      <p className="mt-1.5 text-xl md:text-2xl font-bold tabular-nums">{value}</p>
     </div>
   );
 }

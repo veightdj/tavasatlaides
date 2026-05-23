@@ -42,6 +42,8 @@ export function AdEditor({ adId }: { adId?: string }) {
     cover_image_url: "",
   });
 
+  const draftKey = isNew ? "draft:new-ad" : `draft:ad:${adId}`;
+
   useEffect(() => {
     if (!isNew && ad) {
       setForm({
@@ -55,10 +57,29 @@ export function AdEditor({ adId }: { adId?: string }) {
         status: ad.status,
         cover_image_url: ad.cover_image_url ?? "",
       });
-    } else if (isNew && store && !form.category) {
-      setForm((f) => ({ ...f, category: store.category }));
+    } else if (isNew && store) {
+      // Restore draft from localStorage if present
+      try {
+        const raw = localStorage.getItem(draftKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setForm((f) => ({ ...f, ...parsed, category: parsed.category || store.category }));
+          return;
+        }
+      } catch {}
+      if (!form.category) setForm((f) => ({ ...f, category: store.category }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ad, isNew, store]);
+
+  // Auto-save draft (new ad only) — debounced
+  useEffect(() => {
+    if (!isNew) return;
+    const id = setTimeout(() => {
+      try { localStorage.setItem(draftKey, JSON.stringify(form)); } catch {}
+    }, 400);
+    return () => clearTimeout(id);
+  }, [form, isNew, draftKey]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -83,6 +104,7 @@ export function AdEditor({ adId }: { adId?: string }) {
     },
     onSuccess: () => {
       toast.success(t.common.saved);
+      try { localStorage.removeItem(draftKey); } catch {}
       qc.invalidateQueries({ queryKey: ["my-ads"] });
       navigate({ to: "/ads" });
     },
@@ -101,19 +123,19 @@ export function AdEditor({ adId }: { adId?: string }) {
   if (!store) return <div>{t.merchant.setupStore}</div>;
 
   return (
-    <div className="max-w-2xl space-y-5">
-      <h1 className="text-3xl font-bold tracking-tight">{isNew ? t.merchant.newAd : t.merchant.edit}</h1>
+    <div className="max-w-2xl space-y-5 [&_input]:h-12 [&_input]:text-base [&_button[role=combobox]]:h-12 [&_textarea]:text-base">
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{isNew ? t.merchant.newAd : t.merchant.edit}</h1>
 
       <div className="flex items-center gap-4">
         {form.cover_image_url ? <img src={form.cover_image_url} className="h-24 w-32 rounded-lg object-cover" alt="" /> : <div className="h-24 w-32 rounded-lg bg-gradient-warm" />}
         <label className="text-sm cursor-pointer">
-          <span className="rounded-md bg-secondary px-3 py-2 text-secondary-foreground hover:bg-secondary/80">{t.merchant.coverImage}</span>
+          <span className="inline-flex items-center min-h-[44px] rounded-md bg-secondary px-4 py-2 text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70">{t.merchant.coverImage}</span>
           <input type="file" accept="image/*" className="hidden" onChange={onCover} />
         </label>
       </div>
 
       <F label={t.merchant.adTitle}><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></F>
-      <F label={t.merchant.adDescription}><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></F>
+      <F label={t.merchant.adDescription}><Textarea rows={4} className="min-h-[120px]" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></F>
       <F label={t.merchant.category}>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
@@ -121,13 +143,13 @@ export function AdEditor({ adId }: { adId?: string }) {
         </Select>
       </F>
 
-      <div className="grid grid-cols-3 gap-3">
-        <F label={t.merchant.discount}><Input type="number" min="0" max="99" value={form.discount_pct} onChange={(e) => setForm({ ...form, discount_pct: e.target.value })} /></F>
-        <F label={t.merchant.priceOriginal}><Input type="number" step="0.01" value={form.price_original} onChange={(e) => setForm({ ...form, price_original: e.target.value })} /></F>
-        <F label={t.merchant.priceSale}><Input type="number" step="0.01" value={form.price_sale} onChange={(e) => setForm({ ...form, price_sale: e.target.value })} /></F>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <F label={t.merchant.discount}><Input type="number" inputMode="numeric" min="0" max="99" value={form.discount_pct} onChange={(e) => setForm({ ...form, discount_pct: e.target.value })} /></F>
+        <F label={t.merchant.priceOriginal}><Input type="number" inputMode="decimal" step="0.01" value={form.price_original} onChange={(e) => setForm({ ...form, price_original: e.target.value })} /></F>
+        <F label={t.merchant.priceSale}><Input type="number" inputMode="decimal" step="0.01" value={form.price_sale} onChange={(e) => setForm({ ...form, price_sale: e.target.value })} /></F>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <F label={t.merchant.startsAt}><Input type="date" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} /></F>
         <F label={t.merchant.endsAt}><Input type="date" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} /></F>
       </div>
@@ -143,7 +165,13 @@ export function AdEditor({ adId }: { adId?: string }) {
         </Select>
       </F>
 
-      <Button onClick={() => save.mutate()} disabled={save.isPending}>{t.merchant.save}</Button>
+      <Button
+        onClick={() => save.mutate()}
+        disabled={save.isPending}
+        className="w-full sm:w-auto h-12 text-base font-semibold"
+      >
+        {t.merchant.save}
+      </Button>
     </div>
   );
 }
