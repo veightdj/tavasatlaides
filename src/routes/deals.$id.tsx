@@ -257,3 +257,91 @@ function DealDetail() {
     </div>
   );
 }
+
+function ShareMenu({
+  title,
+  discountPct,
+  storeName,
+  onShare,
+}: {
+  title: string;
+  discountPct: number | null;
+  storeName?: string;
+  onShare: () => void;
+}) {
+  const { t } = useI18n();
+
+  const buildText = () => {
+    const pct = discountPct ? `-${discountPct}% ` : "";
+    const at = storeName ? ` @ ${storeName}` : "";
+    return `${pct}${title}${at}`;
+  };
+
+  const getUrl = () => (typeof window !== "undefined" ? window.location.href : "");
+
+  const openShare = (href: string) => {
+    onShare();
+    window.open(href, "_blank", "noopener,noreferrer,width=600,height=600");
+  };
+
+  const shareWhatsapp = () => {
+    const text = `${buildText()} — ${getUrl()}`;
+    openShare(`https://wa.me/?text=${encodeURIComponent(text)}`);
+  };
+
+  const shareFacebook = () => {
+    openShare(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getUrl())}&quote=${encodeURIComponent(buildText())}`);
+  };
+
+  const copyLink = async () => {
+    onShare();
+    try {
+      await navigator.clipboard.writeText(getUrl());
+      toast.success(t.deals.shareCopied);
+    } catch {
+      toast.error(t.common.error);
+    }
+  };
+
+  const nativeShare = async () => {
+    onShare();
+    try {
+      await navigator.share({ title, text: buildText(), url: getUrl() });
+    } catch {
+      /* user cancelled */
+    }
+  };
+
+  const canNative = typeof navigator !== "undefined" && typeof navigator.share === "function";
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">
+          <Share2 className="h-4 w-4 mr-2" />
+          {t.deals.shareTitle}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuItem onSelect={shareWhatsapp}>
+          <Send className="h-4 w-4 mr-2 text-green-600" />
+          {t.deals.shareWhatsapp}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={shareFacebook}>
+          <Facebook className="h-4 w-4 mr-2 text-blue-600" />
+          {t.deals.shareFacebook}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={copyLink}>
+          <LinkIcon className="h-4 w-4 mr-2" />
+          {t.deals.shareCopy}
+        </DropdownMenuItem>
+        {canNative && (
+          <DropdownMenuItem onSelect={nativeShare}>
+            <Smartphone className="h-4 w-4 mr-2" />
+            {t.deals.shareNative}
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
