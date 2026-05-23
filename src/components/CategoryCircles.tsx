@@ -84,7 +84,7 @@ export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug }) {
               to="/categories/$slug"
               params={{ slug }}
               className={cn(
-                "snap-start flex flex-col items-center gap-2 shrink-2",
+                "snap-start flex flex-col items-center gap-2 shrink-0",
                 isActive && "opacity-80"
               )}
             >
