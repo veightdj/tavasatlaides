@@ -96,7 +96,7 @@ function AdsList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t.merchant.ads}</h1>
-        <Button asChild><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
+        <Button asChild className="h-11 md:h-10"><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
       </div>
 
       {ads.length === 0 ? (
@@ -105,52 +105,73 @@ function AdsList() {
         </div>
       ) : (
         <div className="space-y-4">
-          {ads.map((ad) => {
-            const m = metrics?.[ad.id] ?? { views: 0, clicks: 0, saves: 0, shares: 0 };
-            const ctr = m.views > 0 ? Math.round((m.clicks / m.views) * 1000) / 10 : 0;
-            return (
-              <div key={ad.id} className="rounded-2xl border bg-card p-4 space-y-4">
-                <div className="flex items-center gap-3">
-                  {ad.cover_image_url ? (
-                    <img src={ad.cover_image_url} alt="" className="h-14 w-14 rounded-lg object-cover shrink-0" />
-                  ) : (
-                    <div className="h-14 w-14 rounded-lg bg-gradient-warm shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold truncate">{ad.title}</h3>
-                      <Badge variant={ad.status === "active" ? "default" : "secondary"}>
-                        {ad.status === "active" ? t.merchant.statusActive : ad.status === "paused" ? t.merchant.statusPaused : t.merchant.statusDraft}
-                      </Badge>
-                      {ad.discount_pct && <Badge variant="outline">-{ad.discount_pct}%</Badge>}
-                    </div>
-                    {ad.ends_at && <p className="text-xs text-muted-foreground mt-1">{t.deals.validUntil}: {new Date(ad.ends_at).toLocaleDateString()}</p>}
-                  </div>
-                  <Button asChild size="sm" variant="ghost" className="h-10 w-10 p-0"><Link to="/ads/$id" params={{ id: ad.id }}><Edit className="h-4 w-4" /></Link></Button>
-                  <Button size="sm" variant="ghost" className="h-10 w-10 p-0" onClick={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                  <MetricCard icon={Eye} label={t.merchant.stats.views} value={m.views} />
-                  <MetricCard icon={MousePointerClick} label={t.merchant.stats.clicks} value={m.clicks} />
-                  <MetricCard icon={Percent} label={t.merchant.stats.ctr} value={`${ctr}%`} />
-                  <MetricCard icon={Heart} label={t.merchant.stats.saves} value={m.saves} />
-                  <MetricCard icon={Share2} label={t.merchant.stats.shares} value={m.shares} />
-                </div>
-              </div>
-            );
-          })}
+          {ads.map((ad) => (
+            <AdRow
+              key={ad.id}
+              ad={ad}
+              metrics={metrics?.[ad.id] ?? { views: 0, clicks: 0, saves: 0, shares: 0 }}
+              t={t}
+              onDelete={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}
+            />
+          ))}
         </div>
       )}
     </div>
   );
 }
 
-function MetricCard({ icon: Icon, label, value }: { icon: any; label: string; value: number | string }) {
+function AdRow({ ad, metrics: m, t, onDelete }: { ad: any; metrics: Metrics; t: any; onDelete: () => void }) {
+  const [open, setOpen] = useState(false);
+  const ctr = m.views > 0 ? Math.round((m.clicks / m.views) * 1000) / 10 : 0;
   return (
-    <div className="rounded-xl border bg-background/60 p-3">
+    <div className="rounded-2xl border bg-card p-3 md:p-4 space-y-3 md:space-y-4">
+      <div className="flex items-center gap-3">
+        {ad.cover_image_url ? (
+          <img src={ad.cover_image_url} alt="" className="h-14 w-14 rounded-lg object-cover shrink-0" />
+        ) : (
+          <div className="h-14 w-14 rounded-lg bg-gradient-warm shrink-0" />
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-semibold truncate">{ad.title}</h3>
+            <Badge variant={ad.status === "active" ? "default" : "secondary"}>
+              {ad.status === "active" ? t.merchant.statusActive : ad.status === "paused" ? t.merchant.statusPaused : t.merchant.statusDraft}
+            </Badge>
+            {ad.discount_pct && <Badge variant="outline">-{ad.discount_pct}%</Badge>}
+          </div>
+          {ad.ends_at && <p className="text-xs text-muted-foreground mt-1">{t.deals.validUntil}: {new Date(ad.ends_at).toLocaleDateString()}</p>}
+        </div>
+        <Button asChild size="sm" variant="ghost" className="h-11 w-11 p-0 shrink-0"><Link to="/ads/$id" params={{ id: ad.id }}><Edit className="h-4 w-4" /></Link></Button>
+        <Button size="sm" variant="ghost" className="h-11 w-11 p-0 shrink-0" onClick={onDelete}>
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </Button>
+      </div>
+
+      {/* Mobile: 3 key metrics + tap to expand. Desktop: all 5. */}
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+        <MetricCard icon={Eye} label={t.merchant.stats.views} value={m.views} />
+        <MetricCard icon={MousePointerClick} label={t.merchant.stats.clicks} value={m.clicks} />
+        <MetricCard icon={Percent} label={t.merchant.stats.ctr} value={`${ctr}%`} />
+        <MetricCard icon={Heart} label={t.merchant.stats.saves} value={m.saves} className={open ? "" : "hidden sm:block"} />
+        <MetricCard icon={Share2} label={t.merchant.stats.shares} value={m.shares} className={open ? "" : "hidden sm:block"} />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="sm:hidden w-full inline-flex items-center justify-center gap-1 min-h-[44px] text-xs font-medium text-muted-foreground rounded-lg hover:bg-muted/60 active:bg-muted"
+        aria-expanded={open}
+      >
+        {open ? "—" : "+"} {t.merchant.stats.saves} · {t.merchant.stats.shares}
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+    </div>
+  );
+}
+
+function MetricCard({ icon: Icon, label, value, className = "" }: { icon: any; label: string; value: number | string; className?: string }) {
+  return (
+    <div className={`rounded-xl border bg-background/60 p-3 ${className}`}>
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Icon className="h-3.5 w-3.5" />
         <span className="truncate">{label}</span>
