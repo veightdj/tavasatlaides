@@ -173,8 +173,16 @@ function DealDetail() {
   const images = [deal.cover_image_url, ...((deal.ad_images ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order).map((i: any) => i.url))].filter(Boolean);
   const store = deal.stores as any;
 
+  const isReferred = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("ref");
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      {isReferred && (
+        <div className="mb-6 flex items-center gap-2 rounded-2xl border border-primary/30 bg-brand-soft/60 px-4 py-3 text-sm font-medium text-foreground">
+          <Gift className="h-4 w-4 text-primary" />
+          {t.deals.referralBanner}
+        </div>
+      )}
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-muted">
