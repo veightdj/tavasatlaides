@@ -27,6 +27,33 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const [locating, setLocating] = useState(false);
+
+  const handleNearMe = () => {
+    if (!("geolocation" in navigator)) {
+      toast.error(t.deals.nearError);
+      return;
+    }
+    setLocating(true);
+    const toastId = toast.loading(t.deals.nearLocating);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        toast.dismiss(toastId);
+        setLocating(false);
+        const lat = pos.coords.latitude.toFixed(5);
+        const lng = pos.coords.longitude.toFixed(5);
+        navigate({ to: "/deals", search: { near: `${lat},${lng}` } });
+      },
+      () => {
+        toast.dismiss(toastId);
+        setLocating(false);
+        toast.error(t.deals.nearError);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
 
   const { data: featured = [] } = useQuery({
     queryKey: ["featured-deals"],
