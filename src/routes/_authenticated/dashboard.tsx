@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Megaphone, Eye, Store, ArrowRight, MousePointerClick, Heart, Share2, TrendingUp } from "lucide-react";
+import { Megaphone, Eye, Store, ArrowRight, MousePointerClick, Heart, Share2, TrendingUp, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
