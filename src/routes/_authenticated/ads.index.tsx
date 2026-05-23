@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { useEffect } from "react";
+import { Plus, Edit, Trash2, Eye, MousePointerClick, Percent, Heart, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,6 +12,30 @@ import { useI18n } from "@/i18n/use-i18n";
 export const Route = createFileRoute("/_authenticated/ads/")({
   component: AdsList,
 });
+
+type Metrics = { views: number; clicks: number; saves: number; shares: number };
+
+async function loadMetrics(adIds: string[]): Promise<Record<string, Metrics>> {
+  const empty: Record<string, Metrics> = {};
+  adIds.forEach((id) => (empty[id] = { views: 0, clicks: 0, saves: 0, shares: 0 }));
+  if (adIds.length === 0) return empty;
+
+  const tables = [
+    { name: "ad_views", key: "views" as const },
+    { name: "ad_clicks", key: "clicks" as const },
+    { name: "ad_saves", key: "saves" as const },
+    { name: "ad_shares", key: "shares" as const },
+  ];
+  await Promise.all(
+    tables.map(async ({ name, key }) => {
+      const { data } = await supabase.from(name as any).select("ad_id").in("ad_id", adIds);
+      (data ?? []).forEach((row: any) => {
+        if (empty[row.ad_id]) empty[row.ad_id][key]++;
+      });
+    })
+  );
+  return empty;
+}
 
 function AdsList() {
   const { t } = useI18n();
@@ -34,6 +59,26 @@ function AdsList() {
     },
   });
 
+  const adIds = ads.map((a) => a.id);
+  const { data: metrics } = useQuery({
+    queryKey: ["my-ad-metrics", adIds.join(",")],
+    enabled: adIds.length > 0,
+    queryFn: () => loadMetrics(adIds),
+  });
+
+  // Realtime: refresh metrics on any new tracking event
+  useEffect(() => {
+    if (adIds.length === 0) return;
+    const channel = supabase
+      .channel("ad-metrics")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "ad_views" }, () => qc.invalidateQueries({ queryKey: ["my-ad-metrics"] }))
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "ad_clicks" }, () => qc.invalidateQueries({ queryKey: ["my-ad-metrics"] }))
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "ad_saves" }, () => qc.invalidateQueries({ queryKey: ["my-ad-metrics"] }))
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "ad_shares" }, () => qc.invalidateQueries({ queryKey: ["my-ad-metrics"] }))
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [adIds.join(","), qc]);
+
   const del = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("ads").delete().eq("id", id);
@@ -49,8 +94,8 @@ function AdsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">{t.merchant.ads}</h1>
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t.merchant.ads}</h1>
         <Button asChild><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
       </div>
 
@@ -59,32 +104,58 @@ function AdsList() {
           {t.merchant.noAds}
         </div>
       ) : (
-        <div className="space-y-3">
-          {ads.map((ad) => (
-            <div key={ad.id} className="rounded-xl border bg-card p-4 flex items-center gap-4">
-              {ad.cover_image_url ? (
-                <img src={ad.cover_image_url} alt="" className="h-16 w-16 rounded-lg object-cover" />
-              ) : (
-                <div className="h-16 w-16 rounded-lg bg-gradient-warm" />
-              )}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-semibold truncate">{ad.title}</h3>
-                  <Badge variant={ad.status === "active" ? "default" : "secondary"}>
-                    {ad.status === "active" ? t.merchant.statusActive : ad.status === "paused" ? t.merchant.statusPaused : t.merchant.statusDraft}
-                  </Badge>
-                  {ad.discount_pct && <Badge variant="outline">-{ad.discount_pct}%</Badge>}
+        <div className="space-y-4">
+          {ads.map((ad) => {
+            const m = metrics?.[ad.id] ?? { views: 0, clicks: 0, saves: 0, shares: 0 };
+            const ctr = m.views > 0 ? Math.round((m.clicks / m.views) * 1000) / 10 : 0;
+            return (
+              <div key={ad.id} className="rounded-2xl border bg-card p-4 space-y-4">
+                <div className="flex items-center gap-3">
+                  {ad.cover_image_url ? (
+                    <img src={ad.cover_image_url} alt="" className="h-14 w-14 rounded-lg object-cover shrink-0" />
+                  ) : (
+                    <div className="h-14 w-14 rounded-lg bg-gradient-warm shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-semibold truncate">{ad.title}</h3>
+                      <Badge variant={ad.status === "active" ? "default" : "secondary"}>
+                        {ad.status === "active" ? t.merchant.statusActive : ad.status === "paused" ? t.merchant.statusPaused : t.merchant.statusDraft}
+                      </Badge>
+                      {ad.discount_pct && <Badge variant="outline">-{ad.discount_pct}%</Badge>}
+                    </div>
+                    {ad.ends_at && <p className="text-xs text-muted-foreground mt-1">{t.deals.validUntil}: {new Date(ad.ends_at).toLocaleDateString()}</p>}
+                  </div>
+                  <Button asChild size="sm" variant="ghost" className="h-10 w-10 p-0"><Link to="/ads/$id" params={{ id: ad.id }}><Edit className="h-4 w-4" /></Link></Button>
+                  <Button size="sm" variant="ghost" className="h-10 w-10 p-0" onClick={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
                 </div>
-                {ad.ends_at && <p className="text-xs text-muted-foreground mt-1">{t.deals.validUntil}: {new Date(ad.ends_at).toLocaleDateString()}</p>}
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  <MetricCard icon={Eye} label={t.merchant.stats.views} value={m.views} />
+                  <MetricCard icon={MousePointerClick} label={t.merchant.stats.clicks} value={m.clicks} />
+                  <MetricCard icon={Percent} label={t.merchant.stats.ctr} value={`${ctr}%`} />
+                  <MetricCard icon={Heart} label={t.merchant.stats.saves} value={m.saves} />
+                  <MetricCard icon={Share2} label={t.merchant.stats.shares} value={m.shares} />
+                </div>
               </div>
-              <Button asChild size="sm" variant="ghost"><Link to="/ads/$id" params={{ id: ad.id }}><Edit className="h-4 w-4" /></Link></Button>
-              <Button size="sm" variant="ghost" onClick={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
+    </div>
+  );
+}
+
+function MetricCard({ icon: Icon, label, value }: { icon: any; label: string; value: number | string }) {
+  return (
+    <div className="rounded-xl border bg-background/60 p-3">
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Icon className="h-3.5 w-3.5" />
+        <span className="truncate">{label}</span>
+      </div>
+      <p className="mt-1 text-lg font-bold tabular-nums">{value}</p>
     </div>
   );
 }
