@@ -151,6 +151,23 @@ function Home() {
 
       {/* Featured */}
       <section className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+        <div className="flex items-end justify-between mb-5 md:mb-6 gap-3">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
+          <Link to="/deals" className="text-sm text-primary font-medium hover:underline shrink-0">{t.home.seeAll} →</Link>
+        </div>
+        {featured.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border p-6 md:p-12 text-center text-muted-foreground">
+            {t.deals.empty}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.map((d) => <DealCard key={d.id} deal={d as any} />)}
+          </div>
+        )}
+      </section>
+
+      {/* Merchant CTA */}
+      <section className="mx-auto max-w-6xl px-4 py-8 md:py-14">
         <div className="rounded-2xl md:rounded-3xl bg-gradient-warm p-6 md:p-12 text-primary-foreground flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-6 justify-between">
           <div className="flex items-start gap-4">
             <Store className="h-8 w-8 md:h-10 md:w-10 shrink-0" />
