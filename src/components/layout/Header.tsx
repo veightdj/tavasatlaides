@@ -45,11 +45,11 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-warm text-primary-foreground font-bold">D</span>
-          <span className="text-lg font-bold tracking-tight">{t.appName}</span>
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 pt-[env(safe-area-inset-top)]">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 gap-2">
+        <Link to="/" className="flex items-center gap-2 min-w-0" onClick={() => setOpen(false)}>
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-warm text-primary-foreground font-bold">D</span>
+          <span className="text-lg font-bold tracking-tight truncate">{t.appName}</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">{navLinks}</nav>
@@ -87,35 +87,65 @@ export function Header() {
           )}
         </div>
 
-        <button className="md:hidden p-2" onClick={() => setOpen((v) => !v)} aria-label="Menu">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        <button
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center -mr-2 rounded-md hover:bg-muted active:bg-muted transition"
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Menu"
+          aria-expanded={open}
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-border/60 bg-background">
-          <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-4">
-            <div className="flex flex-col gap-3" onClick={() => setOpen(false)}>{navLinks}</div>
-            <div className="flex items-center gap-2 pt-2 border-t border-border/60">
-              {LANGS.map((l) => (
-                <Button key={l.code} size="sm" variant={lang === l.code ? "default" : "ghost"} onClick={() => setLang(l.code)}>
-                  {l.label}
-                </Button>
-              ))}
+        <>
+          <div
+            className="md:hidden fixed inset-0 top-16 z-30 bg-black/40 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="md:hidden fixed inset-x-0 top-16 z-40 border-t border-border/60 bg-background max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
+            <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-2">
+              <div className="flex flex-col" onClick={() => setOpen(false)}>
+                {[
+                  { to: "/deals", label: t.nav.deals },
+                  { to: "/stores", label: t.nav.stores },
+                  { to: "/map", label: t.nav.map, icon: MapPin },
+                  { to: "/favorites", label: t.nav.favorites, icon: Heart },
+                  { to: "/for-merchants", label: t.nav.forMerchants },
+                ].map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    className="flex items-center gap-2 min-h-11 px-2 py-3 rounded-md text-base font-medium hover:bg-muted active:bg-muted transition"
+                    activeProps={{ className: "text-primary" }}
+                  >
+                    {l.icon ? <l.icon className="h-5 w-5" /> : null}
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 pt-3 mt-1 border-t border-border/60">
+                {LANGS.map((l) => (
+                  <Button key={l.code} size="sm" className="min-h-10" variant={lang === l.code ? "default" : "ghost"} onClick={() => setLang(l.code)}>
+                    {l.label}
+                  </Button>
+                ))}
+              </div>
+              {user ? (
+                <div className="flex flex-col gap-2 pt-2">
+                  <Button asChild variant="outline" className="min-h-11" onClick={() => setOpen(false)}><Link to="/dashboard">{t.merchant.dashboard}</Link></Button>
+                  <Button variant="ghost" className="min-h-11" onClick={() => { setOpen(false); signOut(); }}>{t.cta.signOut}</Button>
+                </div>
+              ) : (
+                <div className="flex gap-2 pt-2">
+                  <Button asChild variant="ghost" className="flex-1 min-h-11" onClick={() => setOpen(false)}><Link to="/login">{t.cta.signIn}</Link></Button>
+                  <Button asChild className="flex-1 min-h-11" onClick={() => setOpen(false)}><Link to="/signup">{t.cta.postAd}</Link></Button>
+                </div>
+              )}
             </div>
-            {user ? (
-              <div className="flex flex-col gap-2">
-                <Button asChild variant="outline" size="sm" onClick={() => setOpen(false)}><Link to="/dashboard">{t.merchant.dashboard}</Link></Button>
-                <Button size="sm" variant="ghost" onClick={signOut}>{t.cta.signOut}</Button>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Button asChild variant="ghost" size="sm" className="flex-1" onClick={() => setOpen(false)}><Link to="/login">{t.cta.signIn}</Link></Button>
-                <Button asChild size="sm" className="flex-1" onClick={() => setOpen(false)}><Link to="/signup">{t.cta.postAd}</Link></Button>
-              </div>
-            )}
           </div>
-        </div>
+        </>
       )}
     </header>
   );
