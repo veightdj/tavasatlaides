@@ -141,7 +141,14 @@ function DealDetail() {
   const trackView = useMutation({
     mutationFn: async () => {
       await supabase.from("ad_views").insert({ ad_id: id });
+      await supabase.from("ad_clicks").insert({ ad_id: id });
     },
+  });
+  const trackSave = useMutation({
+    mutationFn: async () => { await supabase.from("ad_saves").insert({ ad_id: id }); },
+  });
+  const trackShare = useMutation({
+    mutationFn: async () => { await supabase.from("ad_shares").insert({ ad_id: id }); },
   });
 
   useEffect(() => {
@@ -200,13 +207,14 @@ function DealDetail() {
           )}
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button onClick={() => toggle(deal.id)} variant={saved ? "default" : "outline"}>
+            <Button onClick={() => { if (!saved) trackSave.mutate(); toggle(deal.id); }} variant={saved ? "default" : "outline"}>
               <Heart className={`h-4 w-4 mr-2 ${saved ? "fill-current" : ""}`} />
               {saved ? t.deals.saved : t.deals.save}
             </Button>
             <Button
               variant="outline"
               onClick={() => {
+                trackShare.mutate();
                 if (navigator.share) navigator.share({ title: deal.title, url: window.location.href });
                 else navigator.clipboard.writeText(window.location.href);
               }}

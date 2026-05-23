@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_clicks: {
+        Row: {
+          ad_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       ad_images: {
         Row: {
           ad_id: string
@@ -45,6 +63,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ad_saves: {
+        Row: {
+          ad_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      ad_shares: {
+        Row: {
+          ad_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
       }
       ad_views: {
         Row: {
