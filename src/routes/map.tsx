@@ -28,6 +28,12 @@ const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
   Jurmala: { lat: 56.968, lng: 23.7704 },
 };
 
+function escapeHtml(s: string): string {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 function MapPage() {
   const { t } = useI18n();
   const mapEl = useRef<HTMLDivElement>(null);
