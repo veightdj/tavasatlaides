@@ -55,7 +55,7 @@ function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
           <div className="absolute inset-2 rounded-xl md:rounded-2xl border border-white/10 pointer-events-none" />
-        </a>
+        </div>
 
         <div className="mx-auto max-w-6xl px-5 md:px-4 py-16 sm:py-20 md:py-28">
           <div className="max-w-2xl">
