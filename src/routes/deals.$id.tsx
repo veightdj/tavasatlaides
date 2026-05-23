@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock, Link as LinkIcon, Send, Facebook, Smartphone } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock, Link as LinkIcon, Send, Facebook, Smartphone, Check, Sparkles, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
 import { useCountdown } from "@/hooks/useCountdown";
+import { buildShareUrl } from "@/lib/referral";
 
 function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: string | null }) {
   const { t } = useI18n();
@@ -172,8 +173,16 @@ function DealDetail() {
   const images = [deal.cover_image_url, ...((deal.ad_images ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order).map((i: any) => i.url))].filter(Boolean);
   const store = deal.stores as any;
 
+  const isReferred = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("ref");
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      {isReferred && (
+        <div className="mb-6 flex items-center gap-2 rounded-2xl border border-primary/30 bg-brand-soft/60 px-4 py-3 text-sm font-medium text-foreground">
+          <Gift className="h-4 w-4 text-primary" />
+          {t.deals.referralBanner}
+        </div>
+      )}
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-muted">
@@ -228,6 +237,16 @@ function DealDetail() {
             />
           </div>
 
+          {/* Viral share & save card */}
+          <ShareSaveCard
+            title={deal.title}
+            discountPct={deal.discount_pct}
+            storeName={store?.name}
+            saved={saved}
+            onSaveToggle={() => { if (!saved) trackSave.mutate(); toggle(deal.id); }}
+            onShare={() => trackShare.mutate()}
+          />
+
           {/* Validity / offer time */}
           <ValidityCard startsAt={deal.starts_at} endsAt={deal.ends_at} />
 
@@ -277,7 +296,7 @@ function ShareMenu({
     return `${pct}${title}${at}`;
   };
 
-  const getUrl = () => (typeof window !== "undefined" ? window.location.href : "");
+  const getUrl = () => (typeof window !== "undefined" ? buildShareUrl(window.location.href) : "");
 
   const openShare = (href: string) => {
     onShare();
@@ -343,5 +362,126 @@ function ShareMenu({
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+function ShareSaveCard({
+  title,
+  discountPct,
+  storeName,
+  saved,
+  onSaveToggle,
+  onShare,
+}: {
+  title: string;
+  discountPct: number | null;
+  storeName?: string;
+  saved: boolean;
+  onSaveToggle: () => void;
+  onShare: () => void;
+}) {
+  const { t } = useI18n();
+  const [copied, setCopied] = useState(false);
+
+  const buildText = () => {
+    const pct = discountPct ? `-${discountPct}% ` : "";
+    const at = storeName ? ` @ ${storeName}` : "";
+    return `${pct}${title}${at}`;
+  };
+  const getUrl = () => (typeof window !== "undefined" ? buildShareUrl(window.location.href) : "");
+
+  const handleCopy = async () => {
+    onShare();
+    try {
+      await navigator.clipboard.writeText(getUrl());
+      setCopied(true);
+      toast.success(t.deals.sharedToast);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error(t.common.error);
+    }
+  };
+
+  const handleWhatsapp = () => {
+    onShare();
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(`${buildText()} — ${getUrl()}`)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
+  };
+  const handleFacebook = () => {
+    onShare();
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getUrl())}&quote=${encodeURIComponent(buildText())}`,
+      "_blank",
+      "noopener,noreferrer,width=600,height=600",
+    );
+  };
+  const canNative = typeof navigator !== "undefined" && typeof navigator.share === "function";
+  const handleNative = async () => {
+    onShare();
+    try {
+      await navigator.share({ title, text: buildText(), url: getUrl() });
+      toast.success(t.deals.sharedToast);
+    } catch {
+      /* cancelled */
+    }
+  };
+
+  return (
+    <div className="mt-6 rounded-2xl border border-primary/20 bg-gradient-to-br from-brand-soft/70 via-background to-background p-5 shadow-sm">
+      <div className="flex items-start gap-3">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+          <Sparkles className="h-5 w-5" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-base font-semibold leading-tight">{t.deals.shareCardTitle}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{t.deals.shareCardSub}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <Button onClick={handleCopy} className="flex-1 justify-center" size="lg">
+          {copied ? (
+            <>
+              <Check className="h-4 w-4 mr-2" />
+              {t.deals.shareCopied}
+            </>
+          ) : (
+            <>
+              <LinkIcon className="h-4 w-4 mr-2" />
+              {t.deals.shareCopyCta}
+            </>
+          )}
+        </Button>
+        <Button onClick={onSaveToggle} variant={saved ? "secondary" : "outline"} size="lg" className="sm:w-auto">
+          <Heart className={`h-4 w-4 mr-2 ${saved ? "fill-current text-primary" : ""}`} />
+          {saved ? t.deals.saved : t.deals.save}
+        </Button>
+      </div>
+
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <Button onClick={handleWhatsapp} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+          <Send className="h-4 w-4 mr-2 text-green-600" />
+          <span className="text-sm">WhatsApp</span>
+        </Button>
+        <Button onClick={handleFacebook} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+          <Facebook className="h-4 w-4 mr-2 text-blue-600" />
+          <span className="text-sm">Facebook</span>
+        </Button>
+        {canNative ? (
+          <Button onClick={handleNative} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+            <Smartphone className="h-4 w-4 mr-2" />
+            <span className="text-sm">{t.deals.shareNative}</span>
+          </Button>
+        ) : (
+          <Button onClick={handleCopy} variant="ghost" className="h-11 justify-center border border-border/60 bg-background/60 hover:bg-background">
+            <Share2 className="h-4 w-4 mr-2" />
+            <span className="text-sm">{t.deals.shareTitle}</span>
+          </Button>
+        )}
+      </div>
+    </div>
   );
 }
