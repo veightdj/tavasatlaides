@@ -192,14 +192,14 @@ function QuickAction({
   );
 }
 
-function Stat({ label, value, icon: Icon }: { label: string; value: number | string; icon: any }) {
+function Stat({ label, value, icon: Icon, className = "" }: { label: string; value: number | string; icon: any; className?: string }) {
   return (
-    <div className="rounded-2xl border bg-card p-4">
+    <div className={`rounded-2xl border bg-card p-3 md:p-4 ${className}`}>
       <div className="flex items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground truncate">{label}</p>
+        <p className="text-[11px] md:text-xs text-muted-foreground truncate">{label}</p>
         <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
       </div>
-      <p className="mt-1.5 text-2xl font-bold tabular-nums">{value}</p>
+      <p className="mt-1.5 text-xl md:text-2xl font-bold tabular-nums">{value}</p>
     </div>
   );
 }
