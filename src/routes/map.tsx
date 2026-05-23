@@ -79,7 +79,7 @@ function MapPage() {
         title: s.name,
       });
       const iw = new window.google.maps.InfoWindow({
-        content: `<div style="font-family:system-ui;font-size:14px;max-width:200px"><strong>${s.name}</strong><br/>${s.address}<br/><a href="/stores/${s.id}" style="color:#c2410c">View store →</a></div>`,
+        content: `<div style="font-family:system-ui;font-size:14px;max-width:200px"><strong>${escapeHtml(s.name)}</strong><br/>${escapeHtml(s.address)}<br/><a href="/stores/${encodeURIComponent(s.id)}" style="color:#c2410c">View store →</a></div>`,
       });
       m.addListener("click", () => iw.open({ map: mapRef.current, anchor: m }));
       markers.push(m);
