@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock } from "lucide-react";
+import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock, Link as LinkIcon, Send, Facebook, Smartphone } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
@@ -91,7 +93,8 @@ export const Route = createFileRoute("/deals/$id")({
   head: ({ params, loaderData }) => {
     const d: any = loaderData?.deal;
     const storeName = d?.stores?.name;
-    const title = d ? `${d.title}${storeName ? ` — ${storeName}` : ""} — DealsLV` : "Deal — DealsLV";
+    const pctTag = d?.discount_pct ? `-${d.discount_pct}% ` : "";
+    const title = d ? `${pctTag}${d.title}${storeName ? ` — ${storeName}` : ""} — DealsLV` : "Deal — DealsLV";
     const baseDesc = d?.description?.slice(0, 160);
     const fallbackDesc = d
       ? `${d.discount_pct ? `${d.discount_pct}% off — ` : ""}${d.title}${storeName ? ` at ${storeName}` : ""}${d?.stores?.city ? ` in ${d.stores.city}` : ""}.`
@@ -99,6 +102,7 @@ export const Route = createFileRoute("/deals/$id")({
     const desc = baseDesc || fallbackDesc;
     const url = `https://superatlaides.lovable.app/deals/${params.id}`;
     const image = d?.cover_image_url || undefined;
+    const imageAlt = d ? `${d.title}${storeName ? ` — ${storeName}` : ""}` : "Deal";
     return {
       meta: [
         { title },
@@ -107,11 +111,16 @@ export const Route = createFileRoute("/deals/$id")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "product" },
+        { property: "og:site_name", content: "DealsLV" },
+        ...(d?.discount_pct ? [{ name: "product:discount", content: `${d.discount_pct}%` }] : []),
+        { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: desc },
         ...(image ? [
           { property: "og:image", content: image },
+          { property: "og:image:alt", content: imageAlt },
           { name: "twitter:image", content: image },
+          { name: "twitter:image:alt", content: imageAlt },
         ] : []),
       ],
       links: [{ rel: "canonical", href: url }],
@@ -211,16 +220,12 @@ function DealDetail() {
               <Heart className={`h-4 w-4 mr-2 ${saved ? "fill-current" : ""}`} />
               {saved ? t.deals.saved : t.deals.save}
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                trackShare.mutate();
-                if (navigator.share) navigator.share({ title: deal.title, url: window.location.href });
-                else navigator.clipboard.writeText(window.location.href);
-              }}
-            >
-              <Share2 className="h-4 w-4 mr-2" />{t.deals.shareTitle}
-            </Button>
+            <ShareMenu
+              title={deal.title}
+              discountPct={deal.discount_pct}
+              storeName={store?.name}
+              onShare={() => trackShare.mutate()}
+            />
           </div>
 
           {/* Validity / offer time */}
@@ -250,5 +255,93 @@ function DealDetail() {
         </div>
       </div>
     </div>
+  );
+}
+
+function ShareMenu({
+  title,
+  discountPct,
+  storeName,
+  onShare,
+}: {
+  title: string;
+  discountPct: number | null;
+  storeName?: string;
+  onShare: () => void;
+}) {
+  const { t } = useI18n();
+
+  const buildText = () => {
+    const pct = discountPct ? `-${discountPct}% ` : "";
+    const at = storeName ? ` @ ${storeName}` : "";
+    return `${pct}${title}${at}`;
+  };
+
+  const getUrl = () => (typeof window !== "undefined" ? window.location.href : "");
+
+  const openShare = (href: string) => {
+    onShare();
+    window.open(href, "_blank", "noopener,noreferrer,width=600,height=600");
+  };
+
+  const shareWhatsapp = () => {
+    const text = `${buildText()} — ${getUrl()}`;
+    openShare(`https://wa.me/?text=${encodeURIComponent(text)}`);
+  };
+
+  const shareFacebook = () => {
+    openShare(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getUrl())}&quote=${encodeURIComponent(buildText())}`);
+  };
+
+  const copyLink = async () => {
+    onShare();
+    try {
+      await navigator.clipboard.writeText(getUrl());
+      toast.success(t.deals.shareCopied);
+    } catch {
+      toast.error(t.common.error);
+    }
+  };
+
+  const nativeShare = async () => {
+    onShare();
+    try {
+      await navigator.share({ title, text: buildText(), url: getUrl() });
+    } catch {
+      /* user cancelled */
+    }
+  };
+
+  const canNative = typeof navigator !== "undefined" && typeof navigator.share === "function";
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">
+          <Share2 className="h-4 w-4 mr-2" />
+          {t.deals.shareTitle}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuItem onSelect={shareWhatsapp}>
+          <Send className="h-4 w-4 mr-2 text-green-600" />
+          {t.deals.shareWhatsapp}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={shareFacebook}>
+          <Facebook className="h-4 w-4 mr-2 text-blue-600" />
+          {t.deals.shareFacebook}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={copyLink}>
+          <LinkIcon className="h-4 w-4 mr-2" />
+          {t.deals.shareCopy}
+        </DropdownMenuItem>
+        {canNative && (
+          <DropdownMenuItem onSelect={nativeShare}>
+            <Smartphone className="h-4 w-4 mr-2" />
+            {t.deals.shareNative}
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
