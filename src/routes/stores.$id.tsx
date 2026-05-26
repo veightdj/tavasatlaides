@@ -16,8 +16,8 @@ export const Route = createFileRoute("/stores/$id")({
   },
   head: ({ params, loaderData }) => {
     const s = loaderData?.store;
-    const title = s ? `${s.name} — Deals in ${s.city ?? "Latvia"} — DealsLV` : "Store — DealsLV";
-    const desc = s?.description?.slice(0, 160) || (s ? `See all active deals from ${s.name}${s.city ? ` in ${s.city}` : ""}.` : "Local store on DealsLV.");
+    const title = s ? `${s.name} — Deals in ${s.city ?? "Latvia"} — TavasAtlaides` : "Store — TavasAtlaides";
+    const desc = s?.description?.slice(0, 160) || (s ? `See all active deals from ${s.name}${s.city ? ` in ${s.city}` : ""}.` : "Local store on TavasAtlaides.");
     const url = `https://superatlaides.lovable.app/stores/${params.id}`;
     const image = s?.cover_image_url || s?.logo_url || undefined;
     return {

@@ -12,12 +12,12 @@ import { useI18n } from "@/i18n/use-i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DealsLV — Local store deals in Riga & Jurmala" },
+      { title: "TavasAtlaides — Local store deals in Riga & Jurmala" },
       { name: "description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga & Jurmala." },
-      { property: "og:title", content: "DealsLV — Local store deals in Riga & Jurmala" },
+      { property: "og:title", content: "TavasAtlaides — Local store deals in Riga & Jurmala" },
       { property: "og:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga & Jurmala." },
       { property: "og:url", content: "https://superatlaides.lovable.app/" },
-      { name: "twitter:title", content: "DealsLV — Local store deals in Riga & Jurmala" },
+      { name: "twitter:title", content: "TavasAtlaides — Local store deals in Riga & Jurmala" },
       { name: "twitter:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga & Jurmala." },
     ],
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/" }],
