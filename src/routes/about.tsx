@@ -4,13 +4,13 @@ import { useI18n } from "@/i18n/use-i18n";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — DealsLV" },
-      { name: "description", content: "DealsLV helps shoppers in Riga & Jurmala discover local discounts and promotions in one place." },
-      { property: "og:title", content: "About — DealsLV" },
-      { property: "og:description", content: "DealsLV helps shoppers in Riga & Jurmala discover local discounts and promotions in one place." },
+      { title: "About — TavasAtlaides" },
+      { name: "description", content: "TavasAtlaides helps shoppers in Riga & Jurmala discover local discounts and promotions in one place." },
+      { property: "og:title", content: "About — TavasAtlaides" },
+      { property: "og:description", content: "TavasAtlaides helps shoppers in Riga & Jurmala discover local discounts and promotions in one place." },
       { property: "og:url", content: "https://superatlaides.lovable.app/about" },
-      { name: "twitter:title", content: "About — DealsLV" },
-      { name: "twitter:description", content: "DealsLV helps shoppers in Riga & Jurmala discover local discounts and promotions in one place." },
+      { name: "twitter:title", content: "About — TavasAtlaides" },
+      { name: "twitter:description", content: "TavasAtlaides helps shoppers in Riga & Jurmala discover local discounts and promotions in one place." },
     ],
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/about" }],
   }),
