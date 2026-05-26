@@ -20,7 +20,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 export const Route = createFileRoute("/categories/$slug")({
   head: ({ params }) => {
     const label = CATEGORY_LABEL[params.slug] ?? params.slug;
-    const title = `${label} deals — DealsLV`;
+    const title = `${label} deals — TavasAtlaides`;
     const desc = `Active ${label.toLowerCase()} discounts and promotions in Riga & Jurmala.`;
     const url = `https://superatlaides.lovable.app/categories/${params.slug}`;
     return {

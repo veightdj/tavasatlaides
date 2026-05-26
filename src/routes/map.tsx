@@ -8,12 +8,12 @@ import { useI18n } from "@/i18n/use-i18n";
 export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
-      { title: "Deals map — DealsLV" },
+      { title: "Deals map — TavasAtlaides" },
       { name: "description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
-      { property: "og:title", content: "Deals map — DealsLV" },
+      { property: "og:title", content: "Deals map — TavasAtlaides" },
       { property: "og:description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
       { property: "og:url", content: "https://superatlaides.lovable.app/map" },
-      { name: "twitter:title", content: "Deals map — DealsLV" },
+      { name: "twitter:title", content: "Deals map — TavasAtlaides" },
       { name: "twitter:description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
     ],
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/map" }],

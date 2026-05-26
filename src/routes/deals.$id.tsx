@@ -95,11 +95,11 @@ export const Route = createFileRoute("/deals/$id")({
     const d: any = loaderData?.deal;
     const storeName = d?.stores?.name;
     const pctTag = d?.discount_pct ? `-${d.discount_pct}% ` : "";
-    const title = d ? `${pctTag}${d.title}${storeName ? ` — ${storeName}` : ""} — DealsLV` : "Deal — DealsLV";
+    const title = d ? `${pctTag}${d.title}${storeName ? ` — ${storeName}` : ""} — TavasAtlaides` : "Deal — TavasAtlaides";
     const baseDesc = d?.description?.slice(0, 160);
     const fallbackDesc = d
       ? `${d.discount_pct ? `${d.discount_pct}% off — ` : ""}${d.title}${storeName ? ` at ${storeName}` : ""}${d?.stores?.city ? ` in ${d.stores.city}` : ""}.`
-      : "Local deal on DealsLV.";
+      : "Local deal on TavasAtlaides.";
     const desc = baseDesc || fallbackDesc;
     const url = `https://superatlaides.lovable.app/deals/${params.id}`;
     const image = d?.cover_image_url || undefined;
@@ -112,7 +112,7 @@ export const Route = createFileRoute("/deals/$id")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "product" },
-        { property: "og:site_name", content: "DealsLV" },
+        { property: "og:site_name", content: "TavasAtlaides" },
         ...(d?.discount_pct ? [{ name: "product:discount", content: `${d.discount_pct}%` }] : []),
         { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
         { name: "twitter:title", content: title },

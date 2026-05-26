@@ -11,10 +11,10 @@ import { useI18n } from "@/i18n/use-i18n";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign in — DealsLV" },
-      { name: "description", content: "Sign in to your DealsLV account to manage your store and deals." },
-      { property: "og:title", content: "Sign in — DealsLV" },
-      { property: "og:description", content: "Sign in to your DealsLV account to manage your store and deals." },
+      { title: "Sign in — TavasAtlaides" },
+      { name: "description", content: "Sign in to your TavasAtlaides account to manage your store and deals." },
+      { property: "og:title", content: "Sign in — TavasAtlaides" },
+      { property: "og:description", content: "Sign in to your TavasAtlaides account to manage your store and deals." },
       { property: "og:url", content: "https://superatlaides.lovable.app/login" },
       { name: "robots", content: "noindex" },
     ],
