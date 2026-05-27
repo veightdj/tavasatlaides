@@ -194,6 +194,10 @@ function StoreEditor() {
       <Field label={t.merchant.website}><Input type="url" placeholder="https://..." value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field>
       <Field label={t.merchant.description}><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
 
+      <HoursEditor value={hours} onChange={setHours} />
+
+
+
       <Button onClick={() => save.mutate()} disabled={save.isPending}>
         {save.isPending ? t.common.loading : t.merchant.save}
       </Button>
