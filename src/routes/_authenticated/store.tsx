@@ -14,6 +14,8 @@ import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { AddressAutocomplete } from "@/components/merchant/AddressAutocomplete";
+import { HoursEditor } from "@/components/merchant/HoursEditor";
+import { DEFAULT_HOURS, parseHours, type Hours } from "@/lib/hours";
 
 export const Route = createFileRoute("/_authenticated/store")({
   component: StoreEditor,
@@ -39,18 +41,22 @@ function StoreEditor() {
     postal_code: "", country: "Latvia",
     phone: "", website: "", description: "", logo_url: "", cover_image_url: "",
   });
+  const [hours, setHours] = useState<Hours>(DEFAULT_HOURS);
   // lat/lng captured directly from address autocomplete (skips server geocode)
   const [pickedCoords, setPickedCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
-    if (store) setForm({
-      name: store.name, category: store.category, address: store.address, city: store.city,
-      postal_code: (store as any).postal_code ?? "",
-      country: (store as any).country ?? "Latvia",
-      phone: store.phone ?? "", website: store.website ?? "",
-      description: store.description ?? "", logo_url: store.logo_url ?? "",
-      cover_image_url: (store as any).cover_image_url ?? "",
-    });
+    if (store) {
+      setForm({
+        name: store.name, category: store.category, address: store.address, city: store.city,
+        postal_code: (store as any).postal_code ?? "",
+        country: (store as any).country ?? "Latvia",
+        phone: store.phone ?? "", website: store.website ?? "",
+        description: store.description ?? "", logo_url: store.logo_url ?? "",
+        cover_image_url: (store as any).cover_image_url ?? "",
+      });
+      setHours(parseHours((store as any).hours_json) ?? DEFAULT_HOURS);
+    }
   }, [store]);
 
   const save = useMutation({
@@ -89,6 +95,7 @@ function StoreEditor() {
       const payload = {
         ...form,
         lat, lng,
+        hours_json: hours as any,
         owner_id: user.id,
         slug: store?.slug ?? `${slugify(form.name)}-${Date.now().toString(36)}`,
       };
@@ -186,6 +193,10 @@ function StoreEditor() {
       <Field label={t.merchant.phone}><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field>
       <Field label={t.merchant.website}><Input type="url" placeholder="https://..." value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field>
       <Field label={t.merchant.description}><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
+
+      <HoursEditor value={hours} onChange={setHours} />
+
+
 
       <Button onClick={() => save.mutate()} disabled={save.isPending}>
         {save.isPending ? t.common.loading : t.merchant.save}

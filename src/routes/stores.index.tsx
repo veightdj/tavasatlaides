@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { MapPin, Phone, Globe, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
+import { StoreStatus, useStoreCardDecoration } from "@/components/StoreStatus";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/stores/")({
@@ -32,6 +33,7 @@ type Store = {
   cover_image_url: string | null;
   phone: string | null;
   website: string | null;
+  hours_json: unknown;
 };
 
 type Ad = {
@@ -54,7 +56,7 @@ function StoresIndex() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("stores")
-        .select("id,name,slug,city,address,description,logo_url,cover_image_url,phone,website")
+        .select("id,name,slug,city,address,description,logo_url,cover_image_url,phone,website,hours_json")
         .order("name");
       if (error) throw error;
       return (data ?? []) as Store[];
@@ -86,71 +88,82 @@ function StoresIndex() {
       {isLoading && <p className="mt-10 text-center text-muted-foreground">{t.common.loading}</p>}
 
       <div className="mt-8 space-y-8">
-        {stores.map((s) => {
-          const ads = adsByStore[s.id] ?? [];
-          return (
-            <section key={s.id} className="rounded-3xl border border-border bg-card overflow-hidden">
-              {s.cover_image_url && (
-                <div className="aspect-[16/5] w-full overflow-hidden bg-muted">
-                  <img src={s.cover_image_url} alt={s.name} className="h-full w-full object-cover" loading="lazy" />
-                </div>
-              )}
-              <div className="p-5 md:p-6">
-                <div className="flex items-start gap-4">
-                  {s.logo_url ? (
-                    <img src={s.logo_url} alt={s.name} className="h-16 w-16 rounded-2xl object-cover shrink-0" />
-                  ) : (
-                    <div className="h-16 w-16 rounded-2xl bg-gradient-warm grid place-items-center text-primary-foreground font-bold text-xl shrink-0">
-                      {s.name[0]}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <Link to="/stores/$id" params={{ id: s.id }} className="text-xl md:text-2xl font-bold hover:text-primary transition">
-                          {s.name}
-                        </Link>
-                        <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                          <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{s.address}, {s.city}</span>
-                          {s.phone && <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4" />{s.phone}</span>}
-                          {s.website && (
-                            <a href={s.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-primary">
-                              <Globe className="h-4 w-4" />{s.website.replace(/^https?:\/\//, "")}
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                      <Link
-                        to="/stores/$id"
-                        params={{ id: s.id }}
-                        className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
-                      >
-                        {t.home.seeAll} <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    </div>
-                    {s.description && (
-                      <p className="mt-3 text-foreground/80 max-w-3xl">{s.description}</p>
-                    )}
-                  </div>
-                </div>
-
-                {ads.length > 0 ? (
-                  <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    {ads.map((a) => (
-                      <DealCard
-                        key={a.id}
-                        deal={{ ...a, stores: { id: s.id, name: s.name, city: s.city, slug: s.slug } }}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-6 text-sm text-muted-foreground">{t.deals.empty}</p>
-                )}
-              </div>
-            </section>
-          );
-        })}
+        {stores.map((s) => (
+          <StoreSection key={s.id} store={s} ads={adsByStore[s.id] ?? []} seeAllLabel={t.home.seeAll} emptyLabel={t.deals.empty} />
+        ))}
       </div>
     </div>
+  );
+}
+
+function StoreSection({
+  store: s, ads, seeAllLabel, emptyLabel,
+}: { store: Store; ads: Ad[]; seeAllLabel: string; emptyLabel: string }) {
+  const deco = useStoreCardDecoration(s.hours_json);
+  return (
+    <section
+      className={`rounded-3xl border border-border bg-card overflow-hidden transition ${deco.ring} ${deco.dim}`}
+    >
+      {s.cover_image_url && (
+        <div className="aspect-[16/5] w-full overflow-hidden bg-muted">
+          <img src={s.cover_image_url} alt={s.name} className="h-full w-full object-cover" loading="lazy" />
+        </div>
+      )}
+      <div className="p-5 md:p-6">
+        <div className="flex items-start gap-4">
+          {s.logo_url ? (
+            <img src={s.logo_url} alt={s.name} className="h-16 w-16 rounded-2xl object-cover shrink-0" />
+          ) : (
+            <div className="h-16 w-16 rounded-2xl bg-gradient-warm grid place-items-center text-primary-foreground font-bold text-xl shrink-0">
+              {s.name[0]}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <Link to="/stores/$id" params={{ id: s.id }} className="text-xl md:text-2xl font-bold hover:text-primary transition">
+                  {s.name}
+                </Link>
+                <div className="mt-1.5">
+                  <StoreStatus hours={s.hours_json} />
+                </div>
+                <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                  <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{s.address}, {s.city}</span>
+                  {s.phone && <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4" />{s.phone}</span>}
+                  {s.website && (
+                    <a href={s.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-primary">
+                      <Globe className="h-4 w-4" />{s.website.replace(/^https?:\/\//, "")}
+                    </a>
+                  )}
+                </div>
+              </div>
+              <Link
+                to="/stores/$id"
+                params={{ id: s.id }}
+                className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
+              >
+                {seeAllLabel} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            {s.description && (
+              <p className="mt-3 text-foreground/80 max-w-3xl">{s.description}</p>
+            )}
+          </div>
+        </div>
+
+        {ads.length > 0 ? (
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {ads.map((a) => (
+              <DealCard
+                key={a.id}
+                deal={{ ...a, stores: { id: s.id, name: s.name, city: s.city, slug: s.slug } }}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-6 text-sm text-muted-foreground">{emptyLabel}</p>
+        )}
+      </div>
+    </section>
   );
 }

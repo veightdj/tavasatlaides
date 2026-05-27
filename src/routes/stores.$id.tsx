@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { MapPin, Phone, Globe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
+import { StoreStatus } from "@/components/StoreStatus";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/stores/$id")({
@@ -88,6 +89,9 @@ function StorePage() {
                 <Globe className="h-4 w-4" />{store.website.replace(/^https?:\/\//, "")}
               </a>
             )}
+          </div>
+          <div className="mt-2">
+            <StoreStatus hours={(store as any).hours_json} />
           </div>
           {store.description && <p className="mt-4 text-foreground/80 max-w-2xl">{store.description}</p>}
         </div>
