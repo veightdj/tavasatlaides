@@ -91,18 +91,21 @@ export type Database = {
       ad_shares: {
         Row: {
           ad_id: string
+          channel: string | null
           created_at: string
           id: string
           user_id: string | null
         }
         Insert: {
           ad_id: string
+          channel?: string | null
           created_at?: string
           id?: string
           user_id?: string | null
         }
         Update: {
           ad_id?: string
+          channel?: string | null
           created_at?: string
           id?: string
           user_id?: string | null
