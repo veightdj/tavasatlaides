@@ -90,6 +90,9 @@ function StorePage() {
               </a>
             )}
           </div>
+          <div className="mt-2">
+            <StoreStatus hours={(store as any).hours_json} />
+          </div>
           {store.description && <p className="mt-4 text-foreground/80 max-w-2xl">{store.description}</p>}
         </div>
       </div>
