@@ -19,16 +19,19 @@ export type Database = {
           ad_id: string
           created_at: string
           id: string
+          user_id: string | null
         }
         Insert: {
           ad_id: string
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Update: {
           ad_id?: string
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -69,16 +72,19 @@ export type Database = {
           ad_id: string
           created_at: string
           id: string
+          user_id: string | null
         }
         Insert: {
           ad_id: string
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Update: {
           ad_id?: string
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -87,16 +93,19 @@ export type Database = {
           ad_id: string
           created_at: string
           id: string
+          user_id: string | null
         }
         Insert: {
           ad_id: string
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Update: {
           ad_id?: string
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -104,16 +113,19 @@ export type Database = {
         Row: {
           ad_id: string
           id: string
+          user_id: string | null
           viewed_at: string
         }
         Insert: {
           ad_id: string
           id?: string
+          user_id?: string | null
           viewed_at?: string
         }
         Update: {
           ad_id?: string
           id?: string
+          user_id?: string | null
           viewed_at?: string
         }
         Relationships: [
