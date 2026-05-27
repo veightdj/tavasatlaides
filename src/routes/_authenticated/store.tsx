@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useI18n } from "@/i18n/use-i18n";
 import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
-
+import { geocodeAddress } from "@/lib/geocode.functions";
 
 export const Route = createFileRoute("/_authenticated/store")({
   component: StoreEditor,
@@ -35,24 +35,53 @@ function StoreEditor() {
 
   const [form, setForm] = useState({
     name: "", category: "food", address: "", city: "Riga",
+    postal_code: "", country: "Latvia",
     phone: "", website: "", description: "", logo_url: "", cover_image_url: "",
   });
 
   useEffect(() => {
     if (store) setForm({
       name: store.name, category: store.category, address: store.address, city: store.city,
+      postal_code: (store as any).postal_code ?? "",
+      country: (store as any).country ?? "Latvia",
       phone: store.phone ?? "", website: store.website ?? "",
       description: store.description ?? "", logo_url: store.logo_url ?? "",
       cover_image_url: (store as any).cover_image_url ?? "",
     });
   }, [store]);
 
-
   const save = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Not authed");
+
+      // Geocode whenever the address-related fields are present
+      let lat: number | null = (store as any)?.lat ?? null;
+      let lng: number | null = (store as any)?.lng ?? null;
+      let geocodeStatus: "OK" | "FAILED" | "SKIPPED" = "SKIPPED";
+
+      if (form.address) {
+        try {
+          const res = await geocodeAddress({
+            data: {
+              address: form.address,
+              city: form.city,
+              postalCode: form.postal_code || undefined,
+              country: form.country || "Latvia",
+            },
+          });
+          if (res.lat != null && res.lng != null) {
+            lat = res.lat; lng = res.lng; geocodeStatus = "OK";
+          } else {
+            geocodeStatus = "FAILED";
+          }
+        } catch {
+          geocodeStatus = "FAILED";
+        }
+      }
+
       const payload = {
         ...form,
+        lat, lng,
         owner_id: user.id,
         slug: store?.slug ?? `${slugify(form.name)}-${Date.now().toString(36)}`,
       };
@@ -60,9 +89,12 @@ function StoreEditor() {
         ? await supabase.from("stores").update(payload).eq("id", store.id)
         : await supabase.from("stores").insert(payload);
       if (error) throw error;
+      return geocodeStatus;
     },
-    onSuccess: () => {
+    onSuccess: (geocodeStatus) => {
       toast.success(t.common.saved);
+      if (geocodeStatus === "OK") toast.success(t.merchant.geocoded);
+      if (geocodeStatus === "FAILED") toast.warning(t.merchant.geocodeFailed);
       qc.invalidateQueries({ queryKey: ["my-store", user?.id] });
       qc.invalidateQueries({ queryKey: ["my-store-edit", user?.id] });
       if (!store) navigate({ to: "/dashboard" });
@@ -102,8 +134,6 @@ function StoreEditor() {
         )}
       </div>
 
-
-
       <Field label={t.merchant.storeName}><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></Field>
       <Field label={t.merchant.category}>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
@@ -113,20 +143,28 @@ function StoreEditor() {
           </SelectContent>
         </Select>
       </Field>
-      <Field label={t.merchant.city}>
-        <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {CITIES.map((c) => <SelectItem key={c} value={c}>{c === "Riga" ? t.city.riga : t.city.jurmala}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </Field>
-      <Field label={t.merchant.address}><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} required /></Field>
+      <Field label={t.merchant.address}><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Brīvības iela 155" required /></Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t.merchant.city}>
+          <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {CITIES.map((c) => <SelectItem key={c} value={c}>{c === "Riga" ? t.city.riga : t.city.jurmala}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field label={t.merchant.postalCode}>
+          <Input value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} placeholder="LV-1012" />
+        </Field>
+      </div>
+      <Field label={t.merchant.country}><Input value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="Latvia" /></Field>
       <Field label={t.merchant.phone}><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field>
       <Field label={t.merchant.website}><Input type="url" placeholder="https://..." value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field>
       <Field label={t.merchant.description}><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
 
-      <Button onClick={() => save.mutate()} disabled={save.isPending}>{t.merchant.save}</Button>
+      <Button onClick={() => save.mutate()} disabled={save.isPending}>
+        {save.isPending ? t.common.loading : t.merchant.save}
+      </Button>
     </div>
   );
 }
