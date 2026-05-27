@@ -5,6 +5,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
 import { formatDistance } from "@/lib/distance";
+import { ShareMenu } from "@/components/ShareMenu";
 
 type Deal = {
   id: string;
@@ -56,6 +57,16 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
             {distLabel}
           </div>
         )}
+        <ShareMenu
+          entityId={deal.id}
+          entityName={deal.title}
+          entityLocation={deal.stores?.city}
+          offerText={deal.discount_pct ? `-${deal.discount_pct}%` : undefined}
+          url={`/deals/${deal.id}`}
+          entityType="ad"
+          buttonVariant="icon"
+          className="absolute top-3 right-14"
+        />
         <button
           onClick={(e) => { e.preventDefault(); toggle(deal.id); }}
           className="absolute top-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-background/90 backdrop-blur hover:scale-110 transition"
