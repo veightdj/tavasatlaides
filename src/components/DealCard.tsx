@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, MapPin } from "lucide-react";
+import { Heart, MapPin, LocateFixed } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
+import { formatDistance } from "@/lib/distance";
 
 type Deal = {
   id: string;
@@ -17,11 +18,15 @@ type Deal = {
   stores?: { id: string; name: string; city: string; slug: string } | null;
 };
 
-export function DealCard({ deal }: { deal: Deal }) {
+export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number }) {
   const { has, toggle } = useFavorites();
   const { t } = useI18n();
   const saved = has(deal.id);
   const endsSoon = deal.ends_at && new Date(deal.ends_at).getTime() - Date.now() < 1000 * 60 * 60 * 24 * 3;
+  const distLabel =
+    typeof distanceKm === "number" && Number.isFinite(distanceKm)
+      ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
+      : null;
 
   return (
     <Link
@@ -45,6 +50,12 @@ export function DealCard({ deal }: { deal: Deal }) {
             -{deal.discount_pct}%
           </div>
         ) : null}
+        {distLabel && (
+          <div className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-background/95 backdrop-blur px-2.5 py-1 text-[11px] font-semibold shadow-sm border">
+            <LocateFixed className="h-3 w-3 text-primary" />
+            {distLabel}
+          </div>
+        )}
         <button
           onClick={(e) => { e.preventDefault(); toggle(deal.id); }}
           className="absolute top-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-background/90 backdrop-blur hover:scale-110 transition"
