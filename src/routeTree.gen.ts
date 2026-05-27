@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
@@ -32,6 +33,11 @@ import { Route as AuthenticatedAdsIdRouteImport } from './routes/_authenticated/
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NearbyRoute = NearbyRouteImport.update({
+  id: '/nearby',
+  path: '/nearby',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/nearby': typeof NearbyRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/store': typeof AuthenticatedStoreRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/nearby': typeof NearbyRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/store': typeof AuthenticatedStoreRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/nearby': typeof NearbyRoute
   '/signup': typeof SignupRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/store': typeof AuthenticatedStoreRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/for-merchants'
     | '/login'
     | '/map'
+    | '/nearby'
     | '/signup'
     | '/dashboard'
     | '/store'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/for-merchants'
     | '/login'
     | '/map'
+    | '/nearby'
     | '/signup'
     | '/dashboard'
     | '/store'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/for-merchants'
     | '/login'
     | '/map'
+    | '/nearby'
     | '/signup'
     | '/_authenticated/dashboard'
     | '/_authenticated/store'
@@ -259,6 +271,7 @@ export interface RootRouteChildren {
   ForMerchantsRoute: typeof ForMerchantsRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
+  NearbyRoute: typeof NearbyRoute
   SignupRoute: typeof SignupRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   SettingsNotificationsRoute: typeof SettingsNotificationsRoute
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nearby': {
+      id: '/nearby'
+      path: '/nearby'
+      fullPath: '/nearby'
+      preLoaderRoute: typeof NearbyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForMerchantsRoute: ForMerchantsRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
+  NearbyRoute: NearbyRoute,
   SignupRoute: SignupRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   SettingsNotificationsRoute: SettingsNotificationsRoute,
