@@ -12,12 +12,12 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { CATEGORY_SLUGS, CITIES } from "@/lib/categories";
+import { distanceKm as haversineKm } from "@/lib/distance";
 
 type SortMode = "newest" | "discount" | "expiring" | "nearest";
+type Radius = "any" | "1" | "5" | "10";
 
-type DealsSearch = {
-  near?: string; // "lat,lng"
-};
+type DealsSearch = { near?: string };
 
 function parseNear(v: unknown): { lat: number; lng: number } | null {
   if (typeof v !== "string") return null;
@@ -28,18 +28,6 @@ function parseNear(v: unknown): { lat: number; lng: number } | null {
   return { lat, lng };
 }
 
-// Haversine distance in km
-function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
-  const R = 6371;
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const s =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(s));
-}
-
 export const Route = createFileRoute("/deals")({
   validateSearch: (search: Record<string, unknown>): DealsSearch => ({
     near: typeof search.near === "string" ? search.near : undefined,
@@ -47,12 +35,12 @@ export const Route = createFileRoute("/deals")({
   head: () => ({
     meta: [
       { title: "All deals — TavasAtlaides" },
-      { name: "description", content: "Browse all active discounts in Riga and Jurmala by category, city or expiring soon." },
+      { name: "description", content: "Browse all active discounts in Riga and Jurmala by category, city or distance from you." },
       { property: "og:title", content: "All deals — TavasAtlaides" },
-      { property: "og:description", content: "Browse all active discounts in Riga and Jurmala by category, city or expiring soon." },
+      { property: "og:description", content: "Browse all active discounts in Riga and Jurmala by category, city or distance from you." },
       { property: "og:url", content: "https://superatlaides.lovable.app/deals" },
       { name: "twitter:title", content: "All deals — TavasAtlaides" },
-      { name: "twitter:description", content: "Browse all active discounts in Riga and Jurmala by category, city or expiring soon." },
+      { name: "twitter:description", content: "Browse all active discounts in Riga and Jurmala by category, city or distance from you." },
     ],
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/deals" }],
   }),
@@ -69,11 +57,12 @@ function DealsPage() {
   const [city, setCity] = useState<string>("all");
   const [cat, setCat] = useState<string>("all");
   const [sort, setSort] = useState<SortMode>("newest");
+  const [radius, setRadius] = useState<Radius>("any");
 
-  // When ?near=... is present, default the sort to "nearest"
   useEffect(() => {
     if (origin && sort !== "nearest") setSort("nearest");
     if (!origin && sort === "nearest") setSort("newest");
+    if (!origin && radius !== "any") setRadius("any");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!!origin]);
 
@@ -91,7 +80,6 @@ function DealsPage() {
       if (sort === "newest") query = query.order("created_at", { ascending: false });
       if (sort === "discount") query = query.order("discount_pct", { ascending: false, nullsFirst: false });
       if (sort === "expiring") query = query.order("ends_at", { ascending: true, nullsFirst: false });
-      // For "nearest" we sort client-side after computing distance
       const { data, error } = await query.limit(120);
       if (error) throw error;
       return data ?? [];
@@ -111,21 +99,25 @@ function DealsPage() {
         .map((d) => {
           const lat = d.stores?.lat, lng = d.stores?.lng;
           const dist = typeof lat === "number" && typeof lng === "number"
-            ? distanceKm(origin, { lat, lng })
+            ? haversineKm(origin, { lat, lng })
             : Number.POSITIVE_INFINITY;
           return { ...d, _distanceKm: dist };
         })
-        .filter((d) => Number.isFinite(d._distanceKm))
-        .sort((a, b) => a._distanceKm - b._distanceKm);
+        .filter((d) => Number.isFinite(d._distanceKm));
+      if (radius !== "any") {
+        const max = Number(radius);
+        list = list.filter((d) => d._distanceKm <= max);
+      }
+      list = list.sort((a, b) => a._distanceKm - b._distanceKm);
     }
     return list;
-  }, [deals, q, origin]);
+  }, [deals, q, origin, radius]);
 
   const clearNear = () =>
     navigate({ search: (prev: DealsSearch) => ({ ...prev, near: undefined }), replace: true });
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto max-w-6xl px-4 py-6 md:py-10 pb-24 md:pb-10">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t.deals.title}</h1>
         {!origin && <NearMeButton />}
@@ -141,7 +133,7 @@ function DealsPage() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-3 md:grid-cols-[1fr_auto_auto_auto]">
+      <div className="mt-6 grid gap-3 md:grid-cols-[1fr_auto_auto_auto_auto]">
         <Input placeholder={t.deals.search} value={q} onChange={(e) => setQ(e.target.value)} />
         <Select value={city} onValueChange={setCity}>
           <SelectTrigger className="min-w-[140px]"><SelectValue placeholder={t.deals.city} /></SelectTrigger>
@@ -151,12 +143,23 @@ function DealsPage() {
           </SelectContent>
         </Select>
         <Select value={cat} onValueChange={setCat}>
-          <SelectTrigger className="min-w-[160px]"><SelectValue placeholder={t.deals.category} /></SelectTrigger>
+          <SelectTrigger className="min-w-[150px]"><SelectValue placeholder={t.deals.category} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.cat.all}</SelectItem>
             {CATEGORY_SLUGS.map((c) => <SelectItem key={c} value={c}>{(t.cat as any)[c]}</SelectItem>)}
           </SelectContent>
         </Select>
+        {origin && (
+          <Select value={radius} onValueChange={(v) => setRadius(v as Radius)}>
+            <SelectTrigger className="min-w-[150px]"><SelectValue placeholder={t.deals.radius} /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">{t.deals.radiusAny}</SelectItem>
+              <SelectItem value="1">{t.deals.radius1}</SelectItem>
+              <SelectItem value="5">{t.deals.radius5}</SelectItem>
+              <SelectItem value="10">{t.deals.radius10}</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
         <Select value={sort} onValueChange={(v) => setSort(v as SortMode)}>
           <SelectTrigger className="min-w-[160px]"><SelectValue placeholder={t.deals.sort} /></SelectTrigger>
           <SelectContent>
@@ -178,31 +181,27 @@ function DealsPage() {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {filtered.map((d: any) => (
-              <div key={d.id} className="relative">
-                <DealCard deal={d} />
-                {origin && Number.isFinite(d._distanceKm) && (
-                  <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur px-2.5 py-1 text-[11px] font-semibold shadow-sm border">
-                    <LocateFixed className="h-3 w-3 text-primary" />
-                    {d._distanceKm < 1
-                      ? `${Math.round(d._distanceKm * 1000)} m`
-                      : `${d._distanceKm.toFixed(1)} ${t.deals.distanceKm}`}
-                  </span>
-                )}
-              </div>
+              <DealCard key={d.id} deal={d} distanceKm={d._distanceKm} />
             ))}
           </div>
         )}
       </div>
+
+      {/* Sticky mobile near-me button */}
+      {!origin && (
+        <div className="md:hidden fixed bottom-20 right-4 z-30">
+          <StickyNearMe />
+        </div>
+      )}
     </div>
   );
 }
 
-function NearMeButton() {
+function useGetLocation() {
   const { t } = useI18n();
   const navigate = useNavigate({ from: "/deals" });
   const [loading, setLoading] = useState(false);
-
-  const onClick = () => {
+  const fetch = () => {
     if (!("geolocation" in navigator)) {
       toast.error(t.deals.nearError);
       return;
@@ -225,11 +224,27 @@ function NearMeButton() {
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
   };
+  return { loading, fetch };
+}
 
+function NearMeButton() {
+  const { t } = useI18n();
+  const { loading, fetch } = useGetLocation();
   return (
-    <Button onClick={onClick} disabled={loading} variant="outline" className="rounded-full h-10">
+    <Button onClick={fetch} disabled={loading} variant="outline" className="rounded-full h-10">
       <LocateFixed className="h-4 w-4 mr-1.5" />
-      {loading ? t.deals.nearLocating : t.home.heroCtaSecondary}
+      {loading ? t.deals.nearLocating : t.deals.nearMe}
+    </Button>
+  );
+}
+
+function StickyNearMe() {
+  const { t } = useI18n();
+  const { loading, fetch } = useGetLocation();
+  return (
+    <Button onClick={fetch} disabled={loading} size="lg" className="rounded-full shadow-xl shadow-black/20 h-12 px-5">
+      <LocateFixed className={`h-5 w-5 mr-2 ${loading ? "animate-pulse" : ""}`} />
+      {loading ? t.deals.nearLocating : t.deals.nearMe}
     </Button>
   );
 }

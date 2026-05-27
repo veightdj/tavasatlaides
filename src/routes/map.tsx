@@ -44,7 +44,7 @@ function MapPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("stores")
-        .select("id,name,city,lat,lng,address, ads(id,title,status,discount_pct)")
+        .select("id,name,city,category,lat,lng,address, ads(id,title,status,discount_pct)")
         .not("lat", "is", null);
       if (error) throw error;
       return (data ?? []).filter((s: any) => s.ads?.some((a: any) => a.status === "active"));
@@ -79,19 +79,27 @@ function MapPage() {
     if (!mapRef.current || !window.google) return;
     const markers: any[] = [];
     stores.forEach((s: any) => {
+      const activeAd = s.ads?.find((a: any) => a.status === "active");
       const m = new window.google.maps.Marker({
         position: { lat: s.lat, lng: s.lng },
         map: mapRef.current,
         title: s.name,
       });
+      const discountBadge = activeAd?.discount_pct
+        ? `<div style="display:inline-block;background:#e85d3a;color:#fff;font-weight:700;border-radius:999px;padding:2px 8px;font-size:12px;margin-bottom:6px">-${activeAd.discount_pct}%</div><br/>`
+        : "";
+      const dealTitle = activeAd ? `<div style="color:#444;font-size:13px;margin:2px 0 6px">${escapeHtml(activeAd.title ?? "")}</div>` : "";
+      const dealLink = activeAd
+        ? `<a href="/deals/${encodeURIComponent(activeAd.id)}" style="display:inline-block;background:#0d0d0d;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;text-decoration:none;margin-right:6px">${escapeHtml(t.deals.shareAndSave ?? "Open offer")}</a>`
+        : "";
       const iw = new window.google.maps.InfoWindow({
-        content: `<div style="font-family:system-ui;font-size:14px;max-width:200px"><strong>${escapeHtml(s.name)}</strong><br/>${escapeHtml(s.address)}<br/><a href="/stores/${encodeURIComponent(s.id)}" style="color:#c2410c">View store →</a></div>`,
+        content: `<div style="font-family:system-ui;font-size:14px;max-width:220px">${discountBadge}<strong>${escapeHtml(s.name)}</strong><br/><span style="color:#888;font-size:12px;text-transform:capitalize">${escapeHtml(s.category ?? "")}</span>${dealTitle}<div style="color:#666;font-size:12px;margin-bottom:8px">${escapeHtml(s.address)}</div>${dealLink}<a href="/stores/${encodeURIComponent(s.id)}" style="color:#c2410c;font-size:12px;font-weight:600">${escapeHtml(t.deals.viewStore)} →</a></div>`,
       });
       m.addListener("click", () => iw.open({ map: mapRef.current, anchor: m }));
       markers.push(m);
     });
     return () => markers.forEach((m) => m.setMap(null));
-  }, [stores]);
+  }, [stores, t]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
