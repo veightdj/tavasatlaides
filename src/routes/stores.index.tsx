@@ -148,9 +148,9 @@ function StoreSection({
               </div>
               <div className="flex items-center gap-2">
                 <ShareMenu
-                  storeId={s.id}
-                  storeName={s.name}
-                  storeCity={s.city}
+                  entityId={s.id}
+                  entityName={s.name}
+                  entityLocation={s.city}
                   offerText={offerText}
                   buttonVariant="icon"
                 />

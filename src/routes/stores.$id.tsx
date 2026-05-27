@@ -93,9 +93,9 @@ function StorePage() {
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-3xl font-bold tracking-tight">{store.name}</h1>
             <ShareMenu
-              storeId={store.id}
-              storeName={store.name}
-              storeCity={store.city}
+              entityId={store.id}
+              entityName={store.name}
+              entityLocation={store.city}
               offerText={offerText}
               buttonVariant="inline"
             />
