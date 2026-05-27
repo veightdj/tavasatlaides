@@ -13,6 +13,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
 import { geocodeAddress } from "@/lib/geocode.functions";
+import { AddressAutocomplete } from "@/components/merchant/AddressAutocomplete";
 
 export const Route = createFileRoute("/_authenticated/store")({
   component: StoreEditor,
@@ -38,6 +39,8 @@ function StoreEditor() {
     postal_code: "", country: "Latvia",
     phone: "", website: "", description: "", logo_url: "", cover_image_url: "",
   });
+  // lat/lng captured directly from address autocomplete (skips server geocode)
+  const [pickedCoords, setPickedCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (store) setForm({
@@ -59,7 +62,11 @@ function StoreEditor() {
       let lng: number | null = (store as any)?.lng ?? null;
       let geocodeStatus: "OK" | "FAILED" | "SKIPPED" = "SKIPPED";
 
-      if (form.address) {
+      if (pickedCoords) {
+        lat = pickedCoords.lat;
+        lng = pickedCoords.lng;
+        geocodeStatus = "OK";
+      } else if (form.address) {
         try {
           const res = await geocodeAddress({
             data: {
@@ -143,7 +150,25 @@ function StoreEditor() {
           </SelectContent>
         </Select>
       </Field>
-      <Field label={t.merchant.address}><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Brīvības iela 155" required /></Field>
+      <Field label={t.merchant.address}>
+        <AddressAutocomplete
+          value={form.address}
+          onChange={(v) => { setForm((f) => ({ ...f, address: v })); setPickedCoords(null); }}
+          onPick={(p) => {
+            setForm((f) => ({
+              ...f,
+              address: p.address,
+              city: p.city && (p.city === "Riga" || p.city === "Rīga") ? "Riga"
+                : p.city && (p.city === "Jurmala" || p.city === "Jūrmala") ? "Jurmala"
+                : f.city,
+              postal_code: p.postalCode ?? f.postal_code,
+              country: p.country ?? f.country,
+            }));
+            setPickedCoords({ lat: p.lat, lng: p.lng });
+          }}
+          placeholder="Brīvības iela 155, Rīga"
+        />
+      </Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label={t.merchant.city}>
           <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
