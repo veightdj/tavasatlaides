@@ -1,6 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n, LANGS } from "@/i18n/use-i18n";
 import { useAuth } from "@/hooks/use-auth";
@@ -31,6 +31,9 @@ export function Header() {
       </Link>
       <Link to="/stores" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
         {t.nav.stores}
+      </Link>
+      <Link to="/nearby" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        <span className="inline-flex items-center gap-1"><Bell className="h-4 w-4" /> Near me</span>
       </Link>
       <Link to="/map" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
         <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" /> {t.nav.map}</span>
@@ -110,6 +113,7 @@ export function Header() {
                 {[
                   { to: "/deals", label: t.nav.deals },
                   { to: "/stores", label: t.nav.stores },
+                  { to: "/nearby", label: "Near me", icon: Bell },
                   { to: "/map", label: t.nav.map, icon: MapPin },
                   { to: "/favorites", label: t.nav.favorites, icon: Heart },
                   { to: "/for-merchants", label: t.nav.forMerchants },

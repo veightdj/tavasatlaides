@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
@@ -20,6 +21,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as StoresIdRouteImport } from './routes/stores.$id'
+import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
@@ -31,6 +33,11 @@ import { Route as AuthenticatedAdsIdRouteImport } from './routes/_authenticated/
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NearbyRoute = NearbyRouteImport.update({
+  id: '/nearby',
+  path: '/nearby',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -82,6 +89,11 @@ const StoresIdRoute = StoresIdRouteImport.update({
   path: '/stores/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
+  id: '/settings/notifications',
+  path: '/settings/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -126,11 +138,13 @@ export interface FileRoutesByFullPath {
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/nearby': typeof NearbyRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/store': typeof AuthenticatedStoreRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/stores/': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -145,11 +159,13 @@ export interface FileRoutesByTo {
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/nearby': typeof NearbyRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/store': typeof AuthenticatedStoreRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/stores': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -166,11 +182,13 @@ export interface FileRoutesById {
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/nearby': typeof NearbyRoute
   '/signup': typeof SignupRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/stores/': typeof StoresIndexRoute
   '/_authenticated/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -187,11 +205,13 @@ export interface FileRouteTypes {
     | '/for-merchants'
     | '/login'
     | '/map'
+    | '/nearby'
     | '/signup'
     | '/dashboard'
     | '/store'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/settings/notifications'
     | '/stores/$id'
     | '/stores/'
     | '/ads/$id'
@@ -206,11 +226,13 @@ export interface FileRouteTypes {
     | '/for-merchants'
     | '/login'
     | '/map'
+    | '/nearby'
     | '/signup'
     | '/dashboard'
     | '/store'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/settings/notifications'
     | '/stores/$id'
     | '/stores'
     | '/ads/$id'
@@ -226,11 +248,13 @@ export interface FileRouteTypes {
     | '/for-merchants'
     | '/login'
     | '/map'
+    | '/nearby'
     | '/signup'
     | '/_authenticated/dashboard'
     | '/_authenticated/store'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/settings/notifications'
     | '/stores/$id'
     | '/stores/'
     | '/_authenticated/ads/$id'
@@ -247,8 +271,10 @@ export interface RootRouteChildren {
   ForMerchantsRoute: typeof ForMerchantsRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
+  NearbyRoute: typeof NearbyRoute
   SignupRoute: typeof SignupRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   StoresIdRoute: typeof StoresIdRoute
   StoresIndexRoute: typeof StoresIndexRoute
 }
@@ -260,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nearby': {
+      id: '/nearby'
+      path: '/nearby'
+      fullPath: '/nearby'
+      preLoaderRoute: typeof NearbyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -330,6 +363,13 @@ declare module '@tanstack/react-router' {
       path: '/stores/$id'
       fullPath: '/stores/$id'
       preLoaderRoute: typeof StoresIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/notifications': {
+      id: '/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals/$id': {
@@ -423,8 +463,10 @@ const rootRouteChildren: RootRouteChildren = {
   ForMerchantsRoute: ForMerchantsRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
+  NearbyRoute: NearbyRoute,
   SignupRoute: SignupRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
   StoresIdRoute: StoresIdRoute,
   StoresIndexRoute: StoresIndexRoute,
 }

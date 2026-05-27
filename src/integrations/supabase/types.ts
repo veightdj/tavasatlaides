@@ -197,6 +197,69 @@ export type Database = {
           },
         ]
       }
+      notification_logs: {
+        Row: {
+          ad_id: string
+          distance_m: number | null
+          id: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          ad_id: string
+          distance_m?: number | null
+          id?: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          ad_id?: string
+          distance_m?: number | null
+          id?: string
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          categories: string[]
+          created_at: string
+          enabled: boolean
+          max_per_day: number
+          quiet_end: number
+          quiet_start: number
+          radius_km: number
+          sound_vibration: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categories?: string[]
+          created_at?: string
+          enabled?: boolean
+          max_per_day?: number
+          quiet_end?: number
+          quiet_start?: number
+          radius_km?: number
+          sound_vibration?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categories?: string[]
+          created_at?: string
+          enabled?: boolean
+          max_per_day?: number
+          quiet_end?: number
+          quiet_start?: number
+          radius_km?: number
+          sound_vibration?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
