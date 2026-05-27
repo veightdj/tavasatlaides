@@ -128,6 +128,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <AuthSync />
+        <NotifSWRegister />
         <div className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">
