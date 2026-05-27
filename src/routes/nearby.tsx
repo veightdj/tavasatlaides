@@ -181,18 +181,12 @@ function NearbyPage() {
 
       {/* Status pill */}
       <div className="rounded-2xl border bg-card p-4 flex items-center gap-3">
-        {watching ? (
-          <span className="relative flex h-3 w-3 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
-          </span>
-        ) : (
-          <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
-        )}
+        <span className={`relative flex h-3 w-3 shrink-0 ${watching ? "" : "opacity-50"}`}>
+          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${watching ? "bg-green-500" : "bg-muted-foreground"}`} />
+          <span className={`relative inline-flex rounded-full h-3 w-3 ${watching ? "bg-green-500" : "bg-muted-foreground"}`} />
+        </span>
         <div className="flex-1 text-sm">
-          {watching && pos && <span>Tracking your location · last fix {pos.lat.toFixed(4)}, {pos.lng.toFixed(4)}</span>}
-          {watching && !pos && <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />Waiting for first location fix…</span>}
-          {!watching && <span>Tap below to start receiving nearby alerts while this tab is open.</span>}
+          {watching ? <span className="text-green-600 font-medium">Active</span> : <span className="text-muted-foreground">Inactive</span>}
           {error && <span className="text-destructive block mt-1">{error}</span>}
         </div>
         {!watching ? (
