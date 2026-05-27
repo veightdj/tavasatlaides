@@ -39,6 +39,8 @@ function StoreEditor() {
     postal_code: "", country: "Latvia",
     phone: "", website: "", description: "", logo_url: "", cover_image_url: "",
   });
+  // lat/lng captured directly from address autocomplete (skips server geocode)
+  const [pickedCoords, setPickedCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (store) setForm({
