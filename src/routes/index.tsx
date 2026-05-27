@@ -91,10 +91,6 @@ function Home() {
           {/* Content */}
           <div className="relative z-10 mx-auto max-w-6xl px-5 md:px-4 py-16 sm:py-20 md:py-28">
             <div className="max-w-2xl">
-              {/* Location pill */}
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-3.5 py-1.5 text-xs font-medium text-white/90">
-                <Sparkles className="h-3.5 w-3.5" /> Rīga · Jūrmala · Latvia
-              </span>
 
               {/* Headline */}
               <h1 className="mt-5 text-[2rem] sm:text-5xl md:text-[3.5rem] font-extrabold tracking-tight text-balance leading-[1.08] text-white">
