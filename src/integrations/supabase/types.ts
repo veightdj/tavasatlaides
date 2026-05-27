@@ -214,6 +214,7 @@ export type Database = {
           address: string
           category: string
           city: string
+          country: string
           cover_image_url: string | null
           created_at: string
           description: string | null
@@ -225,6 +226,7 @@ export type Database = {
           name: string
           owner_id: string
           phone: string | null
+          postal_code: string | null
           slug: string
           updated_at: string
           website: string | null
@@ -233,6 +235,7 @@ export type Database = {
           address: string
           category: string
           city: string
+          country?: string
           cover_image_url?: string | null
           created_at?: string
           description?: string | null
@@ -244,6 +247,7 @@ export type Database = {
           name: string
           owner_id: string
           phone?: string | null
+          postal_code?: string | null
           slug: string
           updated_at?: string
           website?: string | null
@@ -252,6 +256,7 @@ export type Database = {
           address?: string
           category?: string
           city?: string
+          country?: string
           cover_image_url?: string | null
           created_at?: string
           description?: string | null
@@ -263,6 +268,7 @@ export type Database = {
           name?: string
           owner_id?: string
           phone?: string | null
+          postal_code?: string | null
           slug?: string
           updated_at?: string
           website?: string | null
