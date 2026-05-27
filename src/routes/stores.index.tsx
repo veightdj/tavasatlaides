@@ -33,6 +33,7 @@ type Store = {
   cover_image_url: string | null;
   phone: string | null;
   website: string | null;
+  hours_json: unknown;
 };
 
 type Ad = {
