@@ -13,6 +13,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
 import { geocodeAddress } from "@/lib/geocode.functions";
+import { AddressAutocomplete } from "@/components/merchant/AddressAutocomplete";
 
 export const Route = createFileRoute("/_authenticated/store")({
   component: StoreEditor,
