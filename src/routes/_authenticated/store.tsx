@@ -41,18 +41,22 @@ function StoreEditor() {
     postal_code: "", country: "Latvia",
     phone: "", website: "", description: "", logo_url: "", cover_image_url: "",
   });
+  const [hours, setHours] = useState<Hours>(DEFAULT_HOURS);
   // lat/lng captured directly from address autocomplete (skips server geocode)
   const [pickedCoords, setPickedCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
-    if (store) setForm({
-      name: store.name, category: store.category, address: store.address, city: store.city,
-      postal_code: (store as any).postal_code ?? "",
-      country: (store as any).country ?? "Latvia",
-      phone: store.phone ?? "", website: store.website ?? "",
-      description: store.description ?? "", logo_url: store.logo_url ?? "",
-      cover_image_url: (store as any).cover_image_url ?? "",
-    });
+    if (store) {
+      setForm({
+        name: store.name, category: store.category, address: store.address, city: store.city,
+        postal_code: (store as any).postal_code ?? "",
+        country: (store as any).country ?? "Latvia",
+        phone: store.phone ?? "", website: store.website ?? "",
+        description: store.description ?? "", logo_url: store.logo_url ?? "",
+        cover_image_url: (store as any).cover_image_url ?? "",
+      });
+      setHours(parseHours((store as any).hours_json) ?? DEFAULT_HOURS);
+    }
   }, [store]);
 
   const save = useMutation({
