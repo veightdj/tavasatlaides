@@ -62,7 +62,11 @@ function StoreEditor() {
       let lng: number | null = (store as any)?.lng ?? null;
       let geocodeStatus: "OK" | "FAILED" | "SKIPPED" = "SKIPPED";
 
-      if (form.address) {
+      if (pickedCoords) {
+        lat = pickedCoords.lat;
+        lng = pickedCoords.lng;
+        geocodeStatus = "OK";
+      } else if (form.address) {
         try {
           const res = await geocodeAddress({
             data: {
