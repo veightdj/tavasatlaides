@@ -56,7 +56,7 @@ function StoresIndex() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("stores")
-        .select("id,name,slug,city,address,description,logo_url,cover_image_url,phone,website")
+        .select("id,name,slug,city,address,description,logo_url,cover_image_url,phone,website,hours_json")
         .order("name");
       if (error) throw error;
       return (data ?? []) as Store[];
