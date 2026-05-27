@@ -32,6 +32,9 @@ export function Header() {
       <Link to="/stores" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
         {t.nav.stores}
       </Link>
+      <Link to="/nearby" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        <span className="inline-flex items-center gap-1"><Bell className="h-4 w-4" /> Near me</span>
+      </Link>
       <Link to="/map" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
         <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" /> {t.nav.map}</span>
       </Link>
