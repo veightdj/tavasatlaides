@@ -113,6 +113,7 @@ export function Header() {
                 {[
                   { to: "/deals", label: t.nav.deals },
                   { to: "/stores", label: t.nav.stores },
+                  { to: "/nearby", label: "Near me", icon: Bell },
                   { to: "/map", label: t.nav.map, icon: MapPin },
                   { to: "/favorites", label: t.nav.favorites, icon: Heart },
                   { to: "/for-merchants", label: t.nav.forMerchants },
