@@ -95,6 +95,7 @@ function StoreEditor() {
       const payload = {
         ...form,
         lat, lng,
+        hours_json: hours as any,
         owner_id: user.id,
         slug: store?.slug ?? `${slugify(form.name)}-${Date.now().toString(36)}`,
       };
