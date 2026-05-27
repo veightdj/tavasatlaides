@@ -14,6 +14,8 @@ import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { AddressAutocomplete } from "@/components/merchant/AddressAutocomplete";
+import { HoursEditor } from "@/components/merchant/HoursEditor";
+import { DEFAULT_HOURS, parseHours, type Hours } from "@/lib/hours";
 
 export const Route = createFileRoute("/_authenticated/store")({
   component: StoreEditor,
