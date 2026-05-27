@@ -284,6 +284,30 @@ export type Database = {
         }
         Relationships: []
       }
+      store_shares: {
+        Row: {
+          channel: string | null
+          created_at: string
+          id: string
+          store_id: string
+          user_id: string | null
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          id?: string
+          store_id: string
+          user_id?: string | null
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          id?: string
+          store_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       stores: {
         Row: {
           address: string
