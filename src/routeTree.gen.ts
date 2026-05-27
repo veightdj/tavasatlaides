@@ -20,6 +20,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as StoresIdRouteImport } from './routes/stores.$id'
+import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
@@ -82,6 +83,11 @@ const StoresIdRoute = StoresIdRouteImport.update({
   path: '/stores/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
+  id: '/settings/notifications',
+  path: '/settings/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/store': typeof AuthenticatedStoreRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/stores/': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/store': typeof AuthenticatedStoreRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/stores': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/stores/': typeof StoresIndexRoute
   '/_authenticated/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/store'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/settings/notifications'
     | '/stores/$id'
     | '/stores/'
     | '/ads/$id'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/store'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/settings/notifications'
     | '/stores/$id'
     | '/stores'
     | '/ads/$id'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/_authenticated/store'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/settings/notifications'
     | '/stores/$id'
     | '/stores/'
     | '/_authenticated/ads/$id'
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   SignupRoute: typeof SignupRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   StoresIdRoute: typeof StoresIdRoute
   StoresIndexRoute: typeof StoresIndexRoute
 }
@@ -330,6 +343,13 @@ declare module '@tanstack/react-router' {
       path: '/stores/$id'
       fullPath: '/stores/$id'
       preLoaderRoute: typeof StoresIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/notifications': {
+      id: '/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals/$id': {
@@ -425,6 +445,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   SignupRoute: SignupRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
   StoresIdRoute: StoresIdRoute,
   StoresIndexRoute: StoresIndexRoute,
 }
