@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Share2, Copy, MessageCircle, Send, Smartphone, Check, X } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Share2, Copy, MessageCircle, Send, Smartphone, Check } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/use-i18n";
@@ -11,43 +11,46 @@ import { cn } from "@/lib/utils";
 type ShareChannel = "copy" | "whatsapp" | "telegram" | "sms" | "native";
 
 interface ShareMenuProps {
-  storeId: string;
-  storeName: string;
-  storeCity?: string;
+  entityId: string;
+  entityName: string;
+  entityLocation?: string;
   offerText?: string;
+  url?: string;
+  entityType?: "store" | "ad";
   className?: string;
   buttonVariant?: "icon" | "inline";
 }
 
-function buildShareData({ storeName, storeCity, offerText }: Omit<ShareMenuProps, "storeId" | "className" | "buttonVariant">) {
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://tavasatlaides.lovable.app";
-  const url = `${origin}/stores/${storeName.toLowerCase().replace(/\s+/g, "-")}`; // fallback; caller should override
-  const lines: string[] = [storeName];
+function buildShareText({ entityName, entityLocation, offerText }: { entityName: string; entityLocation?: string; offerText?: string }) {
+  const lines: string[] = [entityName];
   if (offerText) lines.push(offerText);
-  if (storeCity) lines.push(storeCity);
+  if (entityLocation) lines.push(entityLocation);
   lines.push("Check this deal 👇");
-  const text = lines.join("\n");
-  return { url, text, full: `${text}\n${url}` };
+  return lines.join("\n");
 }
 
-export function ShareMenu({ storeId, storeName, storeCity, offerText, className, buttonVariant = "icon" }: ShareMenuProps) {
+export function ShareMenu({ entityId, entityName, entityLocation, offerText, url, entityType = "store", className, buttonVariant = "icon" }: ShareMenuProps) {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://tavasatlaides.lovable.app";
-  const pageUrl = `${origin}/stores/${storeId}`;
+  const pageUrl = url ? (url.startsWith("http") ? url : `${origin}${url}`) : `${origin}/stores/${entityId}`;
 
-  const shareData = buildShareData({ storeName, storeCity, offerText });
-  const fullText = `${shareData.text}\n${pageUrl}`;
+  const shareText = buildShareText({ entityName, entityLocation, offerText });
+  const fullText = `${shareText}\n${pageUrl}`;
 
   const trackShare = useCallback(async (channel: ShareChannel) => {
     try {
-      await supabase.from("store_shares").insert({ store_id: storeId, channel });
+      if (entityType === "ad") {
+        await supabase.from("ad_shares").insert({ ad_id: entityId, channel });
+      } else {
+        await supabase.from("store_shares").insert({ store_id: entityId, channel });
+      }
     } catch {
       // silent fail for analytics
     }
-  }, [storeId]);
+  }, [entityId, entityType]);
 
   const handleCopy = async () => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
@@ -62,8 +65,8 @@ export function ShareMenu({ storeId, storeName, storeCity, offerText, className,
     if (typeof navigator !== "undefined" && (navigator as any).share) {
       try {
         await (navigator as any).share({
-          title: storeName,
-          text: shareData.text,
+          title: entityName,
+          text: shareText,
           url: pageUrl,
         });
         trackShare("native");
@@ -81,9 +84,9 @@ export function ShareMenu({ storeId, storeName, storeCity, offerText, className,
   };
 
   const handleTelegram = () => {
-    const url = encodeURIComponent(pageUrl);
-    const text = encodeURIComponent(shareData.text);
-    window.open(`https://t.me/share/url?url=${url}&text=${text}`, "_blank", "noopener,noreferrer");
+    const encodedUrl = encodeURIComponent(pageUrl);
+    const encodedText = encodeURIComponent(shareText);
+    window.open(`https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`, "_blank", "noopener,noreferrer");
     trackShare("telegram");
     setOpen(false);
   };
@@ -132,9 +135,9 @@ export function ShareMenu({ storeId, storeName, storeCity, offerText, className,
         <div className="mt-5 space-y-3">
           {/* Preview */}
           <div className="rounded-xl border border-border bg-muted/50 p-4 space-y-1">
-            <p className="font-semibold text-sm">{storeName}</p>
+            <p className="font-semibold text-sm">{entityName}</p>
             {offerText && <p className="text-sm text-primary font-medium">{offerText}</p>}
-            {storeCity && <p className="text-xs text-muted-foreground">{storeCity}</p>}
+            {entityLocation && <p className="text-xs text-muted-foreground">{entityLocation}</p>}
             <p className="text-xs text-muted-foreground">{pageUrl}</p>
           </div>
 
