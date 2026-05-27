@@ -43,7 +43,7 @@ export function ShareMenu({ entityId, entityName, entityLocation, offerText, url
   const trackShare = useCallback(async (channel: ShareChannel) => {
     try {
       if (entityType === "ad") {
-        await supabase.from("ad_shares").insert({ ad_id: entityId, channel } as any);
+        await supabase.from("ad_shares").insert({ ad_id: entityId, channel });
       } else {
         await supabase.from("store_shares").insert({ store_id: entityId, channel });
       }
