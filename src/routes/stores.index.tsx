@@ -4,6 +4,7 @@ import { MapPin, Phone, Globe, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { StoreStatus, useStoreCardDecoration } from "@/components/StoreStatus";
+import { ShareMenu } from "@/components/ShareMenu";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/stores/")({
