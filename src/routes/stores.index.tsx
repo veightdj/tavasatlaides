@@ -4,6 +4,7 @@ import { MapPin, Phone, Globe, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { StoreStatus, useStoreCardDecoration } from "@/components/StoreStatus";
+import { ShareMenu } from "@/components/ShareMenu";
 import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/stores/")({
@@ -100,6 +101,14 @@ function StoreSection({
   store: s, ads, seeAllLabel, emptyLabel,
 }: { store: Store; ads: Ad[]; seeAllLabel: string; emptyLabel: string }) {
   const deco = useStoreCardDecoration(s.hours_json);
+  const bestOffer = ads.length > 0
+    ? ads.reduce((best, a) => (a.discount_pct ?? 0) > (best.discount_pct ?? 0) ? a : best, ads[0])
+    : null;
+  const offerText = bestOffer
+    ? bestOffer.discount_pct
+      ? `-${bestOffer.discount_pct}% ${bestOffer.title}`
+      : bestOffer.title
+    : undefined;
   return (
     <section
       className={`rounded-3xl border border-border bg-card overflow-hidden transition ${deco.ring} ${deco.dim}`}
@@ -137,13 +146,22 @@ function StoreSection({
                   )}
                 </div>
               </div>
-              <Link
-                to="/stores/$id"
-                params={{ id: s.id }}
-                className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
-              >
-                {seeAllLabel} <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="flex items-center gap-2">
+                <ShareMenu
+                  storeId={s.id}
+                  storeName={s.name}
+                  storeCity={s.city}
+                  offerText={offerText}
+                  buttonVariant="icon"
+                />
+                <Link
+                  to="/stores/$id"
+                  params={{ id: s.id }}
+                  className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  {seeAllLabel} <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
             {s.description && (
               <p className="mt-3 text-foreground/80 max-w-3xl">{s.description}</p>
