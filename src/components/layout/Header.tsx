@@ -1,6 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n, LANGS } from "@/i18n/use-i18n";
 import { useAuth } from "@/hooks/use-auth";
