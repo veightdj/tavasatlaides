@@ -105,6 +105,22 @@ function AuthSync() {
   return null;
 }
 
+function NotifSWRegister() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!("serviceWorker" in navigator)) return;
+    const inIframe = (() => {
+      try { return window.self !== window.top; } catch { return true; }
+    })();
+    const isPreviewHost =
+      window.location.hostname.includes("id-preview--") ||
+      window.location.hostname.includes("lovableproject.com");
+    if (inIframe || isPreviewHost) return;
+    navigator.serviceWorker.register("/notif-sw.js").catch(() => {});
+  }, []);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
