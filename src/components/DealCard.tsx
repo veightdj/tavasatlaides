@@ -2,10 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Heart, MapPin, LocateFixed } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
-import { Badge } from "@/components/ui/badge";
+
 import { formatPrice } from "@/lib/utils";
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
+import { StoreStatus } from "@/components/StoreStatus";
 
 type Deal = {
   id: string;
@@ -16,14 +17,13 @@ type Deal = {
   price_sale: number | null;
   cover_image_url: string | null;
   ends_at: string | null;
-  stores?: { id: string; name: string; city: string; slug: string } | null;
+  stores?: { id: string; name: string; city: string; slug: string; hours_json?: unknown } | null;
 };
 
 export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number }) {
   const { has, toggle } = useFavorites();
   const { t } = useI18n();
   const saved = has(deal.id);
-  const endsSoon = deal.ends_at && new Date(deal.ends_at).getTime() - Date.now() < 1000 * 60 * 60 * 24 * 3;
   const distLabel =
     typeof distanceKm === "number" && Number.isFinite(distanceKm)
       ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
@@ -77,7 +77,9 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
           {deal.stores?.city && (
             <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{deal.stores.city}</span>
           )}
-          {endsSoon && <Badge variant="destructive" className="text-[10px] uppercase">⏱</Badge>}
+          {deal.stores?.hours_json !== undefined && (
+            <StoreStatus hours={deal.stores.hours_json} variant="compact" />
+          )}
         </div>
         <h3 className="font-semibold leading-snug line-clamp-2 group-hover:text-primary transition">{deal.title}</h3>
         {deal.stores?.name && <p className="text-sm text-muted-foreground line-clamp-1">{deal.stores.name}</p>}

@@ -30,7 +30,7 @@ function Favorites() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug)")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,hours_json)")
         .in("id", ids);
       if (error) throw error;
       return data ?? [];
