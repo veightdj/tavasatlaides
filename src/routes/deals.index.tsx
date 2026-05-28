@@ -28,7 +28,7 @@ function parseNear(v: unknown): { lat: number; lng: number } | null {
   return { lat, lng };
 }
 
-export const Route = createFileRoute("/deals")({
+export const Route = createFileRoute("/deals/")({
   validateSearch: (search: Record<string, unknown>): DealsSearch => ({
     near: typeof search.near === "string" ? search.near : undefined,
   }),
