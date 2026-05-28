@@ -115,11 +115,12 @@ export function ShareMenu({ entityId, entityName, entityLocation, offerText, url
           </Button>
         ) : (
           <button
+            type="button"
             className={cn(
               "grid h-9 w-9 place-items-center rounded-full bg-background/90 backdrop-blur hover:scale-110 transition",
               className
             )}
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={(e) => { e.stopPropagation(); }}
             aria-label={t.deals.shareTitle}
           >
             <Share2 className="h-4 w-4 text-foreground" />
