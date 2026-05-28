@@ -95,9 +95,9 @@ const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const DealsIdRoute = DealsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => DealsRoute,
+  id: '/deals/$id',
+  path: '/deals/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   id: '/categories/$slug',
@@ -273,6 +273,7 @@ export interface RootRouteChildren {
   NearbyRoute: typeof NearbyRoute
   SignupRoute: typeof SignupRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
+  DealsIdRoute: typeof DealsIdRoute
   SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   StoresIdRoute: typeof StoresIdRoute
   DealsIndexRoute: typeof DealsIndexRoute
@@ -374,10 +375,10 @@ declare module '@tanstack/react-router' {
     }
     '/deals/$id': {
       id: '/deals/$id'
-      path: '/$id'
+      path: '/deals/$id'
       fullPath: '/deals/$id'
       preLoaderRoute: typeof DealsIdRouteImport
-      parentRoute: typeof DealsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/categories/$slug': {
       id: '/categories/$slug'
@@ -455,6 +456,7 @@ const rootRouteChildren: RootRouteChildren = {
   NearbyRoute: NearbyRoute,
   SignupRoute: SignupRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
+  DealsIdRoute: DealsIdRoute,
   SettingsNotificationsRoute: SettingsNotificationsRoute,
   StoresIdRoute: StoresIdRoute,
   DealsIndexRoute: DealsIndexRoute,
@@ -463,13 +465,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
