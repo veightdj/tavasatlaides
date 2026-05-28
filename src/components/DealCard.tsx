@@ -57,14 +57,11 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
             {distLabel}
           </div>
         )}
-        <ShareMenu
-          entityId={deal.id}
-          entityName={deal.title}
-          entityLocation={deal.stores?.city}
-          offerText={deal.discount_pct ? `-${deal.discount_pct}%` : undefined}
-          url={`/deals/${deal.id}`}
-          entityType="ad"
-          buttonVariant="icon"
+        <DealShareButton
+          dealId={deal.id}
+          title={deal.title}
+          description={deal.stores?.name}
+          discountPct={deal.discount_pct}
           className="absolute top-3 right-14"
         />
         <button
