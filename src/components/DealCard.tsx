@@ -77,7 +77,9 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
           {deal.stores?.city && (
             <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{deal.stores.city}</span>
           )}
-          {endsSoon && <Badge variant="destructive" className="text-[10px] uppercase">⏱</Badge>}
+          {deal.stores?.hours_json !== undefined && (
+            <StoreStatus hours={deal.stores.hours_json} variant="compact" />
+          )}
         </div>
         <h3 className="font-semibold leading-snug line-clamp-2 group-hover:text-primary transition">{deal.title}</h3>
         {deal.stores?.name && <p className="text-sm text-muted-foreground line-clamp-1">{deal.stores.name}</p>}
