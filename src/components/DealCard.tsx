@@ -5,7 +5,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
 import { formatDistance } from "@/lib/distance";
-import { ShareMenu } from "@/components/ShareMenu";
+import { DealShareButton } from "@/components/DealShareButton";
 
 type Deal = {
   id: string;
