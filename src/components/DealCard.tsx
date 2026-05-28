@@ -24,7 +24,6 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
   const { has, toggle } = useFavorites();
   const { t } = useI18n();
   const saved = has(deal.id);
-  const endsSoon = deal.ends_at && new Date(deal.ends_at).getTime() - Date.now() < 1000 * 60 * 60 * 24 * 3;
   const distLabel =
     typeof distanceKm === "number" && Number.isFinite(distanceKm)
       ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
