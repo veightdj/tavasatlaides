@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
+import { StoreStatus } from "@/components/StoreStatus";
 
 type Deal = {
   id: string;
