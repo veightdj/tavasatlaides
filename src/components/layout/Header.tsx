@@ -1,4 +1,5 @@
 import { Link, useRouter } from "@tanstack/react-router";
+import logoUrl from "@/assets/logo.png";
 import { useState } from "react";
 import { Menu, X, MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
