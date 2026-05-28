@@ -17,7 +17,7 @@ type Deal = {
   price_sale: number | null;
   cover_image_url: string | null;
   ends_at: string | null;
-  stores?: { id: string; name: string; city: string; slug: string } | null;
+  stores?: { id: string; name: string; city: string; slug: string; hours_json?: unknown } | null;
 };
 
 export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number }) {
