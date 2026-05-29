@@ -161,7 +161,7 @@ export const dict = {
     favorites: { title: "Saved deals", empty: "No saved deals yet." },
     map: { title: "Map" },
     about: { title: "About TavasAtlaides", body: "TavasAtlaides is a local deals marketplace for Jurmala and Riga. We connect shoppers with discounts from nearby stores." },
-    forMerchants: { title: "For merchants", body: "Post your promotions for free and reach local shoppers on the map.", cta: "Sign up free" },
+    forMerchants: { title: "For merchants", body: "Post your promotions for free and reach local shoppers on the map.", cta: "Sign up free", benefits: ["Free to publish your deals", "Appear on the map in Riga & Jurmala", "Reach trilingual audience (LV/EN/RU)", "Track views and saves per ad"] },
     common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off" },
     time: { day: "day", days: "days", hour: "hour", hours: "hours", minute: "minute", minutes: "minutes", second: "second", seconds: "seconds", left: "left", ended: "Ended" },
   },
