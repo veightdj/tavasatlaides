@@ -82,7 +82,7 @@ export const dict = {
     favorites: { title: "Saglabātie piedāvājumi", empty: "Vēl neviens piedāvājums nav saglabāts." },
     map: { title: "Karte" },
     about: { title: "Par TavasAtlaides", body: "TavasAtlaides ir vietējais piedāvājumu marketplace Jūrmalā un Rīgā. Mēs savienojam pircējus ar tuvāko veikalu akcijām." },
-    forMerchants: { title: "Veikaliem", body: "Ievieto savas akcijas bez maksas un sasniedzi vietējos pircējus uz kartes.", cta: "Reģistrēties bez maksas" },
+    forMerchants: { title: "Veikaliem", body: "Ievieto savas akcijas bez maksas un sasniedzi vietējos pircējus uz kartes.", cta: "Reģistrēties bez maksas", benefits: ["Bezmaksas piedāvājumu publicēšana", "Parādies kartē Rīgā un Jūrmalā", "Sasniedz trīsvalodu auditoriju (LV/EN/RU)", "Sekot līdzi skatījumiem un saglabājumiem"] },
     common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide" },
     time: { day: "diena", days: "dienas", hour: "stunda", hours: "stundas", minute: "minūte", minutes: "minūtes", second: "sekunde", seconds: "sekundes", left: "atlicis", ended: "Beidzies" },
   },
