@@ -34,12 +34,7 @@ function ForMerchants() {
       </section>
       <section className="mx-auto max-w-3xl px-4 py-16">
         <ul className="space-y-4 text-lg">
-          {[
-            "Free to publish your deals",
-            "Appear on the map in Riga & Jurmala",
-            "Reach trilingual audience (LV/EN/RU)",
-            "Track views and saves per ad",
-          ].map((line) => (
+          {t.forMerchants.benefits.map((line) => (
             <li key={line} className="flex items-start gap-3">
               <Check className="h-5 w-5 text-primary shrink-0 mt-1" />
               <span>{line}</span>
