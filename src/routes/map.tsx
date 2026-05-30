@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +39,8 @@ function MapPage() {
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
 
+  const [ready, setReady] = useState(false);
+
   const { data: stores = [] } = useQuery({
     queryKey: ["map-stores"],
     queryFn: async () => {
@@ -55,28 +57,51 @@ function MapPage() {
     const key = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
     const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
     if (!key || !mapEl.current) return;
+    let cancelled = false;
 
-    const init = () => {
-      if (!mapEl.current) return;
-      mapRef.current = new window.google.maps.Map(mapEl.current, {
-        center: { lat: 56.96, lng: 24.0 },
-        zoom: 11,
+    const ensureScript = (): Promise<void> => {
+      if (window.google?.maps?.importLibrary) return Promise.resolve();
+      const existing = document.querySelector<HTMLScriptElement>('script[data-deals-maps]');
+      if (existing) {
+        return new Promise((resolve, reject) => {
+          existing.addEventListener("load", () => resolve(), { once: true });
+          existing.addEventListener("error", () => reject(new Error("maps script error")), { once: true });
+        });
+      }
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&v=weekly&loading=async&channel=${channel ?? ""}`;
+        s.async = true;
+        s.defer = true;
+        s.dataset.dealsMaps = "1";
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("Failed to load Google Maps JS"));
+        document.head.appendChild(s);
       });
     };
 
-    if (window.google?.maps) {
-      init();
-    } else {
-      window.initDealsMap = init;
-      const s = document.createElement("script");
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=initDealsMap&channel=${channel ?? ""}`;
-      s.async = true;
-      document.head.appendChild(s);
-    }
+    (async () => {
+      try {
+        await ensureScript();
+        const { Map } = (await window.google.maps.importLibrary("maps")) as any;
+        if (cancelled || !mapEl.current) return;
+        mapRef.current = new Map(mapEl.current, {
+          center: { lat: 56.96, lng: 24.0 },
+          zoom: 11,
+        });
+        setReady(true);
+      } catch (e) {
+        console.error("[map] init failed", e);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
-    if (!mapRef.current || !window.google) return;
+    if (!ready || !mapRef.current || !window.google) return;
     const markers: any[] = [];
     stores.forEach((s: any) => {
       const activeAd = s.ads?.find((a: any) => a.status === "active");
@@ -99,7 +124,8 @@ function MapPage() {
       markers.push(m);
     });
     return () => markers.forEach((m) => m.setMap(null));
-  }, [stores, t]);
+  }, [stores, t, ready]);
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
