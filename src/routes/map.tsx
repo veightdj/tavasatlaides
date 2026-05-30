@@ -59,33 +59,36 @@ function MapPage() {
     if (!key || !mapEl.current) return;
     let cancelled = false;
 
+    const waitForMaps = (): Promise<void> =>
+      new Promise((resolve, reject) => {
+        const start = Date.now();
+        const tick = () => {
+          if (window.google?.maps?.Map) return resolve();
+          if (Date.now() - start > 15000) return reject(new Error("Google Maps load timeout"));
+          setTimeout(tick, 50);
+        };
+        tick();
+      });
+
     const ensureScript = (): Promise<void> => {
-      if (window.google?.maps?.importLibrary) return Promise.resolve();
-      const existing = document.querySelector<HTMLScriptElement>('script[data-deals-maps]');
-      if (existing) {
-        return new Promise((resolve, reject) => {
-          existing.addEventListener("load", () => resolve(), { once: true });
-          existing.addEventListener("error", () => reject(new Error("maps script error")), { once: true });
-        });
-      }
-      return new Promise((resolve, reject) => {
-        const s = document.createElement("script");
-        s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&v=weekly&loading=async&channel=${channel ?? ""}`;
+      if (window.google?.maps?.Map) return Promise.resolve();
+      let s = document.querySelector<HTMLScriptElement>('script[data-deals-maps]');
+      if (!s) {
+        s = document.createElement("script");
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&v=weekly&loading=async&libraries=places&channel=${channel ?? ""}`;
         s.async = true;
         s.defer = true;
         s.dataset.dealsMaps = "1";
-        s.onload = () => resolve();
-        s.onerror = () => reject(new Error("Failed to load Google Maps JS"));
         document.head.appendChild(s);
-      });
+      }
+      return waitForMaps();
     };
 
     (async () => {
       try {
         await ensureScript();
-        const { Map } = (await window.google.maps.importLibrary("maps")) as any;
         if (cancelled || !mapEl.current) return;
-        mapRef.current = new Map(mapEl.current, {
+        mapRef.current = new window.google.maps.Map(mapEl.current, {
           center: { lat: 56.96, lng: 24.0 },
           zoom: 11,
         });
@@ -99,6 +102,7 @@ function MapPage() {
       cancelled = true;
     };
   }, []);
+
 
   useEffect(() => {
     if (!ready || !mapRef.current || !window.google) return;
