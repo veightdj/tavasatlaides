@@ -55,39 +55,12 @@ function MapPage() {
   });
 
   useEffect(() => {
-    const key = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
-    const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
-    if (!key || !mapEl.current) return;
+    if (!mapEl.current) return;
     let cancelled = false;
-
-    const waitForMaps = (): Promise<void> =>
-      new Promise((resolve, reject) => {
-        const start = Date.now();
-        const tick = () => {
-          if (window.google?.maps?.Map) return resolve();
-          if (Date.now() - start > 15000) return reject(new Error("Google Maps load timeout"));
-          setTimeout(tick, 50);
-        };
-        tick();
-      });
-
-    const ensureScript = (): Promise<void> => {
-      if (window.google?.maps?.Map) return Promise.resolve();
-      let s = document.querySelector<HTMLScriptElement>('script[data-deals-maps]');
-      if (!s) {
-        s = document.createElement("script");
-        s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&v=weekly&loading=async&libraries=places&channel=${channel ?? ""}`;
-        s.async = true;
-        s.defer = true;
-        s.dataset.dealsMaps = "1";
-        document.head.appendChild(s);
-      }
-      return waitForMaps();
-    };
 
     (async () => {
       try {
-        await ensureScript();
+        await loadGoogleMaps();
         if (cancelled || !mapEl.current) return;
         mapRef.current = new window.google.maps.Map(mapEl.current, {
           center: { lat: 56.96, lng: 24.0 },
