@@ -46,8 +46,8 @@ export function AddressAutocomplete({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadMaps()
-      .then(async (g) => {
+    loadGoogleMaps()
+      .then(async (g: any) => {
         const places = await g.maps.importLibrary("places");
         placesLibRef.current = places;
         sessionTokenRef.current = new (places as any).AutocompleteSessionToken();
