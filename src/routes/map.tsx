@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/use-i18n";
+import { loadGoogleMaps } from "@/lib/google-maps";
 
 export const Route = createFileRoute("/map")({
   head: () => ({
