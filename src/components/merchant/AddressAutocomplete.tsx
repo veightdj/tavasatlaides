@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Loader2, MapPin } from "lucide-react";
+import { loadGoogleMaps } from "@/lib/google-maps";
 
 export type PickedAddress = {
   address: string;
@@ -22,24 +23,6 @@ type Suggestion = {
     toPlace: () => any;
   };
 };
-
-let mapsLoader: Promise<any> | null = null;
-function loadMaps(): Promise<any> {
-  if (typeof window === "undefined") return Promise.reject(new Error("ssr"));
-  if ((window as any).google?.maps?.importLibrary) return Promise.resolve((window as any).google);
-  if (mapsLoader) return mapsLoader;
-  mapsLoader = new Promise((resolve, reject) => {
-    const key = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
-    const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
-    (window as any).__lovableMapsInit = () => resolve((window as any).google);
-    const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&libraries=places&callback=__lovableMapsInit&channel=${channel}`;
-    s.async = true;
-    s.onerror = () => reject(new Error("Failed to load Google Maps JS"));
-    document.head.appendChild(s);
-  });
-  return mapsLoader;
-}
 
 export function AddressAutocomplete({
   value,
