@@ -8,6 +8,7 @@ import { DealCard } from "@/components/DealCard";
 import { CategoryCircles } from "@/components/CategoryCircles";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
+import { HomeBannerSlider } from "@/components/HomeBannerSlider";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -71,6 +72,7 @@ function Home() {
 
   return (
     <div>
+      <HomeBannerSlider />
       {/* Hero */}
       <section className="px-3 md:px-6 pt-3 md:pt-5 pb-3 md:pb-5">
         <div className="relative overflow-hidden rounded-2xl md:rounded-3xl shadow-xl shadow-black/10">
