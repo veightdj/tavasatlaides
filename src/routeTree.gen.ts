@@ -20,10 +20,12 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as DealsIndexRouteImport } from './routes/deals.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as StoresIdRouteImport } from './routes/stores.$id'
 import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdsIndexRouteImport } from './routes/_authenticated/ads.index'
@@ -84,6 +86,11 @@ const DealsIndexRoute = DealsIndexRouteImport.update({
   path: '/deals/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoresIdRoute = StoresIdRouteImport.update({
   id: '/stores/$id',
   path: '/stores/$id',
@@ -102,6 +109,11 @@ const DealsIdRoute = DealsIdRouteImport.update({
 const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   id: '/categories/$slug',
   path: '/categories/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBannersRoute = AdminBannersRouteImport.update({
+  id: '/admin/banners',
+  path: '/admin/banners',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedStoreRoute = AuthenticatedStoreRouteImport.update({
@@ -141,10 +153,12 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/store': typeof AuthenticatedStoreRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -162,10 +176,12 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/store': typeof AuthenticatedStoreRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
+  '/admin': typeof AdminIndexRoute
   '/deals': typeof DealsIndexRoute
   '/stores': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -185,10 +201,12 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/store': typeof AuthenticatedStoreRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
   '/_authenticated/ads/$id': typeof AuthenticatedAdsIdRoute
@@ -208,10 +226,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/store'
+    | '/admin/banners'
     | '/categories/$slug'
     | '/deals/$id'
     | '/settings/notifications'
     | '/stores/$id'
+    | '/admin/'
     | '/deals/'
     | '/stores/'
     | '/ads/$id'
@@ -229,10 +249,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/store'
+    | '/admin/banners'
     | '/categories/$slug'
     | '/deals/$id'
     | '/settings/notifications'
     | '/stores/$id'
+    | '/admin'
     | '/deals'
     | '/stores'
     | '/ads/$id'
@@ -251,10 +273,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_authenticated/dashboard'
     | '/_authenticated/store'
+    | '/admin/banners'
     | '/categories/$slug'
     | '/deals/$id'
     | '/settings/notifications'
     | '/stores/$id'
+    | '/admin/'
     | '/deals/'
     | '/stores/'
     | '/_authenticated/ads/$id'
@@ -272,10 +296,12 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   NearbyRoute: typeof NearbyRoute
   SignupRoute: typeof SignupRoute
+  AdminBannersRoute: typeof AdminBannersRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   DealsIdRoute: typeof DealsIdRoute
   SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   StoresIdRoute: typeof StoresIdRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
 }
@@ -359,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stores/$id': {
       id: '/stores/$id'
       path: '/stores/$id'
@@ -385,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/categories/$slug'
       fullPath: '/categories/$slug'
       preLoaderRoute: typeof CategoriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/banners': {
+      id: '/admin/banners'
+      path: '/admin/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/store': {
@@ -455,10 +495,12 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   NearbyRoute: NearbyRoute,
   SignupRoute: SignupRoute,
+  AdminBannersRoute: AdminBannersRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   DealsIdRoute: DealsIdRoute,
   SettingsNotificationsRoute: SettingsNotificationsRoute,
   StoresIdRoute: StoresIdRoute,
+  AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
 }
