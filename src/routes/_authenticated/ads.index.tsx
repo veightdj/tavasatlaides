@@ -96,11 +96,32 @@ function AdsList() {
 
   if (!store) return <div>{t.merchant.setupStore} → <Link to="/store" className="text-primary">{t.merchant.store}</Link></div>;
 
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const filteredAds = useMemo(() => {
+    if (statusFilter === "all") return ads;
+    if (statusFilter === "expired") return ads.filter(isExpired);
+    if (statusFilter === "draft") return ads.filter((a) => a.status === "draft" && !isExpired(a));
+    return ads.filter((a) => a.status === statusFilter);
+  }, [ads, statusFilter]);
+
+  if (!store) return <div>{t.merchant.setupStore} → <Link to="/store" className="text-primary">{t.merchant.store}</Link></div>;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t.merchant.ads}</h1>
-        <Button asChild className="h-11 md:h-10"><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
+        <div className="flex items-center gap-2">
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
+            <SelectTrigger className="w-[140px] h-11 md:h-10"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="expired">Expired</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button asChild className="h-11 md:h-10"><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
+        </div>
       </div>
 
       {ads.length === 0 ? (
