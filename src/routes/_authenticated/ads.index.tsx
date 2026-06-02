@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
-import { Plus, Edit, Trash2, Eye, MousePointerClick, Percent, Heart, Share2, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Edit, Trash2, Eye, MousePointerClick, Percent, Heart, Share2, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useI18n } from "@/i18n/use-i18n";
 
 type StatusFilter = "all" | "active" | "draft" | "expired";
+const PAGE_SIZE = 25;
 const isExpired = (ad: any) => !!ad.ends_at && new Date(ad.ends_at).getTime() <= Date.now();
 
 export const Route = createFileRoute("/_authenticated/ads/")({
@@ -46,22 +47,47 @@ function AdsList() {
   const { user } = useAuth();
   const qc = useQueryClient();
 
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [page, setPage] = useState(0);
+
+  // Reset to first page when filter changes
+  useEffect(() => { setPage(0); }, [statusFilter]);
+
   const { data: store } = useQuery({
     queryKey: ["my-store", user?.id],
     enabled: !!user,
     queryFn: async () => (await supabase.from("stores").select("id,name").eq("owner_id", user!.id).maybeSingle()).data,
   });
 
-  const { data: ads = [] } = useQuery({
-    queryKey: ["my-ads", store?.id],
+  const { data: result } = useQuery({
+    queryKey: ["my-ads", store?.id, statusFilter, page],
     enabled: !!store,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("ads").select("*").eq("store_id", store!.id).order("created_at", { ascending: false });
+      let q = supabase
+        .from("ads")
+        .select("*", { count: "exact" })
+        .eq("store_id", store!.id)
+        .order("created_at", { ascending: false })
+        .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
+
+      if (statusFilter === "active") {
+        q = q.eq("status", "active");
+      } else if (statusFilter === "draft") {
+        q = q.eq("status", "draft");
+      } else if (statusFilter === "expired") {
+        // Expired = has ends_at in the past (regardless of status, since the cron flips to draft)
+        q = q.lte("ends_at", new Date().toISOString()).not("ends_at", "is", null);
+      }
+
+      const { data, error, count } = await q;
       if (error) throw error;
-      return data;
+      return { ads: data ?? [], count: count ?? 0 };
     },
   });
+
+  const ads = result?.ads ?? [];
+  const total = result?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const adIds = ads.map((a) => a.id);
   const { data: metrics } = useQuery({
@@ -90,19 +116,9 @@ function AdsList() {
     },
     onSuccess: () => {
       toast.success(t.common.deleted);
-      qc.invalidateQueries({ queryKey: ["my-ads", store?.id] });
+      qc.invalidateQueries({ queryKey: ["my-ads"] });
     },
   });
-
-  if (!store) return <div>{t.merchant.setupStore} → <Link to="/store" className="text-primary">{t.merchant.store}</Link></div>;
-
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const filteredAds = useMemo(() => {
-    if (statusFilter === "all") return ads;
-    if (statusFilter === "expired") return ads.filter(isExpired);
-    if (statusFilter === "draft") return ads.filter((a) => a.status === "draft" && !isExpired(a));
-    return ads.filter((a) => a.status === statusFilter);
-  }, [ads, statusFilter]);
 
   if (!store) return <div>{t.merchant.setupStore} → <Link to="/store" className="text-primary">{t.merchant.store}</Link></div>;
 
@@ -124,23 +140,51 @@ function AdsList() {
         </div>
       </div>
 
-      {filteredAds.length === 0 ? (
+      {ads.length === 0 ? (
         <div className="rounded-2xl border border-dashed p-12 text-center text-muted-foreground">
-          {ads.length === 0 ? t.merchant.noAds : "No ads match this filter."}
+          {total === 0 ? t.merchant.noAds : "No ads match this filter."}
         </div>
       ) : (
-        <div className="space-y-4">
-          {filteredAds.map((ad) => (
-            <AdRow
-              key={ad.id}
-              ad={ad}
-              expired={isExpired(ad)}
-              metrics={metrics?.[ad.id] ?? { views: 0, clicks: 0, saves: 0, shares: 0 }}
-              t={t}
-              onDelete={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="space-y-4">
+            {ads.map((ad) => (
+              <AdRow
+                key={ad.id}
+                ad={ad}
+                expired={isExpired(ad)}
+                metrics={metrics?.[ad.id] ?? { views: 0, clicks: 0, saves: 0, shares: 0 }}
+                t={t}
+                onDelete={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}
+              />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between gap-3 pt-2">
+              <p className="text-sm text-muted-foreground">
+                Page {page + 1} of {totalPages} · {total} total
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page === 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page + 1 >= totalPages}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
