@@ -91,7 +91,7 @@ export const dict = {
     tagline: "Local store deals & discounts",
     nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants" },
     cta: { browse: "Browse deals", postAd: "Post a deal", signIn: "Sign in", signUp: "Sign up", signOut: "Sign out", dashboard: "My store" },
-    city: { all: "All cities", jurmala: "", riga: "Riga" },
+    city: { all: "All cities", jurmala: "Jurmala", riga: "Riga" },
     home: {
       heroTitle: "Best Deals Near You",
       heroSub: "Find discounts, coupons and local offers in Riga and all Latvia.",
