@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { LocateFixed, X } from "lucide-react";
 import { toast } from "sonner";
@@ -16,6 +16,9 @@ import { distanceKm as haversineKm } from "@/lib/distance";
 
 type SortMode = "newest" | "discount" | "expiring" | "nearest";
 type Radius = "any" | "1" | "5" | "10";
+
+const PAGE_SIZE = 24;
+const NEAR_FETCH_CAP = 200; // when sorting by distance we need a wider pool to sort client-side
 
 type DealsSearch = { near?: string };
 
@@ -59,6 +62,13 @@ function DealsPage() {
   const [sort, setSort] = useState<SortMode>("newest");
   const [radius, setRadius] = useState<Radius>("any");
 
+  // Debounce the search query for server-side filtering
+  const [debouncedQ, setDebouncedQ] = useState("");
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQ(q.trim()), 300);
+    return () => clearTimeout(id);
+  }, [q]);
+
   useEffect(() => {
     if (origin && sort !== "nearest") setSort("nearest");
     if (!origin && sort === "nearest") setSort("newest");
@@ -66,34 +76,57 @@ function DealsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!!origin]);
 
-  const { data: deals = [], isLoading } = useQuery({
-    queryKey: ["deals", city, cat, sort, !!origin],
-    queryFn: async () => {
+  // When sorting nearest, fetch a larger pool once (no pagination) and sort/limit client-side.
+  // Otherwise use server-side pagination (24 per page) with "Load more".
+  const nearestMode = sort === "nearest" && !!origin;
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: ["deals", city, cat, sort, debouncedQ, nearestMode],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) => {
+      const page = pageParam as number;
+      const size = nearestMode ? NEAR_FETCH_CAP : PAGE_SIZE;
+      const from = nearestMode ? 0 : page * PAGE_SIZE;
+      const to = from + size - 1;
+
       let query = supabase
         .from("ads")
         .select(
-          "id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng)"
+          "id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng,hours_json)"
         )
         .eq("status", "active");
+
       if (cat !== "all") query = query.eq("category", cat);
       if (city !== "all") query = query.eq("stores.city", city);
+      if (debouncedQ) query = query.ilike("title", `%${debouncedQ}%`);
+
       if (sort === "newest") query = query.order("created_at", { ascending: false });
-      if (sort === "discount") query = query.order("discount_pct", { ascending: false, nullsFirst: false });
-      if (sort === "expiring") query = query.order("ends_at", { ascending: true, nullsFirst: false });
-      const { data, error } = await query.limit(120);
+      else if (sort === "discount") query = query.order("discount_pct", { ascending: false, nullsFirst: false });
+      else if (sort === "expiring") query = query.order("ends_at", { ascending: true, nullsFirst: false });
+      else if (sort === "nearest") query = query.order("created_at", { ascending: false });
+
+      const { data, error } = await query.range(from, to);
       if (error) throw error;
       return data ?? [];
     },
+    getNextPageParam: (lastPage, allPages) => {
+      if (nearestMode) return undefined; // single fetch
+      if (lastPage.length < PAGE_SIZE) return undefined;
+      return allPages.length;
+    },
   });
 
+  const allDeals = useMemo(() => data?.pages.flat() ?? [], [data]);
+
+  // Distance enrichment (client-side) only when an origin is set
   const filtered = useMemo(() => {
-    let list = deals as any[];
-    if (q.trim()) {
-      const needle = q.toLowerCase();
-      list = list.filter(
-        (d) => d.title.toLowerCase().includes(needle) || d.stores?.name?.toLowerCase().includes(needle)
-      );
-    }
+    let list = allDeals as any[];
     if (origin) {
       list = list
         .map((d) => {
@@ -108,10 +141,12 @@ function DealsPage() {
         const max = Number(radius);
         list = list.filter((d) => d._distanceKm <= max);
       }
-      list = list.sort((a, b) => a._distanceKm - b._distanceKm);
+      if (sort === "nearest") {
+        list = list.sort((a, b) => a._distanceKm - b._distanceKm);
+      }
     }
     return list;
-  }, [deals, q, origin, radius]);
+  }, [allDeals, origin, radius, sort]);
 
   const clearNear = () =>
     navigate({ search: (prev: DealsSearch) => ({ ...prev, near: undefined }), replace: true });
@@ -179,11 +214,25 @@ function DealsPage() {
         ) : filtered.length === 0 ? (
           <div className="rounded-2xl border border-dashed p-12 text-center text-muted-foreground">{t.deals.empty}</div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {filtered.map((d: any) => (
-              <DealCard key={d.id} deal={d} distanceKm={d._distanceKm} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {filtered.map((d: any) => (
+                <DealCard key={d.id} deal={d} distanceKm={d._distanceKm} />
+              ))}
+            </div>
+            {hasNextPage && (
+              <div className="mt-8 flex justify-center">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetching}
+                >
+                  {isFetching ? t.common.loading : "Load more"}
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
