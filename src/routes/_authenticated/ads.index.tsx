@@ -1,13 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus, Edit, Trash2, Eye, MousePointerClick, Percent, Heart, Share2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
+
+type StatusFilter = "all" | "active" | "draft" | "expired";
+const isExpired = (ad: any) => !!ad.ends_at && new Date(ad.ends_at).getTime() <= Date.now();
 
 export const Route = createFileRoute("/_authenticated/ads/")({
   component: AdsList,
@@ -92,23 +96,45 @@ function AdsList() {
 
   if (!store) return <div>{t.merchant.setupStore} → <Link to="/store" className="text-primary">{t.merchant.store}</Link></div>;
 
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const filteredAds = useMemo(() => {
+    if (statusFilter === "all") return ads;
+    if (statusFilter === "expired") return ads.filter(isExpired);
+    if (statusFilter === "draft") return ads.filter((a) => a.status === "draft" && !isExpired(a));
+    return ads.filter((a) => a.status === statusFilter);
+  }, [ads, statusFilter]);
+
+  if (!store) return <div>{t.merchant.setupStore} → <Link to="/store" className="text-primary">{t.merchant.store}</Link></div>;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t.merchant.ads}</h1>
-        <Button asChild className="h-11 md:h-10"><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
+        <div className="flex items-center gap-2">
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
+            <SelectTrigger className="w-[140px] h-11 md:h-10"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="expired">Expired</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button asChild className="h-11 md:h-10"><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
+        </div>
       </div>
 
-      {ads.length === 0 ? (
+      {filteredAds.length === 0 ? (
         <div className="rounded-2xl border border-dashed p-12 text-center text-muted-foreground">
-          {t.merchant.noAds}
+          {ads.length === 0 ? t.merchant.noAds : "No ads match this filter."}
         </div>
       ) : (
         <div className="space-y-4">
-          {ads.map((ad) => (
+          {filteredAds.map((ad) => (
             <AdRow
               key={ad.id}
               ad={ad}
+              expired={isExpired(ad)}
               metrics={metrics?.[ad.id] ?? { views: 0, clicks: 0, saves: 0, shares: 0 }}
               t={t}
               onDelete={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}
@@ -120,7 +146,7 @@ function AdsList() {
   );
 }
 
-function AdRow({ ad, metrics: m, t, onDelete }: { ad: any; metrics: Metrics; t: any; onDelete: () => void }) {
+function AdRow({ ad, expired, metrics: m, t, onDelete }: { ad: any; expired: boolean; metrics: Metrics; t: any; onDelete: () => void }) {
   const [open, setOpen] = useState(false);
   const ctr = m.views > 0 ? Math.round((m.clicks / m.views) * 1000) / 10 : 0;
   return (
@@ -137,6 +163,7 @@ function AdRow({ ad, metrics: m, t, onDelete }: { ad: any; metrics: Metrics; t: 
             <Badge variant={ad.status === "active" ? "default" : "secondary"}>
               {ad.status === "active" ? t.merchant.statusActive : ad.status === "paused" ? t.merchant.statusPaused : t.merchant.statusDraft}
             </Badge>
+            {expired && <Badge variant="destructive">Expired</Badge>}
             {ad.discount_pct && <Badge variant="outline">-{ad.discount_pct}%</Badge>}
           </div>
           {ad.ends_at && <p className="text-xs text-muted-foreground mt-1">{t.deals.validUntil}: {new Date(ad.ends_at).toLocaleDateString()}</p>}
