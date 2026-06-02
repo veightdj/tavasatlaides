@@ -224,18 +224,6 @@ function DealDetail() {
             </div>
           )}
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button onClick={() => { if (!saved) trackSave.mutate(); toggle(deal.id); }} variant={saved ? "default" : "outline"}>
-              <Heart className={`h-4 w-4 mr-2 ${saved ? "fill-current" : ""}`} />
-              {saved ? t.deals.saved : t.deals.save}
-            </Button>
-            <ShareMenu
-              title={deal.title}
-              discountPct={deal.discount_pct}
-              storeName={store?.name}
-              onShare={() => trackShare.mutate()}
-            />
-          </div>
 
           {/* Viral share & save card */}
           <ShareSaveCard
