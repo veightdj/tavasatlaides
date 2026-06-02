@@ -10,12 +10,12 @@ export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
       { title: "Deals map — TavasAtlaides" },
-      { name: "description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
+      { name: "description", content: "See all active local deals in Riga on an interactive map." },
       { property: "og:title", content: "Deals map — TavasAtlaides" },
-      { property: "og:description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
+      { property: "og:description", content: "See all active local deals in Riga on an interactive map." },
       { property: "og:url", content: "https://superatlaides.lovable.app/map" },
       { name: "twitter:title", content: "Deals map — TavasAtlaides" },
-      { name: "twitter:description", content: "See all active local deals in Riga & Jurmala on an interactive map." },
+      { name: "twitter:description", content: "See all active local deals in Riga on an interactive map." },
     ],
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/map" }],
   }),
@@ -26,7 +26,6 @@ declare global { interface Window { google: any; initDealsMap?: () => void } }
 
 const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
   Riga: { lat: 56.9496, lng: 24.1052 },
-  Jurmala: { lat: 56.968, lng: 23.7704 },
 };
 
 function escapeHtml(s: string): string {

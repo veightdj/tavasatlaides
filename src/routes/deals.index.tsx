@@ -38,12 +38,12 @@ export const Route = createFileRoute("/deals/")({
   head: () => ({
     meta: [
       { title: "All deals — TavasAtlaides" },
-      { name: "description", content: "Browse all active discounts in Riga and Jurmala by category, city or distance from you." },
+      { name: "description", content: "Browse all active discounts in Riga by category, city or distance from you." },
       { property: "og:title", content: "All deals — TavasAtlaides" },
-      { property: "og:description", content: "Browse all active discounts in Riga and Jurmala by category, city or distance from you." },
+      { property: "og:description", content: "Browse all active discounts in Riga by category, city or distance from you." },
       { property: "og:url", content: "https://superatlaides.lovable.app/deals" },
       { name: "twitter:title", content: "All deals — TavasAtlaides" },
-      { name: "twitter:description", content: "Browse all active discounts in Riga and Jurmala by category, city or distance from you." },
+      { name: "twitter:description", content: "Browse all active discounts in Riga by category, city or distance from you." },
     ],
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/deals" }],
   }),
