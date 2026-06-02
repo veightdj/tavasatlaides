@@ -26,6 +26,7 @@ declare global { interface Window { google: any; initDealsMap?: () => void } }
 
 const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
   Riga: { lat: 56.9496, lng: 24.1052 },
+  Jurmala: { lat: 56.9720, lng: 23.7893 },
 };
 
 function escapeHtml(s: string): string {
