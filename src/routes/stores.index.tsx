@@ -15,12 +15,12 @@ export const Route = createFileRoute("/stores/")({
   head: () => ({
     meta: [
       { title: "Stores — TavasAtlaides" },
-      { name: "description", content: "Browse local stores in Riga & Jurmala and see all their active deals." },
+      { name: "description", content: "Browse local stores in Riga and see all their active deals." },
       { property: "og:title", content: "Stores — TavasAtlaides" },
-      { property: "og:description", content: "Browse local stores in Riga & Jurmala and see all their active deals." },
+      { property: "og:description", content: "Browse local stores in Riga and see all their active deals." },
       { property: "og:url", content: "https://superatlaides.lovable.app/stores" },
       { name: "twitter:title", content: "Stores — TavasAtlaides" },
-      { name: "twitter:description", content: "Browse local stores in Riga & Jurmala and see all their active deals." },
+      { name: "twitter:description", content: "Browse local stores in Riga and see all their active deals." },
     ],
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/stores" }],
   }),

@@ -21,7 +21,7 @@ export const Route = createFileRoute("/categories/$slug")({
   head: ({ params }) => {
     const label = CATEGORY_LABEL[params.slug] ?? params.slug;
     const title = `${label} deals — TavasAtlaides`;
-    const desc = `Active ${label.toLowerCase()} discounts and promotions in Riga & Jurmala.`;
+    const desc = `Active ${label.toLowerCase()} discounts and promotions in Riga.`;
     const url = `https://superatlaides.lovable.app/categories/${params.slug}`;
     return {
       meta: [

@@ -11,7 +11,7 @@ export const CATEGORY_SLUGS = [
 
 export type CategorySlug = typeof CATEGORY_SLUGS[number];
 
-export const CITIES = ["Riga", "Jurmala"] as const;
+export const CITIES = ["Riga"] as const;
 export type City = typeof CITIES[number];
 
 export function slugify(input: string): string {
