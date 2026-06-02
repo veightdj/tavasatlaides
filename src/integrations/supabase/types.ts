@@ -112,6 +112,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_status_logs: {
+        Row: {
+          ad_id: string
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_status: string
+          old_status: string | null
+          reason: string | null
+        }
+        Insert: {
+          ad_id: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_status: string
+          old_status?: string | null
+          reason?: string | null
+        }
+        Update: {
+          ad_id?: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_status?: string
+          old_status?: string | null
+          reason?: string | null
+        }
+        Relationships: []
+      }
       ad_views: {
         Row: {
           ad_id: string
@@ -448,6 +478,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_outdated_ads: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
