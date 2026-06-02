@@ -31,6 +31,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdsIndexRouteImport } from './routes/_authenticated/ads.index'
 import { Route as AuthenticatedAdsNewRouteImport } from './routes/_authenticated/ads.new'
 import { Route as AuthenticatedAdsIdRouteImport } from './routes/_authenticated/ads.$id'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -141,6 +142,12 @@ const AuthenticatedAdsIdRoute = AuthenticatedAdsIdRouteImport.update({
   path: '/ads/$id',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/ads/$id': typeof AuthenticatedAdsIdRoute
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/ads/': typeof AuthenticatedAdsIndexRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -187,6 +195,7 @@ export interface FileRoutesByTo {
   '/ads/$id': typeof AuthenticatedAdsIdRoute
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/ads': typeof AuthenticatedAdsIndexRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -212,6 +221,7 @@ export interface FileRoutesById {
   '/_authenticated/ads/$id': typeof AuthenticatedAdsIdRoute
   '/_authenticated/ads/new': typeof AuthenticatedAdsNewRoute
   '/_authenticated/ads/': typeof AuthenticatedAdsIndexRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/ads/$id'
     | '/ads/new'
     | '/ads/'
+    | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/ads/$id'
     | '/ads/new'
     | '/ads'
+    | '/lovable/email/queue/process'
   id:
     | '__root__'
     | '/'
@@ -284,6 +296,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ads/$id'
     | '/_authenticated/ads/new'
     | '/_authenticated/ads/'
+    | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -304,6 +317,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -462,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdsIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -503,6 +524,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
