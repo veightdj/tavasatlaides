@@ -124,16 +124,17 @@ function AdsList() {
         </div>
       </div>
 
-      {ads.length === 0 ? (
+      {filteredAds.length === 0 ? (
         <div className="rounded-2xl border border-dashed p-12 text-center text-muted-foreground">
-          {t.merchant.noAds}
+          {ads.length === 0 ? t.merchant.noAds : "No ads match this filter."}
         </div>
       ) : (
         <div className="space-y-4">
-          {ads.map((ad) => (
+          {filteredAds.map((ad) => (
             <AdRow
               key={ad.id}
               ad={ad}
+              expired={isExpired(ad)}
               metrics={metrics?.[ad.id] ?? { views: 0, clicks: 0, saves: 0, shares: 0 }}
               t={t}
               onDelete={() => confirm(t.merchant.confirmDelete) && del.mutate(ad.id)}
