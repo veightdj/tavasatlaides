@@ -421,7 +421,7 @@ function ShareSaveCard({
     <div className="mt-6 rounded-2xl border border-primary/20 bg-gradient-to-br from-brand-soft/70 via-background to-background p-5 shadow-sm">
       <div className="flex items-start gap-3">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-          <Sparkles className="h-5 w-5" />
+          <Heart className="h-5 w-5" />
         </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold leading-tight">{t.deals.shareCardTitle}</h3>
