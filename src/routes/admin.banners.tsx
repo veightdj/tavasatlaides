@@ -141,11 +141,13 @@ function AdminBannersPage() {
   const handleUpload = async (file: File) => {
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop() || "jpg";
-      const path = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("banners").upload(path, file, {
-        cacheControl: "3600",
+      const { optimizeImageToWebP } = await import("@/lib/upload");
+      const optimized = await optimizeImageToWebP(file);
+      const path = `${crypto.randomUUID()}.webp`;
+      const { error } = await supabase.storage.from("banners").upload(path, optimized, {
+        cacheControl: "31536000",
         upsert: false,
+        contentType: "image/webp",
       });
       if (error) throw error;
       const { data } = supabase.storage.from("banners").getPublicUrl(path);
