@@ -163,6 +163,7 @@ function AdRow({ ad, expired, metrics: m, t, onDelete }: { ad: any; expired: boo
             <Badge variant={ad.status === "active" ? "default" : "secondary"}>
               {ad.status === "active" ? t.merchant.statusActive : ad.status === "paused" ? t.merchant.statusPaused : t.merchant.statusDraft}
             </Badge>
+            {expired && <Badge variant="destructive">Expired</Badge>}
             {ad.discount_pct && <Badge variant="outline">-{ad.discount_pct}%</Badge>}
           </div>
           {ad.ends_at && <p className="text-xs text-muted-foreground mt-1">{t.deals.validUntil}: {new Date(ad.ends_at).toLocaleDateString()}</p>}
