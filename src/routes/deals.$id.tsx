@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock, Link as LinkIcon, Send, Facebook, Smartphone, Check, Sparkles, Gift } from "lucide-react";
+import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock, Link as LinkIcon, Send, Facebook, Smartphone, Check, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
