@@ -33,7 +33,15 @@ export type Database = {
           id?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ad_clicks_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ad_images: {
         Row: {
@@ -86,7 +94,15 @@ export type Database = {
           id?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ad_saves_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ad_shares: {
         Row: {
@@ -110,7 +126,15 @@ export type Database = {
           id?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ad_shares_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ad_status_logs: {
         Row: {
@@ -140,7 +164,15 @@ export type Database = {
           old_status?: string | null
           reason?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ad_status_logs_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ad_views: {
         Row: {
@@ -297,7 +329,15 @@ export type Database = {
           sent_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notification_logs_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notification_preferences: {
         Row: {
@@ -384,7 +424,15 @@ export type Database = {
           store_id?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "store_shares_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stores: {
         Row: {
@@ -486,6 +534,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      prune_old_analytics: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin"

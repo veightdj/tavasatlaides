@@ -1,11 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { MapPin, Phone, Globe, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { StoreStatus, useStoreCardDecoration } from "@/components/StoreStatus";
 import { ShareMenu } from "@/components/ShareMenu";
+import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
+
+const PAGE_SIZE = 24;
 
 export const Route = createFileRoute("/stores/")({
   head: () => ({
@@ -52,25 +56,43 @@ type Ad = {
 function StoresIndex() {
   const { t } = useI18n();
 
-  const { data: stores = [], isLoading } = useQuery({
-    queryKey: ["stores-with-ads"],
-    queryFn: async () => {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: ["stores-paged"],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) => {
+      const page = pageParam as number;
+      const from = page * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
       const { data, error } = await supabase
         .from("stores")
         .select("id,name,slug,city,address,description,logo_url,cover_image_url,phone,website,hours_json")
-        .order("name");
+        .order("name")
+        .range(from, to);
       if (error) throw error;
       return (data ?? []) as Store[];
     },
+    getNextPageParam: (last, all) => (last.length < PAGE_SIZE ? undefined : all.length),
   });
 
+  const stores = useMemo(() => data?.pages.flat() ?? [], [data]);
+  const storeIds = useMemo(() => stores.map((s) => s.id), [stores]);
+
+  // Only fetch active ads for stores currently visible on the page
   const { data: adsByStore = {} } = useQuery({
-    queryKey: ["all-active-ads-by-store"],
+    queryKey: ["active-ads-for-stores", storeIds.join(",")],
+    enabled: storeIds.length > 0,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ads")
         .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,store_id")
         .eq("status", "active")
+        .in("store_id", storeIds)
         .order("created_at", { ascending: false });
       if (error) throw error;
       const grouped: Record<string, Ad[]> = {};
@@ -93,6 +115,19 @@ function StoresIndex() {
           <StoreSection key={s.id} store={s} ads={adsByStore[s.id] ?? []} seeAllLabel={t.home.seeAll} emptyLabel={t.deals.empty} />
         ))}
       </div>
+
+      {hasNextPage && (
+        <div className="mt-10 flex justify-center">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => fetchNextPage()}
+            disabled={isFetching}
+          >
+            {isFetching ? t.common.loading : "Load more"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

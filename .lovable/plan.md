@@ -1,41 +1,54 @@
-## Security findings to fix
+# Database performance optimization
 
-Two related RLS warnings on `ad_views`, `ad_clicks`, `ad_saves`, `ad_shares`, plus one informational supply-chain advisory.
+## Why not "full normalize"?
+A true restructure (lookup table for `category`, splitting `hours_json`, moving `cover_image_url` into `ad_images`) would force rewrites in 20+ components for a few KB of storage savings. Not worth it. The real performance wins are below.
 
-### 1. Bind engagement events to a user (ad_views/clicks/saves/shares)
+## What I'll do
 
-**Schema migration:**
-- Add nullable `user_id uuid` column to all four tables (nullable so anonymous visitors can still record views/clicks/shares; saves will require auth).
-- Default `user_id` to `auth.uid()` on insert.
-- Add indexes on `(ad_id)` and `(user_id)` for query performance.
+### 1. Indexes (biggest win, zero risk)
+Single migration adding indexes that match every hot query path:
 
-**Tighten RLS policies:**
-- INSERT policies: keep allowing inserts on active ads, but force `user_id = auth.uid()` when authenticated (via WITH CHECK), and allow NULL only for anonymous users.
-- For `ad_saves`: require authenticated user (no anonymous saves) and unique `(ad_id, user_id)` to prevent duplicate-save inflation.
-- SELECT policies: keep "store owner sees their ad metrics" as the only read path. Add an additional SELECT policy on `ad_saves` so users can see their own saves (needed for the favorites UI).
+- `ads (status, ends_at)` — public listing filter + auto-expire job
+- `ads (status, created_at desc)` — "newest" sort on /deals
+- `ads (status, discount_pct desc)` — "discount" sort
+- `ads (store_id)` — store→ads joins
+- `ads (category, status)` — category pages
+- `ad_images (ad_id, sort_order)`
+- `ad_views (ad_id, viewed_at)`, `ad_clicks (ad_id, created_at)`, `ad_saves (ad_id)`, `ad_shares (ad_id)`
+- `ad_status_logs (ad_id, created_at desc)`
+- `stores (slug)` UNIQUE, `stores (city, category)`, `stores (lat, lng)` for nearby
+- `banners (is_active, starts_at, ends_at, sort_order)`
+- `notification_logs (user_id, sent_at desc)`, `notification_logs (ad_id)`
 
-### 2. Realtime broadcast leakage
+### 2. Missing foreign keys
+Add FK constraints (CASCADE on delete) for: `ad_clicks.ad_id`, `ad_saves.ad_id`, `ad_shares.ad_id`, `ad_status_logs.ad_id`, `ad_views` already has one, `store_shares.store_id`, `notification_logs.ad_id`, `notification_logs.user_id`. This prevents orphan rows and lets Postgres optimize joins.
 
-The realtime channel policy is correct, but row payloads on the four engagement tables are still gated only by table SELECT RLS. Fix by:
-- Removing these four high-volume tables from the `supabase_realtime` publication (the dashboard/ads pages already use `postgres_changes` — we'll switch them to lightweight polling/invalidation on user action, since per-row broadcasts of competitor click data is the leak vector).
-- Alternative kept open: keep them on the publication but rely on the now-tightened SELECT policies (store-owner-only), since Supabase Realtime evaluates RLS per subscriber on row changes. I'll go with this alternative since the SELECT policies after step 1 already restrict reads to the owning store — no client change needed.
+### 3. Scheduled jobs (pg_cron)
+- **Hourly:** call `expire_outdated_ads()` — the function exists but isn't scheduled, so deals never auto-expire today.
+- **Daily at 03:00 UTC:** delete `ad_views`, `ad_clicks`, `ad_shares`, `notification_logs` older than 90 days. Aggregated counts on the deal cards keep working because they're computed live and small.
 
-### 3. Supply chain (informational)
+### 4. Pagination (frontend)
+Switch from `.limit(120)` / fetching-all to range-based pagination:
 
-`@cloudflare/vite-plugin` transitive `ws` advisory — build-tool only, no runtime exposure. Mark as acknowledged in security memory; upstream patch required.
+- **Admin `/_authenticated/ads`** — 25 per page, prev/next buttons, URL search params for `?page=`.
+- **Public `/deals`** — "Load more" infinite scroll, 24 per page, server-side filtering moved into the query (so search/category/city run in SQL, not on the full client list).
+- **Public `/stores`** — 24 per page, same pattern.
 
-## Code touch points
+Uses `range(from, to)` + `count: 'exact'` on the count query.
 
-- New migration: alter four tables, drop+recreate INSERT/SELECT policies, add unique index on `ad_saves(ad_id, user_id)`.
-- `src/lib/favorites.ts` / wherever saves are inserted: ensure authenticated before insert (saves now require auth).
-- No change needed for `ad_views`/`ad_clicks`/`ad_shares` insert call sites — `user_id` defaults to `auth.uid()` or NULL for anonymous.
-- Update security memory documenting the access model and the accepted `ws` advisory.
-- Mark the three findings via `manage_security_finding` once migration is applied.
+### 5. Storage cleanup
+- Add a partial index `ads (ends_at) WHERE status = 'active'` so the hourly expire scan is O(log n).
+- The text fields (`cover_image_url`, `description`) stay — they're small and moving them adds joins.
 
-## Open question
+## What I'm explicitly NOT doing
+- Not splitting `hours_json` into a `store_hours` table — JSONB is fast, and the editor reads/writes it as a unit.
+- Not creating a `categories` table — slug-based text is already efficient and changing it touches CategoryCircles, every list page, and i18n keys.
+- Not moving `cover_image_url` into `ad_images` — saves no real storage and breaks every card render.
 
-Saves currently appear to work for anonymous users (the favorites list lives in localStorage). Do you want me to:
-- **A)** Keep `ad_saves` insertable by anonymous users too (just bind to `auth.uid()` when present), or
-- **B)** Require login to save a deal (cleaner, prevents click-fraud-style metric inflation)?
+## Order of execution
+1. Migration: indexes + FKs (you approve)
+2. Migration: pg_cron schedules (you approve)
+3. Code edits: pagination on the three lists
+4. Verify build, then publish
 
-I'll proceed with **A** by default unless you say otherwise.
+Ready to start with step 1?
