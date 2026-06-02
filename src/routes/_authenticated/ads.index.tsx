@@ -7,7 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
+
+type StatusFilter = "all" | "active" | "draft" | "expired";
+const isExpired = (ad: any) => !!ad.ends_at && new Date(ad.ends_at).getTime() <= Date.now();
 
 export const Route = createFileRoute("/_authenticated/ads/")({
   component: AdsList,
