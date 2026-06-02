@@ -146,7 +146,7 @@ function AdsList() {
   );
 }
 
-function AdRow({ ad, metrics: m, t, onDelete }: { ad: any; metrics: Metrics; t: any; onDelete: () => void }) {
+function AdRow({ ad, expired, metrics: m, t, onDelete }: { ad: any; expired: boolean; metrics: Metrics; t: any; onDelete: () => void }) {
   const [open, setOpen] = useState(false);
   const ctr = m.views > 0 ? Math.round((m.clicks / m.views) * 1000) / 10 : 0;
   return (
