@@ -53,8 +53,8 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 gap-2">
         <Link to="/" className="flex items-center gap-2 min-w-0" onClick={() => setOpen(false)}>
-          <img src={logoUrl} alt={t.appName} className="h-9 w-9 shrink-0 rounded-xl object-cover" />
-          <span className="text-lg font-bold tracking-tight truncate">{t.appName}</span>
+          <img src={logoUrl} alt={t.appName} className="block h-9 w-9 shrink-0 rounded-xl object-cover" />
+          <span className="text-lg font-bold tracking-tight truncate leading-none">{t.appName}</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">{navLinks}</nav>
