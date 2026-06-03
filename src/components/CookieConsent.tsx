@@ -45,8 +45,7 @@ export function CookieConsent() {
 
   const choose = (choice: CookieChoice) => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, choice);
-      window.dispatchEvent(new CustomEvent("cookie-consent-change", { detail: choice }));
+      setConsent(choice);
     } catch {}
     setVisible(false);
   };
