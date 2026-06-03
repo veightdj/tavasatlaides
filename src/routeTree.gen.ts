@@ -17,6 +17,7 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -75,6 +76,11 @@ const ForMerchantsRoute = ForMerchantsRouteImport.update({
 const FavoritesRoute = FavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiePolicyRoute = CookiePolicyRouteImport.update({
+  id: '/cookie-policy',
+  path: '/cookie-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -176,6 +182,7 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/cookie-policy'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/cookie-policy'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/cookie-policy'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -351,6 +363,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  CookiePolicyRoute: typeof CookiePolicyRoute
   FavoritesRoute: typeof FavoritesRoute
   ForMerchantsRoute: typeof ForMerchantsRoute
   LoginRoute: typeof LoginRoute
@@ -428,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/favorites'
       fullPath: '/favorites'
       preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookie-policy': {
+      id: '/cookie-policy'
+      path: '/cookie-policy'
+      fullPath: '/cookie-policy'
+      preLoaderRoute: typeof CookiePolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -590,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  CookiePolicyRoute: CookiePolicyRoute,
   FavoritesRoute: FavoritesRoute,
   ForMerchantsRoute: ForMerchantsRoute,
   LoginRoute: LoginRoute,
@@ -613,13 +634,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
