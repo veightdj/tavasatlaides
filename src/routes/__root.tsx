@@ -54,7 +54,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-      { name: "apple-mobile-web-app-title", content: "Atlaides" },
+      { name: "apple-mobile-web-app-title", content: "TavasAtlaides" },
       { name: "application-name", content: "Tavas Atlaides" },
       { property: "og:site_name", content: "TavasAtlaides" },
       { property: "og:type", content: "website" },
