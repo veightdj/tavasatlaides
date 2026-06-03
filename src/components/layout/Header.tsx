@@ -166,6 +166,8 @@ export function Footer() {
         <div className="flex gap-6">
           <Link to="/about" className="hover:text-foreground">{t.nav.about}</Link>
           <Link to="/for-merchants" className="hover:text-foreground">{t.nav.forMerchants}</Link>
+          <Link to="/privacy" className="hover:text-foreground">{t.nav.privacy}</Link>
+          <Link to="/terms" className="hover:text-foreground">{t.nav.terms}</Link>
         </div>
       </div>
     </footer>
