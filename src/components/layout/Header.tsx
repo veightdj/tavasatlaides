@@ -168,6 +168,7 @@ export function Footer() {
           <Link to="/for-merchants" className="hover:text-foreground">{t.nav.forMerchants}</Link>
           <Link to="/privacy" className="hover:text-foreground">{t.nav.privacy}</Link>
           <Link to="/terms" className="hover:text-foreground">{t.nav.terms}</Link>
+          <Link to="/cookie-policy" className="hover:text-foreground">{t.nav.cookies}</Link>
         </div>
       </div>
     </footer>

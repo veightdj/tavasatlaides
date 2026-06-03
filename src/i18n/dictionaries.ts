@@ -89,7 +89,7 @@ export const dict = {
   en: {
     appName: "TavasAtlaides",
     tagline: "Local store deals & discounts",
-    nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants", privacy: "Privacy", terms: "Terms" },
+    nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants", privacy: "Privacy", terms: "Terms", cookies: "Cookies" },
     cta: { browse: "Browse deals", postAd: "Post a deal", signIn: "Sign in", signUp: "Sign up", signOut: "Sign out", dashboard: "My store" },
     city: { all: "All cities", jurmala: "Jurmala", riga: "Riga" },
     home: {
@@ -168,7 +168,7 @@ export const dict = {
   ru: {
     appName: "TavasAtlaides",
     tagline: "Скидки и акции местных магазинов",
-    nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам", privacy: "Конфиденциальность", terms: "Условия" },
+    nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам", privacy: "Конфиденциальность", terms: "Условия", cookies: "Cookies" },
     cta: { browse: "Смотреть акции", postAd: "Разместить", signIn: "Войти", signUp: "Регистрация", signOut: "Выйти", dashboard: "Мой магазин" },
     city: { all: "Все города", jurmala: "Юрмала", riga: "Рига" },
     home: {
