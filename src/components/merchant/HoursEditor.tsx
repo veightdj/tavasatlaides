@@ -23,10 +23,10 @@ export function HoursEditor({ value, onChange }: Props) {
   };
 
   return (
-    <div className="space-y-2 rounded-xl border bg-card p-3">
-      <div className="flex items-center justify-between">
+    <div className="space-y-3 rounded-xl border bg-card p-3 md:p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm font-medium">Working hours</p>
-        <Button type="button" variant="ghost" size="sm" onClick={applyWeekdays} className="h-8 text-xs">
+        <Button type="button" variant="ghost" size="sm" onClick={applyWeekdays} className="h-8 text-xs self-start sm:self-auto">
           Copy Mon → Tue–Fri
         </Button>
       </div>
@@ -34,7 +34,10 @@ export function HoursEditor({ value, onChange }: Props) {
         {DAYS.map((d) => {
           const day = hours[d];
           return (
-            <div key={d} className="grid grid-cols-[64px_auto_1fr_auto_1fr] items-center gap-2">
+            <div
+              key={d}
+              className="flex flex-col gap-2 rounded-lg border border-border/50 p-2 sm:grid sm:grid-cols-[64px_auto_1fr_auto_1fr] sm:items-center sm:gap-2 sm:border-0 sm:p-0"
+            >
               <span className="text-sm font-medium">{DAY_LABELS[d]}</span>
               <div className="flex items-center gap-2">
                 <Switch
@@ -49,15 +52,16 @@ export function HoursEditor({ value, onChange }: Props) {
                 value={day.open}
                 onChange={(e) => setDay(d, { open: e.target.value })}
                 disabled={day.closed}
-                className="h-9"
+                className="h-9 w-full"
               />
-              <span className="text-muted-foreground text-xs">to</span>
+              <span className="text-muted-foreground text-xs hidden sm:block">to</span>
+              <span className="text-muted-foreground text-xs sm:hidden">→</span>
               <Input
                 type="time"
                 value={day.close}
                 onChange={(e) => setDay(d, { close: e.target.value })}
                 disabled={day.closed}
-                className="h-9"
+                className="h-9 w-full"
               />
             </div>
           );
@@ -66,3 +70,4 @@ export function HoursEditor({ value, onChange }: Props) {
     </div>
   );
 }
+
