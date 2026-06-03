@@ -150,6 +150,7 @@ function RootComponent() {
           <Footer />
         </div>
         <Toaster position="top-right" richColors />
+        <CookieConsent />
       </I18nProvider>
     </QueryClientProvider>
   );
