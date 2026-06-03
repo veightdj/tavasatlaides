@@ -14,6 +14,7 @@ import { Header, Footer } from "@/components/layout/Header";
 import { I18nProvider } from "@/i18n/use-i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/CookieConsent";
+import { AnalyticsLoader } from "@/components/AnalyticsLoader";
 import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
