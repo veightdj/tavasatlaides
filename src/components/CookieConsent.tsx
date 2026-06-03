@@ -2,16 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/i18n/use-i18n";
 import { Button } from "@/components/ui/button";
+import { getConsent, setConsent, type ConsentChoice } from "@/lib/consent";
 
-const STORAGE_KEY = "tavasatlaides.cookie-consent";
-
-export type CookieChoice = "accepted" | "rejected";
-
-export function getCookieConsent(): CookieChoice | null {
-  if (typeof window === "undefined") return null;
-  const v = window.localStorage.getItem(STORAGE_KEY);
-  return v === "accepted" || v === "rejected" ? v : null;
-}
+export type CookieChoice = ConsentChoice;
+export const getCookieConsent = getConsent;
 
 const copy = {
   lv: {
