@@ -152,6 +152,7 @@ function RootComponent() {
         </div>
         <Toaster position="top-right" richColors />
         <CookieConsent />
+        <AnalyticsLoader />
       </I18nProvider>
     </QueryClientProvider>
   );
