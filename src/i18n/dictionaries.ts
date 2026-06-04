@@ -168,7 +168,7 @@ export const dict = {
   ru: {
     appName: "TavasAtlaides",
     tagline: "Скидки и акции местных магазинов",
-    nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам", privacy: "Конфиденциальность", terms: "Условия", cookies: "Cookies" },
+    nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам", privacy: "Конфиденциальность", terms: "Условия", cookies: "Cookies", deleteAccount: "Удаление аккаунта", settings: "Настройки" },
     cta: { browse: "Смотреть акции", postAd: "Разместить", signIn: "Войти", signUp: "Регистрация", signOut: "Выйти", dashboard: "Мой магазин" },
     city: { all: "Все города", jurmala: "Юрмала", riga: "Рига" },
     home: {
