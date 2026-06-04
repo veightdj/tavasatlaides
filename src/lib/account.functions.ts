@@ -18,16 +18,10 @@ export const deactivateAccount = createServerFn({ method: "POST" })
       .eq("id", userId);
     if (upErr) throw new Error(upErr.message);
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // Revoke all refresh tokens => signs user out everywhere.
-    await supabaseAdmin.auth.admin.signOut(
-      // we don't have the JWT here, but admin API also exposes `updateUserById` with `app_metadata`
-      // — easiest portable approach: use admin to revoke via deleteFactor not available; fall back to updateUserById to bump password change time isn't ideal.
-      // Use the auth API's user JWT-based signOut by fetching a one-shot JWT via admin generateLink is overkill.
-      // The cleanest supported call is: supabaseAdmin.auth.admin.signOut(userId, 'global') — supabase-js v2 accepts a userId.
-      userId as unknown as string,
-      "global",
-    ).catch(() => {/* ignore — client will also sign out locally */});
+    // The middleware client is authenticated as the user, so a global
+    // signOut invalidates every refresh token for this user.
+    await supabase.auth.signOut({ scope: "global" }).catch(() => {});
 
     return { ok: true };
   });
