@@ -142,6 +142,7 @@ export function Header() {
               {user ? (
                 <div className="flex flex-col gap-2 pt-2">
                   <Button asChild variant="outline" className="min-h-11" onClick={() => setOpen(false)}><Link to="/dashboard">{t.merchant.dashboard}</Link></Button>
+                  <Button asChild variant="ghost" className="min-h-11" onClick={() => setOpen(false)}><Link to="/settings">{t.nav.settings}</Link></Button>
                   <Button variant="ghost" className="min-h-11" onClick={() => { setOpen(false); signOut(); }}>{t.cta.signOut}</Button>
                 </div>
               ) : (
