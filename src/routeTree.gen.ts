@@ -17,6 +17,7 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -30,6 +31,7 @@ import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdsIndexRouteImport } from './routes/_authenticated/ads.index'
 import { Route as AuthenticatedAdsNewRouteImport } from './routes/_authenticated/ads.new'
@@ -76,6 +78,11 @@ const ForMerchantsRoute = ForMerchantsRouteImport.update({
 const FavoritesRoute = FavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeleteAccountRoute = DeleteAccountRouteImport.update({
+  id: '/delete-account',
+  path: '/delete-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CookiePolicyRoute = CookiePolicyRouteImport.update({
@@ -142,6 +149,11 @@ const AuthenticatedStoreRoute = AuthenticatedStoreRouteImport.update({
   path: '/store',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -183,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/cookie-policy': typeof CookiePolicyRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -192,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -212,6 +226,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/cookie-policy': typeof CookiePolicyRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -221,6 +236,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -243,6 +259,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
   '/cookie-policy': typeof CookiePolicyRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -252,6 +269,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -274,6 +292,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/cookie-policy'
+    | '/delete-account'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -283,6 +302,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/dashboard'
+    | '/settings'
     | '/store'
     | '/admin/banners'
     | '/categories/$slug'
@@ -303,6 +323,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/cookie-policy'
+    | '/delete-account'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -312,6 +333,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/dashboard'
+    | '/settings'
     | '/store'
     | '/admin/banners'
     | '/categories/$slug'
@@ -333,6 +355,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/cookie-policy'
+    | '/delete-account'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -342,6 +365,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/_authenticated/dashboard'
+    | '/_authenticated/settings'
     | '/_authenticated/store'
     | '/admin/banners'
     | '/categories/$slug'
@@ -364,6 +388,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
   CookiePolicyRoute: typeof CookiePolicyRoute
+  DeleteAccountRoute: typeof DeleteAccountRoute
   FavoritesRoute: typeof FavoritesRoute
   ForMerchantsRoute: typeof ForMerchantsRoute
   LoginRoute: typeof LoginRoute
@@ -441,6 +466,13 @@ declare module '@tanstack/react-router' {
       path: '/favorites'
       fullPath: '/favorites'
       preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delete-account': {
+      id: '/delete-account'
+      path: '/delete-account'
+      fullPath: '/delete-account'
+      preLoaderRoute: typeof DeleteAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cookie-policy': {
@@ -534,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -588,6 +627,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStoreRoute: typeof AuthenticatedStoreRoute
   AuthenticatedAdsIdRoute: typeof AuthenticatedAdsIdRoute
   AuthenticatedAdsNewRoute: typeof AuthenticatedAdsNewRoute
@@ -596,6 +636,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStoreRoute: AuthenticatedStoreRoute,
   AuthenticatedAdsIdRoute: AuthenticatedAdsIdRoute,
   AuthenticatedAdsNewRoute: AuthenticatedAdsNewRoute,
@@ -611,6 +652,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
   CookiePolicyRoute: CookiePolicyRoute,
+  DeleteAccountRoute: DeleteAccountRoute,
   FavoritesRoute: FavoritesRoute,
   ForMerchantsRoute: ForMerchantsRoute,
   LoginRoute: LoginRoute,
@@ -634,3 +676,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
