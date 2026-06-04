@@ -171,6 +171,7 @@ export function Footer() {
           <Link to="/privacy" className="hover:text-foreground">{t.nav.privacy}</Link>
           <Link to="/terms" className="hover:text-foreground">{t.nav.terms}</Link>
           <Link to="/cookie-policy" className="hover:text-foreground">{t.nav.cookies}</Link>
+          <Link to="/delete-account" className="hover:text-foreground">{t.nav.deleteAccount}</Link>
         </div>
       </div>
     </footer>
