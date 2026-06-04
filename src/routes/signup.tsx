@@ -6,6 +6,7 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useI18n } from "@/i18n/use-i18n";
 import { AuthShell, Divider, GoogleIcon } from "./login";
 
@@ -30,19 +31,25 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!accepted) return toast.error(t.auth.agreeRequired);
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const acceptedAt = new Date().toISOString();
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: window.location.origin + "/dashboard",
-        data: { full_name: fullName },
+        data: { full_name: fullName, terms_accepted_at: acceptedAt },
       },
     });
+    if (!error && data.user) {
+      await supabase.from("profiles").update({ terms_accepted_at: acceptedAt }).eq("id", data.user.id);
+    }
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Check your email to confirm your account.");
@@ -76,7 +83,16 @@ function SignupPage() {
           <Label htmlFor="password">{t.auth.password}</Label>
           <Input id="password" type="password" minLength={6} required value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>{t.auth.signUp}</Button>
+        <div className="flex items-start gap-2 pt-1">
+          <Checkbox id="terms" checked={accepted} onCheckedChange={(v) => setAccepted(v === true)} className="mt-0.5" />
+          <Label htmlFor="terms" className="text-sm font-normal leading-snug text-muted-foreground cursor-pointer">
+            {t.auth.agreePrefix}{" "}
+            <Link to="/terms" target="_blank" className="text-primary font-medium hover:underline">{t.auth.agreeTerms}</Link>
+            {" "}{t.auth.agreeAnd}{" "}
+            <Link to="/privacy" target="_blank" className="text-primary font-medium hover:underline">{t.auth.agreePrivacy}</Link>
+          </Label>
+        </div>
+        <Button type="submit" className="w-full" disabled={loading || !accepted}>{t.auth.signUp}</Button>
       </form>
       <p className="text-sm text-center text-muted-foreground">
         {t.auth.haveAccount} <Link to="/login" className="text-primary font-medium hover:underline">{t.auth.signIn}</Link>

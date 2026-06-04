@@ -67,7 +67,7 @@ export const dict = {
       radius10: "10 km robežās",
     },
     cat: { all: "Visas", food: "Ēdiens", auto: "Auto", beauty: "Skaistums", electronics: "Elektronika", home: "Mājai", kids: "Bērniem", cafes: "Kafejnīcas", events: "Notikumi" },
-    auth: { email: "E-pasts", password: "Parole", fullName: "Vārds, uzvārds", signIn: "Ienākt", signUp: "Reģistrēties", continueGoogle: "Turpināt ar Google", or: "vai", haveAccount: "Jau ir konts?", noAccount: "Nav konta?", forgot: "Aizmirsi paroli?" },
+    auth: { email: "E-pasts", password: "Parole", fullName: "Vārds, uzvārds", signIn: "Ienākt", signUp: "Reģistrēties", continueGoogle: "Turpināt ar Google", or: "vai", haveAccount: "Jau ir konts?", noAccount: "Nav konta?", forgot: "Aizmirsi paroli?", agreePrefix: "Piekrītu", agreeTerms: "Noteikumiem", agreeAnd: "un", agreePrivacy: "Privātuma politikai", agreeRequired: "Lai turpinātu, jāpiekrīt Noteikumiem un Privātuma politikai." },
     merchant: {
       dashboard: "Pārskats", store: "Veikala profils", ads: "Sludinājumi", newAd: "Jauns sludinājums", logout: "Iziet",
       welcome: "Sveiks!", setupStore: "Iestati savu veikalu", setupStoreSub: "Pirms ievietot piedāvājumus, izveido sava veikala profilu.",
@@ -146,7 +146,7 @@ export const dict = {
       radius10: "Within 10 km",
     },
     cat: { all: "All", food: "Food", auto: "Auto", beauty: "Beauty", electronics: "Electronics", home: "Home", kids: "Kids", cafes: "Cafes", events: "Events" },
-    auth: { email: "Email", password: "Password", fullName: "Full name", signIn: "Sign in", signUp: "Sign up", continueGoogle: "Continue with Google", or: "or", haveAccount: "Already have an account?", noAccount: "No account?", forgot: "Forgot password?" },
+    auth: { email: "Email", password: "Password", fullName: "Full name", signIn: "Sign in", signUp: "Sign up", continueGoogle: "Continue with Google", or: "or", haveAccount: "Already have an account?", noAccount: "No account?", forgot: "Forgot password?", agreePrefix: "I agree to the", agreeTerms: "Terms and Conditions", agreeAnd: "and", agreePrivacy: "Privacy Policy", agreeRequired: "You must accept the Terms and Conditions to continue." },
     merchant: {
       dashboard: "Overview", store: "Store profile", ads: "Ads", newAd: "New ad", logout: "Sign out",
       welcome: "Welcome!", setupStore: "Set up your store", setupStoreSub: "Before posting deals, create your store profile.",
@@ -225,7 +225,7 @@ export const dict = {
       radius10: "В пределах 10 км",
     },
     cat: { all: "Все", food: "Еда", auto: "Авто", beauty: "Красота", electronics: "Электроника", home: "Для дома", kids: "Детям", cafes: "Кафе", events: "События" },
-    auth: { email: "Эл. почта", password: "Пароль", fullName: "Имя", signIn: "Войти", signUp: "Регистрация", continueGoogle: "Войти через Google", or: "или", haveAccount: "Уже есть аккаунт?", noAccount: "Нет аккаунта?", forgot: "Забыли пароль?" },
+    auth: { email: "Эл. почта", password: "Пароль", fullName: "Имя", signIn: "Войти", signUp: "Регистрация", continueGoogle: "Войти через Google", or: "или", haveAccount: "Уже есть аккаунт?", noAccount: "Нет аккаунта?", forgot: "Забыли пароль?", agreePrefix: "Я согласен с", agreeTerms: "Условиями", agreeAnd: "и", agreePrivacy: "Политикой конфиденциальности", agreeRequired: "Необходимо принять Условия, чтобы продолжить." },
     merchant: {
       dashboard: "Обзор", store: "Профиль магазина", ads: "Объявления", newAd: "Новое", logout: "Выйти",
       welcome: "Добро пожаловать!", setupStore: "Настройте магазин", setupStoreSub: "Перед публикацией акций создайте профиль магазина.",
