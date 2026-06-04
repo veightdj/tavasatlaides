@@ -146,7 +146,7 @@ export const dict = {
       radius10: "Within 10 km",
     },
     cat: { all: "All", food: "Food", auto: "Auto", beauty: "Beauty", electronics: "Electronics", home: "Home", kids: "Kids", cafes: "Cafes", events: "Events" },
-    auth: { email: "Email", password: "Password", fullName: "Full name", signIn: "Sign in", signUp: "Sign up", continueGoogle: "Continue with Google", or: "or", haveAccount: "Already have an account?", noAccount: "No account?", forgot: "Forgot password?" },
+    auth: { email: "Email", password: "Password", fullName: "Full name", signIn: "Sign in", signUp: "Sign up", continueGoogle: "Continue with Google", or: "or", haveAccount: "Already have an account?", noAccount: "No account?", forgot: "Forgot password?", agreePrefix: "I agree to the", agreeTerms: "Terms and Conditions", agreeAnd: "and", agreePrivacy: "Privacy Policy", agreeRequired: "You must accept the Terms and Conditions to continue." },
     merchant: {
       dashboard: "Overview", store: "Store profile", ads: "Ads", newAd: "New ad", logout: "Sign out",
       welcome: "Welcome!", setupStore: "Set up your store", setupStoreSub: "Before posting deals, create your store profile.",
