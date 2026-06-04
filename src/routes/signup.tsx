@@ -31,19 +31,25 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!accepted) return toast.error(t.auth.agreeRequired);
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const acceptedAt = new Date().toISOString();
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: window.location.origin + "/dashboard",
-        data: { full_name: fullName },
+        data: { full_name: fullName, terms_accepted_at: acceptedAt },
       },
     });
+    if (!error && data.user) {
+      await supabase.from("profiles").update({ terms_accepted_at: acceptedAt }).eq("id", data.user.id);
+    }
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Check your email to confirm your account.");
