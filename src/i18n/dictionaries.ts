@@ -10,7 +10,7 @@ export const dict = {
   lv: {
     appName: "TavasAtlaides",
     tagline: "Atlaides un piedāvājumi tuvākajos veikalos",
-    nav: { deals: "Piedāvājumi", stores: "Veikali", map: "Karte", favorites: "Saglabātie", about: "Par mums", forMerchants: "Veikaliem", privacy: "Privātums", terms: "Noteikumi", cookies: "Sīkdatnes" },
+    nav: { deals: "Piedāvājumi", stores: "Veikali", map: "Karte", favorites: "Saglabātie", about: "Par mums", forMerchants: "Veikaliem", privacy: "Privātums", terms: "Noteikumi", cookies: "Sīkdatnes", deleteAccount: "Konta dzēšana", settings: "Iestatījumi" },
     cta: { browse: "Skatīt piedāvājumus", postAd: "Ievietot sludinājumu", signIn: "Ienākt", signUp: "Reģistrēties", signOut: "Iziet", dashboard: "Mans veikals" },
     city: { all: "Visas pilsētas", jurmala: "Jūrmala", riga: "Rīga" },
     home: {
