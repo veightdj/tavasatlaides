@@ -83,7 +83,16 @@ function SignupPage() {
           <Label htmlFor="password">{t.auth.password}</Label>
           <Input id="password" type="password" minLength={6} required value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>{t.auth.signUp}</Button>
+        <div className="flex items-start gap-2 pt-1">
+          <Checkbox id="terms" checked={accepted} onCheckedChange={(v) => setAccepted(v === true)} className="mt-0.5" />
+          <Label htmlFor="terms" className="text-sm font-normal leading-snug text-muted-foreground cursor-pointer">
+            {t.auth.agreePrefix}{" "}
+            <Link to="/terms" target="_blank" className="text-primary font-medium hover:underline">{t.auth.agreeTerms}</Link>
+            {" "}{t.auth.agreeAnd}{" "}
+            <Link to="/privacy" target="_blank" className="text-primary font-medium hover:underline">{t.auth.agreePrivacy}</Link>
+          </Label>
+        </div>
+        <Button type="submit" className="w-full" disabled={loading || !accepted}>{t.auth.signUp}</Button>
       </form>
       <p className="text-sm text-center text-muted-foreground">
         {t.auth.haveAccount} <Link to="/login" className="text-primary font-medium hover:underline">{t.auth.signIn}</Link>
