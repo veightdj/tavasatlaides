@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletion_log: {
+        Row: {
+          deleted_at: string
+          email: string | null
+          id: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          deleted_at?: string
+          email?: string | null
+          id?: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          deleted_at?: string
+          email?: string | null
+          id?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ad_clicks: {
         Row: {
           ad_id: string
@@ -471,6 +495,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          status: string
           updated_at: string
         }
         Insert: {
@@ -478,6 +503,7 @@ export type Database = {
           full_name?: string | null
           id: string
           phone?: string | null
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -485,6 +511,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          status?: string
           updated_at?: string
         }
         Relationships: []

@@ -80,6 +80,7 @@ export function Header() {
                 <DropdownMenuItem asChild><Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/ads">{t.merchant.ads}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/store">{t.merchant.store}</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/settings">{t.nav.settings}</Link></DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
               </DropdownMenuContent>
@@ -141,6 +142,7 @@ export function Header() {
               {user ? (
                 <div className="flex flex-col gap-2 pt-2">
                   <Button asChild variant="outline" className="min-h-11" onClick={() => setOpen(false)}><Link to="/dashboard">{t.merchant.dashboard}</Link></Button>
+                  <Button asChild variant="ghost" className="min-h-11" onClick={() => setOpen(false)}><Link to="/settings">{t.nav.settings}</Link></Button>
                   <Button variant="ghost" className="min-h-11" onClick={() => { setOpen(false); signOut(); }}>{t.cta.signOut}</Button>
                 </div>
               ) : (
@@ -169,6 +171,7 @@ export function Footer() {
           <Link to="/privacy" className="hover:text-foreground">{t.nav.privacy}</Link>
           <Link to="/terms" className="hover:text-foreground">{t.nav.terms}</Link>
           <Link to="/cookie-policy" className="hover:text-foreground">{t.nav.cookies}</Link>
+          <Link to="/delete-account" className="hover:text-foreground">{t.nav.deleteAccount}</Link>
         </div>
       </div>
     </footer>
