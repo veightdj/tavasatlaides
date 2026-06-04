@@ -80,6 +80,7 @@ export function Header() {
                 <DropdownMenuItem asChild><Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/ads">{t.merchant.ads}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/store">{t.merchant.store}</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/settings">{t.nav.settings}</Link></DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
               </DropdownMenuContent>
