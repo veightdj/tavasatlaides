@@ -172,7 +172,7 @@ export function Footer() {
               <span className="text-base font-bold tracking-tight">{t.appName}</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">
-              {t.tagline ?? ""}
+              {t.appName}
             </p>
           </div>
 
