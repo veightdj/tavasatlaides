@@ -161,17 +161,41 @@ export function Header() {
 
 export function Footer() {
   const { t } = useI18n();
+  const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-border/60 bg-muted/30 mt-16">
-      <div className="mx-auto max-w-6xl px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-        <span>© {new Date().getFullYear()} {t.appName}</span>
-        <div className="flex gap-6">
-          <Link to="/about" className="hover:text-foreground">{t.nav.about}</Link>
-          <Link to="/for-merchants" className="hover:text-foreground">{t.nav.forMerchants}</Link>
-          <Link to="/privacy" className="hover:text-foreground">{t.nav.privacy}</Link>
-          <Link to="/terms" className="hover:text-foreground">{t.nav.terms}</Link>
-          <Link to="/cookie-policy" className="hover:text-foreground">{t.nav.cookies}</Link>
-          <Link to="/delete-account" className="hover:text-foreground">{t.nav.deleteAccount}</Link>
+    <footer className="border-t border-border/60 bg-muted/30 mt-16 pb-[env(safe-area-inset-bottom)]">
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.2fr_1fr_1fr] gap-8 md:gap-12">
+          <div className="space-y-3">
+            <Link to="/" className="flex items-center gap-2">
+              <img src={logoUrl} alt={t.appName} className="h-9 w-9 rounded-xl object-cover" />
+              <span className="text-base font-bold tracking-tight">{t.appName}</span>
+            </Link>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              {t.tagline}
+            </p>
+          </div>
+
+          <nav aria-label={t.nav.about} className="flex flex-col gap-2 text-sm">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-1">
+              {t.appName}
+            </h3>
+            <Link to="/about" className="text-muted-foreground hover:text-foreground transition">{t.nav.about}</Link>
+            <Link to="/for-merchants" className="text-muted-foreground hover:text-foreground transition">{t.nav.forMerchants}</Link>
+          </nav>
+
+          <nav aria-label={t.nav.privacy} className="flex flex-col gap-2 text-sm">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-1">
+              {t.nav.privacy}
+            </h3>
+            <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition">{t.nav.privacy}</Link>
+            <Link to="/terms" className="text-muted-foreground hover:text-foreground transition">{t.nav.terms}</Link>
+            <Link to="/cookie-policy" className="text-muted-foreground hover:text-foreground transition">{t.nav.cookies}</Link>
+          </nav>
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-muted-foreground">
+          <span>© {year} {t.appName}. All rights reserved.</span>
         </div>
       </div>
     </footer>
