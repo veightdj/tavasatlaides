@@ -76,8 +76,8 @@ function SettingsPage() {
         {/* Deactivate */}
         <div className="rounded-2xl border p-5 space-y-3 bg-card">
           <div className="flex items-start gap-3">
-            <ShieldOff className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" />
-            <div className="flex-1 space-y-1">
+            <ShieldOff className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <div className="flex-1 space-y-1 min-w-0">
               <h3 className="font-semibold">Deaktivizēt kontu</h3>
               <p className="text-sm text-muted-foreground">
                 Īslaicīgi atslēdz kontu. Tevi izrakstīs no visām ierīcēm,
@@ -87,17 +87,32 @@ function SettingsPage() {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button variant="outline" onClick={() => setDeactivateOpen(true)}>
+            <Button variant="outline" className="w-full sm:w-auto min-h-11" onClick={() => setDeactivateOpen(true)}>
               Deaktivizēt
             </Button>
           </div>
         </div>
+      </section>
 
-        {/* Delete (red) */}
-        <div className="rounded-2xl border border-destructive/40 p-5 space-y-3 bg-destructive/5">
+      {/* Danger Zone */}
+      <section aria-labelledby="danger-zone-heading" className="space-y-4">
+        <div className="space-y-1">
+          <h2
+            id="danger-zone-heading"
+            className="text-xl font-semibold text-destructive flex items-center gap-2"
+          >
+            <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+            Bīstamā zona
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Šīs darbības ir neatgriezeniskas. Lūdzu, rīkojies uzmanīgi.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border-2 border-destructive/40 p-5 space-y-3 bg-destructive/5">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 mt-1 shrink-0 text-destructive" />
-            <div className="flex-1 space-y-1">
+            <Trash2 className="h-5 w-5 mt-1 shrink-0 text-destructive" aria-hidden="true" />
+            <div className="flex-1 space-y-1 min-w-0">
               <h3 className="font-semibold text-destructive">Dzēst kontu neatgriezeniski</h3>
               <p className="text-sm text-muted-foreground">
                 Visi tavi personas dati tiks pilnībā izdzēsti: profils,
@@ -105,7 +120,7 @@ function SettingsPage() {
                 aktivitātes vēsture un piekļuves konts. Šo darbību nevar atsaukt.
               </p>
               <p className="text-sm">
-                <Link to="/delete-account" className="underline">
+                <Link to="/delete-account" className="underline underline-offset-2">
                   Sīkāk par konta dzēšanu
                 </Link>
               </p>
@@ -114,9 +129,10 @@ function SettingsPage() {
           <div className="flex justify-end">
             <Button
               variant="destructive"
+              className="w-full sm:w-auto min-h-11"
               onClick={() => { setConfirmText(""); setDeleteOpen(true); }}
             >
-              <Trash2 className="h-4 w-4 mr-2" />
+              <Trash2 className="h-4 w-4 mr-2" aria-hidden="true" />
               Dzēst kontu
             </Button>
           </div>
