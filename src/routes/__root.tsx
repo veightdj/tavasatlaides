@@ -50,8 +50,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TavasAtlaides - Atlaides kas ir tūvu" },
-      { name: "description", content: "Discover the best discounts and promotions from local stores in Riga. Browse on the map or by category." },
       { name: "theme-color", content: "#00C853" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
@@ -63,12 +61,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "lv_LV" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@dealslv" },
-      { property: "og:title", content: "TavasAtlaides" },
-      { name: "twitter:title", content: "TavasAtlaides" },
-      { property: "og:description", content: "Discover the best discounts and promotions from local stores in Riga. Browse on the map or by category." },
-      { name: "twitter:description", content: "Discover the best discounts and promotions from local stores in Riga. Browse on the map or by category." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/77f583f5-e344-4444-b6d7-114a64b2125b" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/77f583f5-e344-4444-b6d7-114a64b2125b" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

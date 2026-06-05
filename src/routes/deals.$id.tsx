@@ -86,7 +86,7 @@ export const Route = createFileRoute("/deals/$id")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("ads")
-      .select("title,description,cover_image_url,discount_pct,price_sale,stores(name,city)")
+      .select("title,description,cover_image_url,discount_pct,price_sale,price_original,currency,stores(name,city)")
       .eq("id", params.id)
       .maybeSingle();
     return { deal: data };
@@ -101,9 +101,29 @@ export const Route = createFileRoute("/deals/$id")({
       ? `${d.discount_pct ? `${d.discount_pct}% off — ` : ""}${d.title}${storeName ? ` at ${storeName}` : ""}${d?.stores?.city ? ` in ${d.stores.city}` : ""}.`
       : "Local deal on TavasAtlaides.";
     const desc = baseDesc || fallbackDesc;
-    const url = `https://superatlaides.lovable.app/deals/${params.id}`;
+    const url = `https://tavasatlaides.lv/deals/${params.id}`;
     const image = d?.cover_image_url || undefined;
     const imageAlt = d ? `${d.title}${storeName ? ` — ${storeName}` : ""}` : "Deal";
+    const ldScripts = d
+      ? [{
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: d.title,
+            description: d.description ?? desc,
+            image: image ?? undefined,
+            brand: storeName ? { "@type": "Organization", name: storeName } : undefined,
+            offers: d.price_sale != null ? {
+              "@type": "Offer",
+              price: d.price_sale,
+              priceCurrency: d.currency ?? "EUR",
+              availability: "https://schema.org/InStock",
+              url,
+            } : undefined,
+          }),
+        }]
+      : [];
     return {
       meta: [
         { title },
@@ -125,6 +145,7 @@ export const Route = createFileRoute("/deals/$id")({
         ] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: ldScripts,
     };
   },
   component: DealDetail,

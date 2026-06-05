@@ -11,17 +11,43 @@ export const Route = createFileRoute("/stores/$id")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("stores")
-      .select("name,city,description,logo_url,cover_image_url")
+      .select("name,city,description,logo_url,cover_image_url,address,postal_code,country,phone,website,lat,lng")
       .eq("id", params.id)
       .maybeSingle();
     return { store: data };
   },
   head: ({ params, loaderData }) => {
-    const s = loaderData?.store;
+    const s: any = loaderData?.store;
     const title = s ? `${s.name} — Deals in ${s.city ?? "Latvia"} — TavasAtlaides` : "Store — TavasAtlaides";
     const desc = s?.description?.slice(0, 160) || (s ? `See all active deals from ${s.name}${s.city ? ` in ${s.city}` : ""}.` : "Local store on TavasAtlaides.");
-    const url = `https://superatlaides.lovable.app/stores/${params.id}`;
+    const url = `https://tavasatlaides.lv/stores/${params.id}`;
     const image = s?.cover_image_url || s?.logo_url || undefined;
+    const ldScripts = s
+      ? [{
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: s.name,
+            description: s.description ?? undefined,
+            image: image ?? undefined,
+            telephone: s.phone ?? undefined,
+            url: s.website ?? url,
+            address: s.address || s.city ? {
+              "@type": "PostalAddress",
+              streetAddress: s.address ?? undefined,
+              addressLocality: s.city ?? undefined,
+              postalCode: s.postal_code ?? undefined,
+              addressCountry: s.country ?? "LV",
+            } : undefined,
+            geo: s.lat && s.lng ? {
+              "@type": "GeoCoordinates",
+              latitude: s.lat,
+              longitude: s.lng,
+            } : undefined,
+          }),
+        }]
+      : [];
     return {
       meta: [
         { title },
@@ -38,6 +64,7 @@ export const Route = createFileRoute("/stores/$id")({
         ] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: ldScripts,
     };
   },
   component: StorePage,

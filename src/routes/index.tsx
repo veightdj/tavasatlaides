@@ -14,14 +14,40 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "TavasAtlaides — Local store deals in Riga" },
-      { name: "description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga." },
+      { name: "description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga. Browse offers by category, store or on the map." },
       { property: "og:title", content: "TavasAtlaides — Local store deals in Riga" },
-      { property: "og:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga." },
-      { property: "og:url", content: "https://superatlaides.lovable.app/" },
+      { property: "og:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga. Browse offers by category, store or on the map." },
+      { property: "og:url", content: "https://tavasatlaides.lv/" },
       { name: "twitter:title", content: "TavasAtlaides — Local store deals in Riga" },
-      { name: "twitter:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga." },
+      { name: "twitter:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga. Browse offers by category, store or on the map." },
     ],
-    links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/" }],
+    links: [{ rel: "canonical", href: "https://tavasatlaides.lv/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              name: "TavasAtlaides",
+              url: "https://tavasatlaides.lv/",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://tavasatlaides.lv/deals?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+            {
+              "@type": "Organization",
+              name: "TavasAtlaides",
+              url: "https://tavasatlaides.lv/",
+              logo: "https://tavasatlaides.lv/icons/icon-512.png",
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: Home,
 });
@@ -83,6 +109,8 @@ function Home() {
             className="absolute inset-0 h-full w-full object-cover"
             width={1920}
             height={1080}
+            fetchPriority="high"
+            decoding="async"
           />
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/25" />
