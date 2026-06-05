@@ -140,7 +140,7 @@ function DealDetail() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ads")
-        .select("*, stores(*), ad_images(url, sort_order)")
+        .select("*, stores(id,name,slug,category,description,address,city,postal_code,country,lat,lng,phone,website,hours_json,logo_url,cover_image_url), ad_images(url, sort_order)")
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
