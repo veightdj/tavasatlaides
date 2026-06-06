@@ -70,7 +70,7 @@ export function AdminShell({ title, children }: { title: string; children: React
                   return (
                     <Link
                       key={n.to}
-                      to={n.to}
+                      to={n.to as any}
                       className={cn(
                         "flex items-center gap-2 rounded-lg px-3 py-2 text-sm whitespace-nowrap transition-colors",
                         active ? "bg-primary text-primary-foreground" : "hover:bg-muted text-foreground",
