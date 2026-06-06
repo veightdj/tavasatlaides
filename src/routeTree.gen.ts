@@ -29,6 +29,8 @@ import { Route as StoresIdRouteImport } from './routes/stores.$id'
 import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as AdminDealsRouteImport } from './routes/admin.deals'
+import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -139,6 +141,16 @@ const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   path: '/categories/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDealsRoute = AdminDealsRouteImport.update({
+  id: '/admin/deals',
+  path: '/admin/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCompaniesRoute = AdminCompaniesRouteImport.update({
+  id: '/admin/companies',
+  path: '/admin/companies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminBannersRoute = AdminBannersRouteImport.update({
   id: '/admin/banners',
   path: '/admin/banners',
@@ -208,6 +220,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
+  '/admin/companies': typeof AdminCompaniesRoute
+  '/admin/deals': typeof AdminDealsRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/settings/notifications': typeof SettingsNotificationsRoute
@@ -239,6 +253,8 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
+  '/admin/companies': typeof AdminCompaniesRoute
+  '/admin/deals': typeof AdminDealsRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/settings/notifications': typeof SettingsNotificationsRoute
@@ -272,6 +288,8 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
+  '/admin/companies': typeof AdminCompaniesRoute
+  '/admin/deals': typeof AdminDealsRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
   '/settings/notifications': typeof SettingsNotificationsRoute
@@ -305,6 +323,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/store'
     | '/admin/banners'
+    | '/admin/companies'
+    | '/admin/deals'
     | '/categories/$slug'
     | '/deals/$id'
     | '/settings/notifications'
@@ -336,6 +356,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/store'
     | '/admin/banners'
+    | '/admin/companies'
+    | '/admin/deals'
     | '/categories/$slug'
     | '/deals/$id'
     | '/settings/notifications'
@@ -368,6 +390,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/store'
     | '/admin/banners'
+    | '/admin/companies'
+    | '/admin/deals'
     | '/categories/$slug'
     | '/deals/$id'
     | '/settings/notifications'
@@ -398,6 +422,8 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
   AdminBannersRoute: typeof AdminBannersRoute
+  AdminCompaniesRoute: typeof AdminCompaniesRoute
+  AdminDealsRoute: typeof AdminDealsRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   DealsIdRoute: typeof DealsIdRoute
   SettingsNotificationsRoute: typeof SettingsNotificationsRoute
@@ -552,6 +578,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/deals': {
+      id: '/admin/deals'
+      path: '/admin/deals'
+      fullPath: '/admin/deals'
+      preLoaderRoute: typeof AdminDealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/companies': {
+      id: '/admin/companies'
+      path: '/admin/companies'
+      fullPath: '/admin/companies'
+      preLoaderRoute: typeof AdminCompaniesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/banners': {
       id: '/admin/banners'
       path: '/admin/banners'
@@ -662,6 +702,8 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
   AdminBannersRoute: AdminBannersRoute,
+  AdminCompaniesRoute: AdminCompaniesRoute,
+  AdminDealsRoute: AdminDealsRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   DealsIdRoute: DealsIdRoute,
   SettingsNotificationsRoute: SettingsNotificationsRoute,
@@ -676,13 +718,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

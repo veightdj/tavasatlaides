@@ -232,10 +232,12 @@ export type Database = {
           category: string
           cover_image_url: string | null
           created_at: string
+          deleted_at: string | null
           description: string | null
           discount_pct: number | null
           ends_at: string | null
           id: string
+          is_hidden: boolean
           price_original: number | null
           price_sale: number | null
           starts_at: string
@@ -248,10 +250,12 @@ export type Database = {
           category: string
           cover_image_url?: string | null
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           discount_pct?: number | null
           ends_at?: string | null
           id?: string
+          is_hidden?: boolean
           price_original?: number | null
           price_sale?: number | null
           starts_at?: string
@@ -264,10 +268,12 @@ export type Database = {
           category?: string
           cover_image_url?: string | null
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           discount_pct?: number | null
           ends_at?: string | null
           id?: string
+          is_hidden?: boolean
           price_original?: number | null
           price_sale?: number | null
           starts_at?: string
@@ -559,9 +565,11 @@ export type Database = {
           country: string
           cover_image_url: string | null
           created_at: string
+          deleted_at: string | null
           description: string | null
           hours_json: Json | null
           id: string
+          is_hidden: boolean
           lat: number | null
           lng: number | null
           logo_url: string | null
@@ -580,9 +588,11 @@ export type Database = {
           country?: string
           cover_image_url?: string | null
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           hours_json?: Json | null
           id?: string
+          is_hidden?: boolean
           lat?: number | null
           lng?: number | null
           logo_url?: string | null
@@ -601,9 +611,11 @@ export type Database = {
           country?: string
           cover_image_url?: string | null
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           hours_json?: Json | null
           id?: string
+          is_hidden?: boolean
           lat?: number | null
           lng?: number | null
           logo_url?: string | null
