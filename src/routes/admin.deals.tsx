@@ -133,7 +133,7 @@ function AdminDealsPage() {
   };
 
   const runUpdate = async (ids: string[], patch: Record<string, any>, label: string) => {
-    const { error } = await supabase.from("ads").update(patch).in("id", ids);
+    const { error } = await supabase.from("ads").update(patch as any).in("id", ids);
     if (error) return toast.error(error.message);
     toast.success(`${label} (${ids.length})`);
     setSelected(new Set());
