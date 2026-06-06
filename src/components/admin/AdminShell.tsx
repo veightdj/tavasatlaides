@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils";
 
 type AuthState = "checking" | "anon" | "not-admin" | "admin";
 
-const nav = [
+const nav: Array<{ to: string; label: string; icon: any; exact?: boolean }> = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/companies", label: "Companies", icon: Building2 },
   { to: "/admin/deals", label: "Deals", icon: Tag },
   { to: "/admin/banners", label: "Banners", icon: ImageIcon },
-] as const;
+];
 
 export function AdminShell({ title, children }: { title: string; children: ReactNode }) {
   const [auth, setAuth] = useState<AuthState>("checking");
