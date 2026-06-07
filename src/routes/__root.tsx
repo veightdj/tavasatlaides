@@ -110,28 +110,25 @@ function AuthSync() {
   const router = useRouter();
   const qc = useQueryClient();
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      router.invalidate();
-      qc.invalidateQueries();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
+        router.invalidate();
+        if (event !== "SIGNED_OUT") qc.invalidateQueries();
+      }
+      // Bind / unbind OneSignal external id so server-side targeting works.
+      try {
+        const { setOneSignalExternalId, logoutOneSignal } = await import("@/lib/onesignal");
+        if (event === "SIGNED_IN" && session?.user?.id) {
+          await setOneSignalExternalId(session.user.id);
+        } else if (event === "SIGNED_OUT") {
+          await logoutOneSignal();
+        }
+      } catch (e) {
+        console.warn("[onesignal] auth bind failed", e);
+      }
     });
     return () => subscription.unsubscribe();
   }, [router, qc]);
-  return null;
-}
-
-function NotifSWRegister() {
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!("serviceWorker" in navigator)) return;
-    const inIframe = (() => {
-      try { return window.self !== window.top; } catch { return true; }
-    })();
-    const isPreviewHost =
-      window.location.hostname.includes("id-preview--") ||
-      window.location.hostname.includes("lovableproject.com");
-    if (inIframe || isPreviewHost) return;
-    navigator.serviceWorker.register("/notif-sw.js").catch(() => {});
-  }, []);
   return null;
 }
 
@@ -142,7 +139,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <AuthSync />
-        <NotifSWRegister />
         <div className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">
