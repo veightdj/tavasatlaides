@@ -424,6 +424,96 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_events: {
+        Row: {
+          data: Json
+          event: string
+          external_user_id: string | null
+          id: string
+          occurred_at: string
+          onesignal_notification_id: string
+          subscription_id: string | null
+        }
+        Insert: {
+          data?: Json
+          event: string
+          external_user_id?: string | null
+          id?: string
+          occurred_at?: string
+          onesignal_notification_id: string
+          subscription_id?: string | null
+        }
+        Update: {
+          data?: Json
+          event?: string
+          external_user_id?: string | null
+          id?: string
+          occurred_at?: string
+          onesignal_notification_id?: string
+          subscription_id?: string | null
+        }
+        Relationships: []
+      }
+      notification_history: {
+        Row: {
+          body: string
+          created_at: string
+          dedup_key: string | null
+          error: string | null
+          id: string
+          is_draft: boolean
+          onesignal_notification_id: string | null
+          recipients: number | null
+          scheduled_for: string | null
+          sent_at: string | null
+          sent_by: string | null
+          status: string
+          target_payload: Json
+          target_type: string
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          dedup_key?: string | null
+          error?: string | null
+          id?: string
+          is_draft?: boolean
+          onesignal_notification_id?: string | null
+          recipients?: number | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string
+          target_payload?: Json
+          target_type: string
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          dedup_key?: string | null
+          error?: string | null
+          id?: string
+          is_draft?: boolean
+          onesignal_notification_id?: string | null
+          recipients?: number | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string
+          target_payload?: Json
+          target_type?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       notification_logs: {
         Row: {
           ad_id: string
@@ -458,38 +548,56 @@ export type Database = {
       }
       notification_preferences: {
         Row: {
+          announcements: boolean
           categories: string[]
           created_at: string
           enabled: boolean
+          expiring_deals: boolean
+          favorite_businesses: boolean
           max_per_day: number
+          nearby_deals: boolean
+          new_deals: boolean
           quiet_end: number
           quiet_start: number
           radius_km: number
           sound_vibration: boolean
+          special_offers: boolean
           updated_at: string
           user_id: string
         }
         Insert: {
+          announcements?: boolean
           categories?: string[]
           created_at?: string
           enabled?: boolean
+          expiring_deals?: boolean
+          favorite_businesses?: boolean
           max_per_day?: number
+          nearby_deals?: boolean
+          new_deals?: boolean
           quiet_end?: number
           quiet_start?: number
           radius_km?: number
           sound_vibration?: boolean
+          special_offers?: boolean
           updated_at?: string
           user_id: string
         }
         Update: {
+          announcements?: boolean
           categories?: string[]
           created_at?: string
           enabled?: boolean
+          expiring_deals?: boolean
+          favorite_businesses?: boolean
           max_per_day?: number
+          nearby_deals?: boolean
+          new_deals?: boolean
           quiet_end?: number
           quiet_start?: number
           radius_km?: number
           sound_vibration?: boolean
+          special_offers?: boolean
           updated_at?: string
           user_id?: string
         }
@@ -685,6 +793,42 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          device_label: string | null
+          id: string
+          is_active: boolean
+          last_seen_at: string
+          onesignal_subscription_id: string
+          platform: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_label?: string | null
+          id?: string
+          is_active?: boolean
+          last_seen_at?: string
+          onesignal_subscription_id: string
+          platform: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_label?: string | null
+          id?: string
+          is_active?: boolean
+          last_seen_at?: string
+          onesignal_subscription_id?: string
+          platform?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

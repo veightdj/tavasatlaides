@@ -1,6 +1,7 @@
 import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/categories";
 
-export type Radius = 1 | 3 | 5;
+export type Radius = 1 | 3 | 5 | 10 | 25 | 50;
+export const RADIUS_OPTIONS: Radius[] = [1, 3, 5, 10, 25, 50];
 
 export type NotificationPrefs = {
   enabled: boolean;
@@ -10,16 +11,29 @@ export type NotificationPrefs = {
   quietEnd: number; // 0–23
   maxPerDay: number;
   soundVibration: boolean;
+  // OneSignal category toggles (Phase 1)
+  newDeals: boolean;
+  favoriteBusinesses: boolean;
+  expiringDeals: boolean;
+  specialOffers: boolean;
+  announcements: boolean;
+  nearbyDeals: boolean;
 };
 
 export const DEFAULT_PREFS: NotificationPrefs = {
   enabled: true,
-  radiusKm: 3,
+  radiusKm: 5,
   categories: [...CATEGORY_SLUGS],
   quietStart: 22,
   quietEnd: 8,
   maxPerDay: 5,
   soundVibration: true,
+  newDeals: true,
+  favoriteBusinesses: true,
+  expiringDeals: true,
+  specialOffers: true,
+  announcements: true,
+  nearbyDeals: true,
 };
 
 const PREFS_KEY = "tavasatlaides.notif.prefs";

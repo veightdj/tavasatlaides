@@ -1,6 +1,8 @@
 import { isNativePlatform, nativePlatformName } from "./platform";
 
-export const ONESIGNAL_APP_ID = "60ddea51-e254-4626-bfb2-888c3ec55efe";
+export const ONESIGNAL_APP_ID =
+  (import.meta.env.VITE_ONESIGNAL_APP_ID as string | undefined) ??
+  "60ddea51-e254-4626-bfb2-888c3ec55efe";
 
 let webInitPromise: Promise<void> | null = null;
 let nativeInitDone = false;
@@ -115,6 +117,23 @@ export async function setOneSignalExternalId(externalId: string) {
     await initWeb();
     const OneSignal = (await import("react-onesignal")).default as any;
     await OneSignal.login?.(externalId);
+  } catch {
+    /* non-blocking */
+  }
+}
+
+/** Unbind the OneSignal user from this device (called on sign-out). */
+export async function logoutOneSignal() {
+  try {
+    if (isNativePlatform()) {
+      const mod: any = await import("onesignal-cordova-plugin");
+      const OneSignal = mod.default ?? mod;
+      OneSignal.logout?.();
+      return;
+    }
+    if (typeof window === "undefined") return;
+    const OneSignal = (await import("react-onesignal")).default as any;
+    await OneSignal.logout?.();
   } catch {
     /* non-blocking */
   }
