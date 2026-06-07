@@ -87,10 +87,11 @@ export function HomeBannerSlider() {
                 </div>
               </div>
             );
+            const safeLink = b.link_url && /^(https?:\/\/|\/)/.test(b.link_url) ? b.link_url : null;
             return (
               <div key={b.id} className="min-w-0 flex-[0_0_100%]">
-                {b.link_url ? (
-                  <a href={b.link_url} className="block">
+                {safeLink ? (
+                  <a href={safeLink} className="block">
                     {inner}
                   </a>
                 ) : (
@@ -98,6 +99,7 @@ export function HomeBannerSlider() {
                 )}
               </div>
             );
+
           })}
         </div>
       </div>
