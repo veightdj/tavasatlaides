@@ -136,17 +136,22 @@ function AuthSync() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  // Hide the consumer header/footer on merchant + admin hosts — those audiences
+  // get their own chrome from _authenticated/AdminShell layouts.
+  const audience = typeof window !== "undefined" ? getHostAudience() : null;
+  const showClientChrome = audience === null || audience === "client";
 
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <AuthSync />
+        <HostGuard />
         <div className="flex min-h-screen flex-col">
-          <Header />
+          {showClientChrome && <Header />}
           <main className="flex-1">
             <Outlet />
           </main>
-          <Footer />
+          {showClientChrome && <Footer />}
         </div>
         <Toaster position="top-right" richColors />
         <CookieConsent />
@@ -155,3 +160,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
