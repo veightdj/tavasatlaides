@@ -1,0 +1,2 @@
+ALTER TABLE public.notification_preferences DROP CONSTRAINT IF EXISTS notification_preferences_radius_km_check;
+ALTER TABLE public.notification_preferences ADD CONSTRAINT notification_preferences_radius_km_check CHECK (radius_km = ANY (ARRAY[1,3,5,10,25,50]));
