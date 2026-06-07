@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getHostAudience } from "@/lib/audience";
 import { DealCard } from "@/components/DealCard";
 import { CategoryCircles } from "@/components/CategoryCircles";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,7 @@ function Home() {
 
   const handleNearMe = () => {
     if (!("geolocation" in navigator)) {
-      toast.error(t.deals.nearError);
+      if (getHostAudience() !== "client") toast.error(t.deals.nearError);
       return;
     }
     setLocating(true);
@@ -75,7 +76,7 @@ function Home() {
       () => {
         toast.dismiss(toastId);
         setLocating(false);
-        toast.error(t.deals.nearError);
+        if (getHostAudience() !== "client") toast.error(t.deals.nearError);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
