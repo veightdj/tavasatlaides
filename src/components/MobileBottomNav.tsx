@@ -24,31 +24,31 @@ export function MobileBottomNav() {
   const tabs: Tab[] = [
     {
       to: "/",
-      label: t.bottomNav?.home ?? "Home",
+      label: t.bottomNav.home,
       icon: Home,
       match: (p) => p === "/",
     },
     {
       to: "/nearby",
-      label: t.bottomNav?.nearMe ?? "Near Me",
+      label: t.bottomNav.nearMe,
       icon: MapPin,
       match: (p) => p.startsWith("/nearby") || p.startsWith("/near-me"),
     },
     {
       to: "/map",
-      label: t.bottomNav?.map ?? "Map",
+      label: t.bottomNav.map,
       icon: MapIcon,
       match: (p) => p.startsWith("/map"),
     },
     {
       to: "/favorites",
-      label: t.bottomNav?.saved ?? "Saved",
+      label: t.bottomNav.saved,
       icon: Heart,
       match: (p) => p.startsWith("/favorites") || p.startsWith("/saved"),
     },
     {
       to: "/settings",
-      label: t.bottomNav?.settings ?? "Settings",
+      label: t.bottomNav.settings,
       icon: SettingsIcon,
       match: (p) => p.startsWith("/settings"),
     },
@@ -84,7 +84,7 @@ export function MobileBottomNav() {
                   />
                 </span>
                 <span
-                  className={`text-[10.5px] leading-none font-medium tracking-tight hidden xs:block ${
+                  className={`text-[10.5px] leading-none font-medium tracking-tight min-[360px]:block hidden ${
                     active ? "" : "opacity-90"
                   }`}
                 >
