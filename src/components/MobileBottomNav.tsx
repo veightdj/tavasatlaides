@@ -1,7 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, MapPin, Map as MapIcon, Heart, Settings as SettingsIcon } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
-import { audienceForPath } from "@/lib/audience";
 
 type Tab = {
   to: string;
@@ -14,11 +13,15 @@ export function MobileBottomNav() {
   const { t } = useI18n();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  // Don't render on merchant/admin sections — they have their own shell.
-  const aud = audienceForPath(pathname);
-  if (aud === "merchant" || aud === "admin") return null;
+  // Hide on merchant/admin sections — they have their own shell.
+  const isMerchant =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/ads") ||
+    pathname.startsWith("/store");
+  const isAdmin = pathname.startsWith("/admin");
+  if (isMerchant || isAdmin) return null;
 
-  // Hide on auth and full-screen flows
+  // Hide on auth flows
   if (pathname.startsWith("/login") || pathname.startsWith("/signup")) return null;
 
   const tabs: Tab[] = [
