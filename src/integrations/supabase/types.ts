@@ -500,7 +500,12 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          last_lat: number | null
+          last_lng: number | null
+          last_location_at: string | null
           phone: string | null
+          push_platform: string | null
+          push_token: string | null
           status: string
           terms_accepted_at: string | null
           updated_at: string
@@ -509,7 +514,12 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          last_lat?: number | null
+          last_lng?: number | null
+          last_location_at?: string | null
           phone?: string | null
+          push_platform?: string | null
+          push_token?: string | null
           status?: string
           terms_accepted_at?: string | null
           updated_at?: string
@@ -518,7 +528,12 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          last_lat?: number | null
+          last_lng?: number | null
+          last_location_at?: string | null
           phone?: string | null
+          push_platform?: string | null
+          push_token?: string | null
           status?: string
           terms_accepted_at?: string | null
           updated_at?: string
