@@ -78,6 +78,18 @@ export function Header() {
                 <Button variant="outline" size="sm"><StoreIcon className="h-4 w-4 mr-2" /> {t.cta.dashboard}</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {getHostAudience() === "client" ? (
+                  <DropdownMenuItem asChild>
+                    <a href={buildAudienceUrl("merchant", "/dashboard")}>
+                      <ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}
+                    </a>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard"><ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild><Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/ads">{t.merchant.ads}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/store">{t.merchant.store}</Link></DropdownMenuItem>
