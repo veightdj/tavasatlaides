@@ -131,75 +131,50 @@ function SettingsPage() {
         </div>
       </section>
 
-      {/* Account */}
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Account
-        </h2>
+      {/* Account (only when signed in) */}
+      {!loading && user && (
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Account
+          </h2>
 
-        {loading ? (
-          <div className="rounded-2xl border bg-card p-5 text-sm text-muted-foreground">
-            Loading…
-          </div>
-        ) : user ? (
-          <>
-            <div className="rounded-2xl border bg-card p-5 space-y-3">
-              <div className="flex items-start gap-3">
-                <LogOut className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
-                <div className="flex-1 space-y-1 min-w-0">
-                  <h3 className="font-semibold">Sign out</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Sign out of this device. You can sign back in anytime.
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <Button variant="outline" className="w-full sm:w-auto min-h-11" onClick={signOut}>
-                  {t.cta.signOut}
-                </Button>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border bg-card p-5 space-y-3">
-              <div className="flex items-start gap-3">
-                <ShieldOff className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
-                <div className="flex-1 space-y-1 min-w-0">
-                  <h3 className="font-semibold">Deaktivizēt kontu</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Īslaicīgi atslēdz kontu. Tevi izrakstīs no visām ierīcēm,
-                    dati paliek saglabāti, un kontu varēs atjaunot, ielogojoties atkal.
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <Button variant="outline" className="w-full sm:w-auto min-h-11" onClick={() => setDeactivateOpen(true)}>
-                  Deaktivizēt
-                </Button>
-              </div>
-            </div>
-          </>
-        ) : (
           <div className="rounded-2xl border bg-card p-5 space-y-3">
             <div className="flex items-start gap-3">
-              <LogIn className="h-5 w-5 mt-1 shrink-0 text-primary" aria-hidden="true" />
+              <LogOut className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
               <div className="flex-1 space-y-1 min-w-0">
-                <h3 className="font-semibold">Sign in</h3>
+                <h3 className="font-semibold">Sign out</h3>
                 <p className="text-sm text-muted-foreground">
-                  Sign in to save favourites, manage notifications and your account.
+                  Sign out of this device.
                 </p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:justify-end">
-              <Button asChild variant="outline" className="min-h-11">
-                <Link to="/login">{t.cta.signIn}</Link>
-              </Button>
-              <Button asChild className="min-h-11">
-                <Link to="/signup">{t.cta.postAd}</Link>
+            <div className="flex justify-end">
+              <Button variant="outline" className="w-full sm:w-auto min-h-11" onClick={signOut}>
+                {t.cta.signOut}
               </Button>
             </div>
           </div>
-        )}
-      </section>
+
+          <div className="rounded-2xl border bg-card p-5 space-y-3">
+            <div className="flex items-start gap-3">
+              <ShieldOff className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <div className="flex-1 space-y-1 min-w-0">
+                <h3 className="font-semibold">Deaktivizēt kontu</h3>
+                <p className="text-sm text-muted-foreground">
+                  Īslaicīgi atslēdz kontu. Tevi izrakstīs no visām ierīcēm,
+                  dati paliek saglabāti, un kontu varēs atjaunot, ielogojoties atkal.
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="outline" className="w-full sm:w-auto min-h-11" onClick={() => setDeactivateOpen(true)}>
+                Deaktivizēt
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
 
       {/* Danger Zone (logged in only) */}
       {user && (
