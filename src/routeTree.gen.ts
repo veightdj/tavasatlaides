@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as MapRouteImport } from './routes/map'
@@ -50,6 +51,11 @@ const TermsRoute = TermsRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -127,9 +133,9 @@ const StoresIdRoute = StoresIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
-  id: '/settings/notifications',
-  path: '/settings/notifications',
-  getParentRoute: () => rootRouteImport,
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => SettingsRoute,
 } as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/deals/$id',
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -282,6 +290,7 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
+    | '/settings'
     | '/signup'
     | '/terms'
     | '/dashboard'
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
+    | '/settings'
     | '/signup'
     | '/terms'
     | '/dashboard'
@@ -384,6 +395,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
+    | '/settings'
     | '/signup'
     | '/terms'
     | '/_authenticated/dashboard'
@@ -419,6 +431,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   NearbyRoute: typeof NearbyRoute
   PrivacyRoute: typeof PrivacyRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
   AdminBannersRoute: typeof AdminBannersRoute
@@ -426,7 +439,6 @@ export interface RootRouteChildren {
   AdminDealsRoute: typeof AdminDealsRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   DealsIdRoute: typeof DealsIdRoute
-  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   StoresIdRoute: typeof StoresIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
@@ -451,6 +463,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -560,10 +579,10 @@ declare module '@tanstack/react-router' {
     }
     '/settings/notifications': {
       id: '/settings/notifications'
-      path: '/settings/notifications'
+      path: '/notifications'
       fullPath: '/settings/notifications'
       preLoaderRoute: typeof SettingsNotificationsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/deals/$id': {
       id: '/deals/$id'
@@ -686,6 +705,18 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface SettingsRouteChildren {
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -698,6 +729,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   NearbyRoute: NearbyRoute,
   PrivacyRoute: PrivacyRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
   AdminBannersRoute: AdminBannersRoute,
@@ -705,7 +737,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDealsRoute: AdminDealsRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   DealsIdRoute: DealsIdRoute,
-  SettingsNotificationsRoute: SettingsNotificationsRoute,
   StoresIdRoute: StoresIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,
@@ -718,3 +749,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
