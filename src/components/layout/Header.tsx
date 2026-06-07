@@ -2,9 +2,10 @@ import { Link, useRouter } from "@tanstack/react-router";
 import logoAsset from "@/assets/tavasatlaides-logo.svg.asset.json";
 const logoUrl = logoAsset.url;
 import { useState } from "react";
-import { Menu, X, MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard, Bell } from "lucide-react";
+import { Menu, X, MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard, Bell, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n, LANGS } from "@/i18n/use-i18n";
+import { getHostAudience, buildAudienceUrl } from "@/lib/audience";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -77,6 +78,18 @@ export function Header() {
                 <Button variant="outline" size="sm"><StoreIcon className="h-4 w-4 mr-2" /> {t.cta.dashboard}</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {getHostAudience() === "client" ? (
+                  <DropdownMenuItem asChild>
+                    <a href={buildAudienceUrl("merchant", "/dashboard")}>
+                      <ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}
+                    </a>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard"><ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild><Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/ads">{t.merchant.ads}</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/store">{t.merchant.store}</Link></DropdownMenuItem>
@@ -141,6 +154,17 @@ export function Header() {
               </div>
               {user ? (
                 <div className="flex flex-col gap-2 pt-2">
+                  {getHostAudience() === "client" ? (
+                    <Button asChild variant="default" className="min-h-11" onClick={() => setOpen(false)}>
+                      <a href={buildAudienceUrl("merchant", "/dashboard")}>
+                        <ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button asChild variant="default" className="min-h-11" onClick={() => setOpen(false)}>
+                      <Link to="/dashboard"><ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}</Link>
+                    </Button>
+                  )}
                   <Button asChild variant="outline" className="min-h-11" onClick={() => setOpen(false)}><Link to="/dashboard">{t.merchant.dashboard}</Link></Button>
                   <Button asChild variant="ghost" className="min-h-11" onClick={() => setOpen(false)}><Link to="/settings">{t.nav.settings}</Link></Button>
                   <Button variant="ghost" className="min-h-11" onClick={() => { setOpen(false); signOut(); }}>{t.cta.signOut}</Button>
