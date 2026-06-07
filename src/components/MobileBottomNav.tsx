@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, MapPin, Map as MapIcon, Heart, Settings as SettingsIcon } from "lucide-react";
+import { Home, MapPin, Map as MapIcon, Heart, User as UserIcon } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
 
 type Tab = {
@@ -50,10 +50,10 @@ export function MobileBottomNav() {
       match: (p) => p.startsWith("/favorites") || p.startsWith("/saved"),
     },
     {
-      to: "/settings",
-      label: t.bottomNav.settings,
-      icon: SettingsIcon,
-      match: (p) => p.startsWith("/settings"),
+      to: "/profile",
+      label: t.bottomNav.profile,
+      icon: UserIcon,
+      match: (p) => p.startsWith("/profile") || p.startsWith("/settings"),
     },
   ];
 
