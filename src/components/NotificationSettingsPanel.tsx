@@ -11,7 +11,9 @@ import {
 import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/categories";
 import {
   DEFAULT_PREFS, loadPrefs, savePrefs, requestNotificationPermission,
-  RADIUS_OPTIONS, type NotificationPrefs, type Radius,
+  RADIUS_OPTIONS_M, FREQUENCY_OPTIONS, setSavedLocation,
+  GEOLOCATION_FRIENDLY_MESSAGE,
+  type NotificationPrefs, type RadiusM, type NotificationFrequency,
 } from "@/lib/notifications";
 import {
   loadNotificationPrefs, saveNotificationPrefs,
