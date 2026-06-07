@@ -1,6 +1,8 @@
 import { isNativePlatform, nativePlatformName } from "./platform";
 
-export const ONESIGNAL_APP_ID = "60ddea51-e254-4626-bfb2-888c3ec55efe";
+export const ONESIGNAL_APP_ID =
+  (import.meta.env.VITE_ONESIGNAL_APP_ID as string | undefined) ??
+  "60ddea51-e254-4626-bfb2-888c3ec55efe";
 
 let webInitPromise: Promise<void> | null = null;
 let nativeInitDone = false;
