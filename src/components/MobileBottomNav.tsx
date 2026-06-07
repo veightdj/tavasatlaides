@@ -50,10 +50,10 @@ export function MobileBottomNav() {
       match: (p) => p.startsWith("/favorites") || p.startsWith("/saved"),
     },
     {
-      to: "/profile",
-      label: t.bottomNav.profile,
-      icon: UserIcon,
-      match: (p) => p.startsWith("/profile") || p.startsWith("/settings"),
+      to: "/settings",
+      label: t.bottomNav.settings,
+      icon: Settings,
+      match: (p) => p.startsWith("/settings"),
     },
   ];
 

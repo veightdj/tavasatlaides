@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
-  AlertTriangle, Globe, LogOut, ShieldOff, Trash2, FileText, Cookie, Lock, Settings as SettingsIcon, Bell,
+  AlertTriangle, Globe, LogOut, ShieldOff, Trash2, FileText, Cookie, Lock, Settings as SettingsIcon, Bell, ChevronRight,
 } from "lucide-react";
 
 import { useServerFn } from "@tanstack/react-start";
