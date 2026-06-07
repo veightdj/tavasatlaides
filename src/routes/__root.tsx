@@ -17,6 +17,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { AnalyticsLoader } from "@/components/AnalyticsLoader";
 import { supabase } from "@/integrations/supabase/client";
 import { HostGuard } from "@/components/HostGuard";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { getHostAudience } from "@/lib/audience";
 
 function NotFoundComponent() {
@@ -148,10 +149,11 @@ function RootComponent() {
         <HostGuard />
         <div className="flex min-h-screen flex-col">
           {showClientChrome && <Header />}
-          <main className="flex-1">
+          <main className={`flex-1 ${showClientChrome ? "pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0" : ""}`}>
             <Outlet />
           </main>
           {showClientChrome && <Footer />}
+          {showClientChrome && <MobileBottomNav />}
         </div>
         <Toaster position="top-right" richColors />
         <CookieConsent />
