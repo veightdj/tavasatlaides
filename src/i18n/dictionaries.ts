@@ -91,6 +91,7 @@ export const dict = {
     appName: "TavasAtlaides",
     tagline: "Local store deals & discounts",
     nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants", privacy: "Privacy", terms: "Terms", cookies: "Cookies", deleteAccount: "Delete account", settings: "Settings", switchToMerchant: "Switch to merchant portal" },
+    bottomNav: { home: "Home", nearMe: "Near Me", map: "Map", saved: "Saved", settings: "Settings" },
     cta: { browse: "Browse deals", postAd: "Post a deal", signIn: "Sign in", signUp: "Sign up", signOut: "Sign out", dashboard: "My store" },
     city: { all: "All cities", jurmala: "Jurmala", riga: "Riga" },
     home: {
