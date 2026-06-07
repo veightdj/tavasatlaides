@@ -3,7 +3,7 @@ import { Bell, Loader2, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { registerPush, PushError } from "@/lib/push";
+import { registerOneSignal, setOneSignalExternalId, OneSignalError } from "@/lib/onesignal";
 import { savePushToken } from "@/lib/device.functions";
 import { isNativePlatform } from "@/lib/platform";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,29 +18,26 @@ export function PushNotificationToggle({ className }: { className?: string }) {
   const handle = async () => {
     setLoading(true);
     try {
-      const reg = await registerPush({
-        onForeground: (n) => toast(n.title ?? "Notification", { description: n.body }),
-      });
+      const reg = await registerOneSignal();
 
-      if (reg) {
-        if (user) {
-          try {
-            await saveToken({ data: { token: reg.token, platform: reg.platform } });
-          } catch {
-            /* non-blocking */
-          }
+      if (user) {
+        await setOneSignalExternalId(user.id);
+        try {
+          await saveToken({ data: { token: reg.playerId, platform: reg.platform } });
+        } catch {
+          /* non-blocking */
         }
-        setRegistered(true);
-        toast.success("Push notifications enabled");
-      } else {
-        // Web fallback — permission granted but no native token
-        setRegistered(true);
-        toast.success("Browser notifications enabled", {
-          description: "For full background alerts, install the mobile app.",
-        });
       }
+
+      setRegistered(true);
+      toast.success(
+        native ? "Push notifications enabled" : "Browser notifications enabled",
+        native
+          ? undefined
+          : { description: "For full background alerts, install the mobile app." },
+      );
     } catch (err) {
-      if (err instanceof PushError) {
+      if (err instanceof OneSignalError) {
         if (err.code === "permission_denied") {
           toast.error("Notifications blocked", {
             description: "Enable notifications in your device settings.",
