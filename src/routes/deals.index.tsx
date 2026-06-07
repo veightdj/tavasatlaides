@@ -253,7 +253,7 @@ function useGetLocation() {
   const [loading, setLoading] = useState(false);
   const fetch = () => {
     if (!("geolocation" in navigator)) {
-      toast.error(t.deals.nearError);
+      if (getHostAudience() !== "client") toast.error(t.deals.nearError);
       return;
     }
     setLoading(true);
@@ -269,7 +269,7 @@ function useGetLocation() {
       () => {
         toast.dismiss(toastId);
         setLoading(false);
-        toast.error(t.deals.nearError);
+        if (getHostAudience() !== "client") toast.error(t.deals.nearError);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
