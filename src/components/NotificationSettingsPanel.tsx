@@ -76,7 +76,8 @@ export function NotificationSettingsPanel() {
           ...DEFAULT_PREFS,
           ...prefs,
           ...server,
-          radiusKm: (server.radiusKm as Radius) ?? prefs.radiusKm,
+          radiusM: (server.radiusM as RadiusM) ?? prefs.radiusM,
+          frequency: (server.frequency as NotificationFrequency) ?? prefs.frequency,
           categories: (server.categories as CategorySlug[]) ?? prefs.categories,
         };
         setPrefs(merged);
