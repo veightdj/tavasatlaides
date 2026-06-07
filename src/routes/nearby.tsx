@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { DealCard } from "@/components/DealCard";
 import { distanceKm as haversineKm, formatDistance } from "@/lib/distance";
 import {
-  loadPrefs, requestNotificationPermission, showDealNotification,
-  canNotify, markNotified, type NotificationPrefs,
+  loadPrefs, requestNotificationPermission,
+  GEOLOCATION_FRIENDLY_MESSAGE, setSavedLocation, getSavedLocation,
+  type NotificationPrefs,
 } from "@/lib/notifications";
 import type { CategorySlug } from "@/lib/categories";
 import { useI18n } from "@/i18n/use-i18n";
