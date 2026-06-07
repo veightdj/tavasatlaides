@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { registerOneSignal, setOneSignalExternalId, OneSignalError } from "@/lib/onesignal";
+import { saveOneSignalSubscription } from "@/lib/subscriptions.functions";
 import { savePushToken } from "@/lib/device.functions";
 import { isNativePlatform } from "@/lib/platform";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,6 +14,7 @@ export function PushNotificationToggle({ className }: { className?: string }) {
   const [registered, setRegistered] = useState(false);
   const native = isNativePlatform();
   const { user } = useAuth();
+  const saveSub = useServerFn(saveOneSignalSubscription);
   const saveToken = useServerFn(savePushToken);
 
   const handle = async () => {
@@ -22,6 +24,17 @@ export function PushNotificationToggle({ className }: { className?: string }) {
 
       if (user) {
         await setOneSignalExternalId(user.id);
+        try {
+          await saveSub({
+            data: {
+              onesignalSubscriptionId: reg.playerId,
+              platform: reg.platform,
+            },
+          });
+        } catch (e) {
+          console.error("[onesignal] saveOneSignalSubscription failed", e);
+        }
+        // Legacy mirror — kept until automation reads user_subscriptions exclusively.
         try {
           await saveToken({ data: { token: reg.playerId, platform: reg.platform } });
         } catch {
@@ -37,6 +50,7 @@ export function PushNotificationToggle({ className }: { className?: string }) {
           : { description: "For full background alerts, install the mobile app." },
       );
     } catch (err) {
+      console.error("[onesignal] register failed", err);
       if (err instanceof OneSignalError) {
         if (err.code === "permission_denied") {
           toast.error("Notifications blocked", {
