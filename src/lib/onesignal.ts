@@ -121,3 +121,20 @@ export async function setOneSignalExternalId(externalId: string) {
     /* non-blocking */
   }
 }
+
+/** Unbind the OneSignal user from this device (called on sign-out). */
+export async function logoutOneSignal() {
+  try {
+    if (isNativePlatform()) {
+      const mod: any = await import("onesignal-cordova-plugin");
+      const OneSignal = mod.default ?? mod;
+      OneSignal.logout?.();
+      return;
+    }
+    if (typeof window === "undefined") return;
+    const OneSignal = (await import("react-onesignal")).default as any;
+    await OneSignal.logout?.();
+  } catch {
+    /* non-blocking */
+  }
+}
