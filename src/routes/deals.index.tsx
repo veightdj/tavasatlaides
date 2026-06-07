@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LocateFixed, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { getHostAudience } from "@/lib/audience";
+
 import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
 import { Input } from "@/components/ui/input";
