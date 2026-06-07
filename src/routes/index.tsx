@@ -60,7 +60,9 @@ function Home() {
 
   const handleNearMe = () => {
     if (!("geolocation" in navigator)) {
-      if (getHostAudience() !== "client") toast.error(t.deals.nearError);
+      toast.error(t.deals.nearError);
+      return;
+    }
       return;
     }
     setLocating(true);
@@ -76,7 +78,7 @@ function Home() {
       () => {
         toast.dismiss(toastId);
         setLocating(false);
-        if (getHostAudience() !== "client") toast.error(t.deals.nearError);
+        toast.error(t.deals.nearError);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );

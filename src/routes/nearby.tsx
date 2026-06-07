@@ -53,7 +53,7 @@ function NearbyPage() {
 
   const startWatch = async () => {
     if (!("geolocation" in navigator)) {
-      setError("Geolocation is not supported in this browser.");
+      setError(t.deals.nearError);
       return;
     }
     // Ask for notification permission once we start tracking
@@ -62,8 +62,8 @@ function NearbyPage() {
     setWatching(true);
     watchId.current = navigator.geolocation.watchPosition(
       (p) => setPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      (e) => {
-        setError(e.message || "Could not get your location.");
+      () => {
+        setError(t.deals.nearError);
         setWatching(false);
       },
       { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
