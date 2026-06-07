@@ -16,6 +16,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/CookieConsent";
 import { AnalyticsLoader } from "@/components/AnalyticsLoader";
 import { supabase } from "@/integrations/supabase/client";
+import { HostGuard } from "@/components/HostGuard";
+import { getHostAudience } from "@/lib/audience";
 
 function NotFoundComponent() {
   return (
