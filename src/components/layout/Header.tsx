@@ -98,12 +98,13 @@ export function Header() {
                 <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
+          ) : getHostAudience() === "client" ? null : (
             <>
               <Button asChild variant="ghost" size="sm"><Link to="/login">{t.cta.signIn}</Link></Button>
               <Button asChild size="sm"><Link to="/signup">{t.cta.postAd}</Link></Button>
             </>
           )}
+
         </div>
 
         <button
@@ -169,12 +170,13 @@ export function Header() {
                   <Button asChild variant="ghost" className="min-h-11" onClick={() => setOpen(false)}><Link to="/settings">{t.nav.settings}</Link></Button>
                   <Button variant="ghost" className="min-h-11" onClick={() => { setOpen(false); signOut(); }}>{t.cta.signOut}</Button>
                 </div>
-              ) : (
+              ) : getHostAudience() === "client" ? null : (
                 <div className="flex gap-2 pt-2">
                   <Button asChild variant="ghost" className="flex-1 min-h-11" onClick={() => setOpen(false)}><Link to="/login">{t.cta.signIn}</Link></Button>
                   <Button asChild className="flex-1 min-h-11" onClick={() => setOpen(false)}><Link to="/signup">{t.cta.postAd}</Link></Button>
                 </div>
               )}
+
             </div>
           </div>
         </>
