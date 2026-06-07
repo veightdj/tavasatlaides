@@ -7,13 +7,13 @@ const CategorySchema = z.enum(CATEGORY_SLUGS as unknown as [string, ...string[]]
 
 const PrefsSchema = z.object({
   enabled: z.boolean(),
-  radiusKm: z.number().int().refine((v) => [1, 3, 5, 10, 25, 50].includes(v), {
-    message: "Invalid radius",
-  }),
+  radiusM: z.union([z.literal(500), z.literal(1000), z.literal(3000), z.literal(5000), z.null()]),
+  frequency: z.enum(["instant", "daily_1", "daily_2", "daily_3"]),
+  latitude: z.number().min(-90).max(90).nullable(),
+  longitude: z.number().min(-180).max(180).nullable(),
   categories: z.array(CategorySchema).min(0).max(32),
   quietStart: z.number().int().min(0).max(23),
   quietEnd: z.number().int().min(0).max(23),
-  maxPerDay: z.number().int().min(1).max(50),
   soundVibration: z.boolean(),
   newDeals: z.boolean(),
   favoriteBusinesses: z.boolean(),
@@ -38,11 +38,13 @@ export const loadNotificationPrefs = createServerFn({ method: "GET" })
     if (!data) return null;
     return {
       enabled: data.enabled,
-      radiusKm: data.radius_km,
+      radiusM: (data as any).radius_m ?? (data.radius_km ? data.radius_km * 1000 : null),
+      frequency: (data as any).notification_frequency ?? "instant",
+      latitude: (data as any).latitude ?? null,
+      longitude: (data as any).longitude ?? null,
       categories: (data.categories ?? []) as string[],
       quietStart: data.quiet_start,
       quietEnd: data.quiet_end,
-      maxPerDay: data.max_per_day,
       soundVibration: data.sound_vibration,
       newDeals: data.new_deals,
       favoriteBusinesses: data.favorite_businesses,
@@ -61,11 +63,15 @@ export const saveNotificationPrefs = createServerFn({ method: "POST" })
     const row = {
       user_id: userId,
       enabled: data.enabled,
-      radius_km: data.radiusKm,
+      radius_m: data.radiusM,
+      // keep legacy radius_km in sync so older code doesn't break
+      radius_km: data.radiusM ? Math.round(data.radiusM / 1000) : 0,
+      notification_frequency: data.frequency,
+      latitude: data.latitude,
+      longitude: data.longitude,
       categories: data.categories,
       quiet_start: data.quietStart,
       quiet_end: data.quietEnd,
-      max_per_day: data.maxPerDay,
       sound_vibration: data.soundVibration,
       new_deals: data.newDeals,
       favorite_businesses: data.favoriteBusinesses,
