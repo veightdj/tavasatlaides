@@ -36,6 +36,7 @@ import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdsIndexRouteImport } from './routes/_authenticated/ads.index'
+import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
 import { Route as AuthenticatedAdsNewRouteImport } from './routes/_authenticated/ads.new'
 import { Route as AuthenticatedAdsIdRouteImport } from './routes/_authenticated/ads.$id'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -176,6 +177,11 @@ const AuthenticatedAdsIndexRoute = AuthenticatedAdsIndexRouteImport.update({
   path: '/ads/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AdminNotificationsDebugRoute = AdminNotificationsDebugRouteImport.update({
+  id: '/admin/notifications/debug',
+  path: '/admin/notifications/debug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdsNewRoute = AuthenticatedAdsNewRouteImport.update({
   id: '/ads/new',
   path: '/ads/new',
@@ -231,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/stores/': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
   '/ads/new': typeof AuthenticatedAdsNewRoute
+  '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/ads/': typeof AuthenticatedAdsIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByTo {
   '/stores': typeof StoresIndexRoute
   '/ads/$id': typeof AuthenticatedAdsIdRoute
   '/ads/new': typeof AuthenticatedAdsNewRoute
+  '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/ads': typeof AuthenticatedAdsIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -299,6 +307,7 @@ export interface FileRoutesById {
   '/stores/': typeof StoresIndexRoute
   '/_authenticated/ads/$id': typeof AuthenticatedAdsIdRoute
   '/_authenticated/ads/new': typeof AuthenticatedAdsNewRoute
+  '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/_authenticated/ads/': typeof AuthenticatedAdsIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | '/stores/'
     | '/ads/$id'
     | '/ads/new'
+    | '/admin/notifications/debug'
     | '/ads/'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -367,6 +377,7 @@ export interface FileRouteTypes {
     | '/stores'
     | '/ads/$id'
     | '/ads/new'
+    | '/admin/notifications/debug'
     | '/ads'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -401,6 +412,7 @@ export interface FileRouteTypes {
     | '/stores/'
     | '/_authenticated/ads/$id'
     | '/_authenticated/ads/new'
+    | '/admin/notifications/debug'
     | '/_authenticated/ads/'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -431,6 +443,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
+  AdminNotificationsDebugRoute: typeof AdminNotificationsDebugRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -627,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/admin/notifications/debug': {
+      id: '/admin/notifications/debug'
+      path: '/admin/notifications/debug'
+      fullPath: '/admin/notifications/debug'
+      preLoaderRoute: typeof AdminNotificationsDebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/ads/new': {
       id: '/_authenticated/ads/new'
       path: '/ads/new'
@@ -711,6 +731,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
+  AdminNotificationsDebugRoute: AdminNotificationsDebugRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
