@@ -195,11 +195,34 @@ export function NotificationSettingsPanel() {
 
       {/* Radius */}
       <Setting label="Notification radius" desc="How far from you a deal must be.">
-        <Select value={String(prefs.radiusKm)} onValueChange={(v) => update("radiusKm", Number(v) as Radius)}>
-          <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
+        <Select
+          value={prefs.radiusM === null ? "unlimited" : String(prefs.radiusM)}
+          onValueChange={(v) => update("radiusM", (v === "unlimited" ? null : Number(v)) as RadiusM)}
+        >
+          <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
           <SelectContent>
-            {RADIUS_OPTIONS.map((r) => (
-              <SelectItem key={r} value={String(r)}>{r} km</SelectItem>
+            {RADIUS_OPTIONS_M.map((o) => (
+              <SelectItem key={String(o.value)} value={o.value === null ? "unlimited" : String(o.value)}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Setting>
+
+      {/* Frequency */}
+      <Setting
+        label="Notification frequency"
+        desc="Instant pushes for each new deal, or a single summary delivered up to 3 times per day."
+      >
+        <Select
+          value={prefs.frequency}
+          onValueChange={(v) => update("frequency", v as NotificationFrequency)}
+        >
+          <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {FREQUENCY_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -238,15 +261,6 @@ export function NotificationSettingsPanel() {
         </div>
       </Setting>
 
-      {/* Frequency */}
-      <Setting label="Max per day" desc="Cap to avoid noise.">
-        <Select value={String(prefs.maxPerDay)} onValueChange={(v) => update("maxPerDay", Number(v))}>
-          <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {[3, 5, 10, 20].map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </Setting>
 
       {/* Sound */}
       <Setting label="Sound & vibration" desc="Play system sound when a notification appears.">
