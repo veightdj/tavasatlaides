@@ -63,8 +63,6 @@ function Home() {
       toast.error(t.deals.nearError);
       return;
     }
-      return;
-    }
     setLocating(true);
     const toastId = toast.loading(t.deals.nearLocating);
     navigator.geolocation.getCurrentPosition(
