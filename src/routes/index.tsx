@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-
 import { DealCard } from "@/components/DealCard";
 import { CategoryCircles } from "@/components/CategoryCircles";
 import { Button } from "@/components/ui/button";

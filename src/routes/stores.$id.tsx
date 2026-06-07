@@ -134,12 +134,11 @@ function StorePage() {
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{store.address}, {store.city}</span>
             {store.phone && <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4" />{store.phone}</span>}
-            {store.website && /^https?:\/\//.test(store.website) && (
+            {store.website && (
               <a href={store.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-primary">
                 <Globe className="h-4 w-4" />{store.website.replace(/^https?:\/\//, "")}
               </a>
             )}
-
           </div>
           <div className="mt-2">
             <StoreStatus hours={(store as any).hours_json} />

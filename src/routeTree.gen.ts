@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as MapRouteImport } from './routes/map'
@@ -34,6 +33,7 @@ import { Route as AdminDealsRouteImport } from './routes/admin.deals'
 import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdsIndexRouteImport } from './routes/_authenticated/ads.index'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
@@ -42,8 +42,6 @@ import { Route as AuthenticatedAdsIdRouteImport } from './routes/_authenticated/
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as ApiPublicHooksNotifyDigestRouteImport } from './routes/api/public/hooks/notify-digest'
-import { Route as ApiPublicHooksNotifyDealRouteImport } from './routes/api/public/hooks/notify-deal'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -53,11 +51,6 @@ const TermsRoute = TermsRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -135,9 +128,9 @@ const StoresIdRoute = StoresIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => SettingsRoute,
+  id: '/settings/notifications',
+  path: '/settings/notifications',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/deals/$id',
@@ -167,6 +160,11 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
 const AuthenticatedStoreRoute = AuthenticatedStoreRouteImport.update({
   id: '/store',
   path: '/store',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -210,18 +208,6 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksNotifyDigestRoute =
-  ApiPublicHooksNotifyDigestRouteImport.update({
-    id: '/api/public/hooks/notify-digest',
-    path: '/api/public/hooks/notify-digest',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksNotifyDealRoute =
-  ApiPublicHooksNotifyDealRouteImport.update({
-    id: '/api/public/hooks/notify-deal',
-    path: '/api/public/hooks/notify-deal',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -234,10 +220,10 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
-  '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
@@ -253,8 +239,6 @@ export interface FileRoutesByFullPath {
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/ads/': typeof AuthenticatedAdsIndexRoute
-  '/api/public/hooks/notify-deal': typeof ApiPublicHooksNotifyDealRoute
-  '/api/public/hooks/notify-digest': typeof ApiPublicHooksNotifyDigestRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -270,10 +254,10 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
-  '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
@@ -289,8 +273,6 @@ export interface FileRoutesByTo {
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/ads': typeof AuthenticatedAdsIndexRoute
-  '/api/public/hooks/notify-deal': typeof ApiPublicHooksNotifyDealRoute
-  '/api/public/hooks/notify-digest': typeof ApiPublicHooksNotifyDigestRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -308,10 +290,10 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
-  '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
@@ -327,8 +309,6 @@ export interface FileRoutesById {
   '/_authenticated/ads/new': typeof AuthenticatedAdsNewRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/_authenticated/ads/': typeof AuthenticatedAdsIndexRoute
-  '/api/public/hooks/notify-deal': typeof ApiPublicHooksNotifyDealRoute
-  '/api/public/hooks/notify-digest': typeof ApiPublicHooksNotifyDigestRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -346,10 +326,10 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
-    | '/settings'
     | '/signup'
     | '/terms'
     | '/dashboard'
+    | '/settings'
     | '/store'
     | '/admin/banners'
     | '/admin/companies'
@@ -365,8 +345,6 @@ export interface FileRouteTypes {
     | '/ads/new'
     | '/admin/notifications/debug'
     | '/ads/'
-    | '/api/public/hooks/notify-deal'
-    | '/api/public/hooks/notify-digest'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -382,10 +360,10 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
-    | '/settings'
     | '/signup'
     | '/terms'
     | '/dashboard'
+    | '/settings'
     | '/store'
     | '/admin/banners'
     | '/admin/companies'
@@ -401,8 +379,6 @@ export interface FileRouteTypes {
     | '/ads/new'
     | '/admin/notifications/debug'
     | '/ads'
-    | '/api/public/hooks/notify-deal'
-    | '/api/public/hooks/notify-digest'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -419,10 +395,10 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
-    | '/settings'
     | '/signup'
     | '/terms'
     | '/_authenticated/dashboard'
+    | '/_authenticated/settings'
     | '/_authenticated/store'
     | '/admin/banners'
     | '/admin/companies'
@@ -438,8 +414,6 @@ export interface FileRouteTypes {
     | '/_authenticated/ads/new'
     | '/admin/notifications/debug'
     | '/_authenticated/ads/'
-    | '/api/public/hooks/notify-deal'
-    | '/api/public/hooks/notify-digest'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -457,7 +431,6 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   NearbyRoute: typeof NearbyRoute
   PrivacyRoute: typeof PrivacyRoute
-  SettingsRoute: typeof SettingsRouteWithChildren
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
   AdminBannersRoute: typeof AdminBannersRoute
@@ -465,13 +438,12 @@ export interface RootRouteChildren {
   AdminDealsRoute: typeof AdminDealsRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   DealsIdRoute: typeof DealsIdRoute
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   StoresIdRoute: typeof StoresIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
   AdminNotificationsDebugRoute: typeof AdminNotificationsDebugRoute
-  ApiPublicHooksNotifyDealRoute: typeof ApiPublicHooksNotifyDealRoute
-  ApiPublicHooksNotifyDigestRoute: typeof ApiPublicHooksNotifyDigestRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -491,13 +463,6 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -607,10 +572,10 @@ declare module '@tanstack/react-router' {
     }
     '/settings/notifications': {
       id: '/settings/notifications'
-      path: '/notifications'
+      path: '/settings/notifications'
       fullPath: '/settings/notifications'
       preLoaderRoute: typeof SettingsNotificationsRouteImport
-      parentRoute: typeof SettingsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/deals/$id': {
       id: '/deals/$id'
@@ -652,6 +617,13 @@ declare module '@tanstack/react-router' {
       path: '/store'
       fullPath: '/store'
       preLoaderRoute: typeof AuthenticatedStoreRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -710,25 +682,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/notify-digest': {
-      id: '/api/public/hooks/notify-digest'
-      path: '/api/public/hooks/notify-digest'
-      fullPath: '/api/public/hooks/notify-digest'
-      preLoaderRoute: typeof ApiPublicHooksNotifyDigestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/notify-deal': {
-      id: '/api/public/hooks/notify-deal'
-      path: '/api/public/hooks/notify-deal'
-      fullPath: '/api/public/hooks/notify-deal'
-      preLoaderRoute: typeof ApiPublicHooksNotifyDealRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStoreRoute: typeof AuthenticatedStoreRoute
   AuthenticatedAdsIdRoute: typeof AuthenticatedAdsIdRoute
   AuthenticatedAdsNewRoute: typeof AuthenticatedAdsNewRoute
@@ -737,6 +696,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStoreRoute: AuthenticatedStoreRoute,
   AuthenticatedAdsIdRoute: AuthenticatedAdsIdRoute,
   AuthenticatedAdsNewRoute: AuthenticatedAdsNewRoute,
@@ -745,18 +705,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
-)
-
-interface SettingsRouteChildren {
-  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
-}
-
-const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsNotificationsRoute: SettingsNotificationsRoute,
-}
-
-const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
-  SettingsRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -771,7 +719,6 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   NearbyRoute: NearbyRoute,
   PrivacyRoute: PrivacyRoute,
-  SettingsRoute: SettingsRouteWithChildren,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
   AdminBannersRoute: AdminBannersRoute,
@@ -779,13 +726,12 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDealsRoute: AdminDealsRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   DealsIdRoute: DealsIdRoute,
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
   StoresIdRoute: StoresIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
   AdminNotificationsDebugRoute: AdminNotificationsDebugRoute,
-  ApiPublicHooksNotifyDealRoute: ApiPublicHooksNotifyDealRoute,
-  ApiPublicHooksNotifyDigestRoute: ApiPublicHooksNotifyDigestRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,

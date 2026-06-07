@@ -1,1 +1,0 @@
-GRANT SELECT ON public.stores TO anon;

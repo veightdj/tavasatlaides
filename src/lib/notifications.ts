@@ -1,33 +1,17 @@
 import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/categories";
 
-// Radius in METERS. null = unlimited (no distance filter).
-export type RadiusM = 500 | 1000 | 3000 | 5000 | null;
-export const RADIUS_OPTIONS_M: Array<{ value: RadiusM; label: string }> = [
-  { value: 500, label: "500 m" },
-  { value: 1000, label: "1 km" },
-  { value: 3000, label: "3 km" },
-  { value: 5000, label: "5 km" },
-  { value: null, label: "No distance limit" },
-];
-
-export type NotificationFrequency = "instant" | "daily_1" | "daily_2" | "daily_3";
-export const FREQUENCY_OPTIONS: Array<{ value: NotificationFrequency; label: string }> = [
-  { value: "instant", label: "Instant" },
-  { value: "daily_1", label: "1 time per day" },
-  { value: "daily_2", label: "2 times per day" },
-  { value: "daily_3", label: "3 times per day" },
-];
+export type Radius = 1 | 3 | 5 | 10 | 25 | 50;
+export const RADIUS_OPTIONS: Radius[] = [1, 3, 5, 10, 25, 50];
 
 export type NotificationPrefs = {
   enabled: boolean;
-  radiusM: RadiusM;
-  frequency: NotificationFrequency;
-  latitude: number | null;
-  longitude: number | null;
+  radiusKm: Radius;
   categories: CategorySlug[];
-  quietStart: number;
-  quietEnd: number;
+  quietStart: number; // 0–23
+  quietEnd: number; // 0–23
+  maxPerDay: number;
   soundVibration: boolean;
+  // OneSignal category toggles (Phase 1)
   newDeals: boolean;
   favoriteBusinesses: boolean;
   expiringDeals: boolean;
@@ -38,13 +22,11 @@ export type NotificationPrefs = {
 
 export const DEFAULT_PREFS: NotificationPrefs = {
   enabled: true,
-  radiusM: 3000,
-  frequency: "instant",
-  latitude: null,
-  longitude: null,
+  radiusKm: 5,
   categories: [...CATEGORY_SLUGS],
   quietStart: 22,
   quietEnd: 8,
+  maxPerDay: 5,
   soundVibration: true,
   newDeals: true,
   favoriteBusinesses: true,
@@ -55,6 +37,8 @@ export const DEFAULT_PREFS: NotificationPrefs = {
 };
 
 const PREFS_KEY = "tavasatlaides.notif.prefs";
+const SENT_KEY = "tavasatlaides.notif.sent"; // { [adId]: isoString }
+const COUNT_KEY = "tavasatlaides.notif.count"; // { date: 'YYYY-MM-DD', count: number }
 
 export function loadPrefs(): NotificationPrefs {
   if (typeof window === "undefined") return DEFAULT_PREFS;
@@ -68,9 +52,7 @@ export function loadPrefs(): NotificationPrefs {
 }
 
 export function savePrefs(p: NotificationPrefs) {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(PREFS_KEY, JSON.stringify(p));
-  }
+  localStorage.setItem(PREFS_KEY, JSON.stringify(p));
 }
 
 export function isInQuietHours(p: NotificationPrefs, now = new Date()): boolean {
@@ -78,7 +60,61 @@ export function isInQuietHours(p: NotificationPrefs, now = new Date()): boolean 
   const { quietStart: s, quietEnd: e } = p;
   if (s === e) return false;
   if (s < e) return h >= s && h < e;
-  return h >= s || h < e;
+  return h >= s || h < e; // wraps midnight
+}
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function getSentMap(): Record<string, string> {
+  try {
+    return JSON.parse(localStorage.getItem(SENT_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function setSentMap(m: Record<string, string>) {
+  localStorage.setItem(SENT_KEY, JSON.stringify(m));
+}
+
+export function getTodayCount(): number {
+  try {
+    const raw = JSON.parse(localStorage.getItem(COUNT_KEY) || "{}");
+    if (raw.date !== todayKey()) return 0;
+    return raw.count || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function bumpTodayCount() {
+  const c = getTodayCount() + 1;
+  localStorage.setItem(COUNT_KEY, JSON.stringify({ date: todayKey(), count: c }));
+}
+
+const COOLDOWN_MS = 6 * 60 * 60 * 1000; // same ad: once per 6h
+
+export function canNotify(adId: string, p: NotificationPrefs): boolean {
+  if (!p.enabled) return false;
+  if (isInQuietHours(p)) return false;
+  if (getTodayCount() >= p.maxPerDay) return false;
+  const sent = getSentMap()[adId];
+  if (sent && Date.now() - new Date(sent).getTime() < COOLDOWN_MS) return false;
+  return true;
+}
+
+export function markNotified(adId: string) {
+  const m = getSentMap();
+  m[adId] = new Date().toISOString();
+  // prune entries older than 24h
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  for (const k of Object.keys(m)) {
+    if (new Date(m[k]).getTime() < cutoff) delete m[k];
+  }
+  setSentMap(m);
+  bumpTodayCount();
 }
 
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
@@ -89,23 +125,42 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   return await Notification.requestPermission();
 }
 
-// User-friendly geolocation messaging
-export const GEOLOCATION_FRIENDLY_MESSAGE =
-  "Couldn't determine your location. Allow location access in your browser settings, or enter an address manually.";
+export type DealNotifyPayload = {
+  adId: string;
+  title: string;
+  body: string;
+  distanceM: number;
+  url: string;
+  imageUrl?: string | null;
+};
 
-// Last-known location cache (used when device GPS isn't available)
-const LAST_LOC_KEY = "tavasatlaides.lastLocation";
-export type SavedCoords = { lat: number; lng: number; at: string };
-
-export function getSavedLocation(): SavedCoords | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(LAST_LOC_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
-}
-
-export function setSavedLocation(lat: number, lng: number) {
+export async function showDealNotification(p: DealNotifyPayload, prefs: NotificationPrefs) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(LAST_LOC_KEY, JSON.stringify({ lat, lng, at: new Date().toISOString() }));
+  // Prefer service worker registration if available (better on mobile)
+  try {
+    if ("serviceWorker" in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg && "showNotification" in reg) {
+        await reg.showNotification(p.title, {
+          body: p.body,
+          icon: "/favicon.svg",
+          badge: "/favicon.svg",
+          tag: `deal-${p.adId}`,
+          data: { url: p.url },
+          silent: !prefs.soundVibration,
+        });
+        return;
+      }
+    }
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification(p.title, {
+        body: p.body,
+        icon: "/favicon.svg",
+        tag: `deal-${p.adId}`,
+        silent: !prefs.soundVibration,
+      });
+    }
+  } catch {
+    // swallow — toast is fallback
+  }
 }

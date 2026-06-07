@@ -292,21 +292,6 @@ export type Database = {
           },
         ]
       }
-      app_settings: {
-        Row: {
-          key: string
-          value: string
-        }
-        Insert: {
-          key: string
-          value: string
-        }
-        Update: {
-          key?: string
-          value?: string
-        }
-        Relationships: []
-      }
       banners: {
         Row: {
           created_at: string
@@ -569,16 +554,12 @@ export type Database = {
           enabled: boolean
           expiring_deals: boolean
           favorite_businesses: boolean
-          latitude: number | null
-          longitude: number | null
           max_per_day: number
           nearby_deals: boolean
           new_deals: boolean
-          notification_frequency: string
           quiet_end: number
           quiet_start: number
           radius_km: number
-          radius_m: number | null
           sound_vibration: boolean
           special_offers: boolean
           updated_at: string
@@ -591,16 +572,12 @@ export type Database = {
           enabled?: boolean
           expiring_deals?: boolean
           favorite_businesses?: boolean
-          latitude?: number | null
-          longitude?: number | null
           max_per_day?: number
           nearby_deals?: boolean
           new_deals?: boolean
-          notification_frequency?: string
           quiet_end?: number
           quiet_start?: number
           radius_km?: number
-          radius_m?: number | null
           sound_vibration?: boolean
           special_offers?: boolean
           updated_at?: string
@@ -613,43 +590,15 @@ export type Database = {
           enabled?: boolean
           expiring_deals?: boolean
           favorite_businesses?: boolean
-          latitude?: number | null
-          longitude?: number | null
           max_per_day?: number
           nearby_deals?: boolean
           new_deals?: boolean
-          notification_frequency?: string
           quiet_end?: number
           quiet_start?: number
           radius_km?: number
-          radius_m?: number | null
           sound_vibration?: boolean
           special_offers?: boolean
           updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      pending_deal_notifications: {
-        Row: {
-          ad_id: string
-          created_at: string
-          distance_m: number | null
-          id: string
-          user_id: string
-        }
-        Insert: {
-          ad_id: string
-          created_at?: string
-          distance_m?: number | null
-          id?: string
-          user_id: string
-        }
-        Update: {
-          ad_id?: string
-          created_at?: string
-          distance_m?: number | null
-          id?: string
           user_id?: string
         }
         Relationships: []
@@ -904,10 +853,6 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
-      }
-      haversine_m: {
-        Args: { lat1: number; lat2: number; lon1: number; lon2: number }
-        Returns: number
       }
       move_to_dlq: {
         Args: {

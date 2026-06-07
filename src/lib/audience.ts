@@ -56,9 +56,11 @@ export function audienceForPath(pathname: string): Audience | "shared" {
   if (SHARED_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "shared";
   if (ADMIN_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "admin";
   if (MERCHANT_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "merchant";
-  // /settings is a public client hub (language, notifications, legal, account)
+  // /settings is merchant; /settings/notifications is shared user setting → keep on client
+  if (p === "/settings" || p.startsWith("/settings/") && !p.startsWith("/settings/notifications")) {
+    return "merchant";
+  }
   return "client";
-
 }
 
 /** Build an absolute URL on the target audience's production host, preserving

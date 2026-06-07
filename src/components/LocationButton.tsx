@@ -5,8 +5,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { getCurrentLocation, LocationError, type Coords } from "@/lib/location";
 import { saveUserLocation } from "@/lib/device.functions";
-import { saveNotificationLocation } from "@/lib/notification-location.functions";
-import { setSavedLocation, GEOLOCATION_FRIENDLY_MESSAGE, loadPrefs, savePrefs } from "@/lib/notifications";
 import { useAuth } from "@/hooks/use-auth";
 
 type Props = {
@@ -29,31 +27,35 @@ export function LocationButton({
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const saveLocation = useServerFn(saveUserLocation);
-  const saveNotifLoc = useServerFn(saveNotificationLocation);
 
   const handle = async () => {
     setLoading(true);
     try {
       const coords = await getCurrentLocation();
       onLocation?.(coords);
-
-      // Always cache last-known coords on the device
-      setSavedLocation(coords.lat, coords.lng);
-      const prefs = loadPrefs();
-      savePrefs({ ...prefs, latitude: coords.lat, longitude: coords.lng });
-
       if (persist && user) {
-        try { await saveLocation({ data: { lat: coords.lat, lng: coords.lng } }); } catch { /* non-blocking */ }
-        try { await saveNotifLoc({ data: { latitude: coords.lat, longitude: coords.lng } }); } catch { /* non-blocking */ }
+        try {
+          await saveLocation({ data: { lat: coords.lat, lng: coords.lng } });
+        } catch {
+          // Non-blocking — UI already has the coords
+        }
       }
       toast.success("Location shared");
     } catch (err) {
       if (err instanceof LocationError) {
-        toast.error("Location unavailable", {
-          description: GEOLOCATION_FRIENDLY_MESSAGE,
-        });
+        if (err.code === "permission_denied") {
+          toast.error("Location permission denied", {
+            description: "Enable location access in your device settings to continue.",
+          });
+        } else if (err.code === "unsupported") {
+          toast.error("Location is not supported on this device");
+        } else if (err.code === "timeout") {
+          toast.error("Could not get location in time. Try again outdoors.");
+        } else {
+          toast.error("Location unavailable", { description: err.message });
+        }
       } else {
-        toast.error("Location unavailable", { description: GEOLOCATION_FRIENDLY_MESSAGE });
+        toast.error("Could not get your location");
       }
     } finally {
       setLoading(false);

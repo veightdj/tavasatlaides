@@ -51,7 +51,7 @@ export function Header() {
   );
 
   return (
-    <header className="hidden md:block sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 gap-2">
         <Link to="/" className="flex items-center gap-2 min-w-0" onClick={() => setOpen(false)}>
           <img src={logoUrl} alt={t.appName} className="block h-9 w-9 shrink-0 rounded-xl object-cover" />
@@ -98,13 +98,12 @@ export function Header() {
                 <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : getHostAudience() === "client" ? null : (
+          ) : (
             <>
               <Button asChild variant="ghost" size="sm"><Link to="/login">{t.cta.signIn}</Link></Button>
               <Button asChild size="sm"><Link to="/signup">{t.cta.postAd}</Link></Button>
             </>
           )}
-
         </div>
 
         <button
@@ -170,13 +169,12 @@ export function Header() {
                   <Button asChild variant="ghost" className="min-h-11" onClick={() => setOpen(false)}><Link to="/settings">{t.nav.settings}</Link></Button>
                   <Button variant="ghost" className="min-h-11" onClick={() => { setOpen(false); signOut(); }}>{t.cta.signOut}</Button>
                 </div>
-              ) : getHostAudience() === "client" ? null : (
+              ) : (
                 <div className="flex gap-2 pt-2">
                   <Button asChild variant="ghost" className="flex-1 min-h-11" onClick={() => setOpen(false)}><Link to="/login">{t.cta.signIn}</Link></Button>
                   <Button asChild className="flex-1 min-h-11" onClick={() => setOpen(false)}><Link to="/signup">{t.cta.postAd}</Link></Button>
                 </div>
               )}
-
             </div>
           </div>
         </>

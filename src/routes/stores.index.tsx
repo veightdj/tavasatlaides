@@ -174,12 +174,11 @@ function StoreSection({
                 <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                   <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{s.address}, {s.city}</span>
                   {s.phone && <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4" />{s.phone}</span>}
-                  {s.website && /^https?:\/\//.test(s.website) && (
+                  {s.website && (
                     <a href={s.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-primary">
                       <Globe className="h-4 w-4" />{s.website.replace(/^https?:\/\//, "")}
                     </a>
                   )}
-
                 </div>
               </div>
               <div className="flex items-center gap-2">
