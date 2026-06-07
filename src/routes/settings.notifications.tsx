@@ -13,6 +13,8 @@ import {
   DEFAULT_PREFS, loadPrefs, savePrefs, requestNotificationPermission,
   type NotificationPrefs, type Radius,
 } from "@/lib/notifications";
+import { PushNotificationToggle } from "@/components/PushNotificationToggle";
+import { LocationButton } from "@/components/LocationButton";
 
 export const Route = createFileRoute("/settings/notifications")({
   head: () => ({
