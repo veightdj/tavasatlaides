@@ -154,6 +154,17 @@ export function Header() {
               </div>
               {user ? (
                 <div className="flex flex-col gap-2 pt-2">
+                  {getHostAudience() === "client" ? (
+                    <Button asChild variant="default" className="min-h-11" onClick={() => setOpen(false)}>
+                      <a href={buildAudienceUrl("merchant", "/dashboard")}>
+                        <ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button asChild variant="default" className="min-h-11" onClick={() => setOpen(false)}>
+                      <Link to="/dashboard"><ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}</Link>
+                    </Button>
+                  )}
                   <Button asChild variant="outline" className="min-h-11" onClick={() => setOpen(false)}><Link to="/dashboard">{t.merchant.dashboard}</Link></Button>
                   <Button asChild variant="ghost" className="min-h-11" onClick={() => setOpen(false)}><Link to="/settings">{t.nav.settings}</Link></Button>
                   <Button variant="ghost" className="min-h-11" onClick={() => { setOpen(false); signOut(); }}>{t.cta.signOut}</Button>
