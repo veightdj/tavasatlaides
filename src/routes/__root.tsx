@@ -149,7 +149,7 @@ function RootComponent() {
         <HostGuard />
         <div className="flex min-h-screen flex-col">
           {showClientChrome && <Header />}
-          <main className={`flex-1 ${showClientChrome ? "pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0" : ""}`}>
+          <main className={`flex-1 ${showClientChrome ? "pt-[env(safe-area-inset-top)] md:pt-0 pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0" : ""}`}>
             <Outlet />
           </main>
           {showClientChrome && <Footer />}
