@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LocateFixed, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { getHostAudience } from "@/lib/audience";
+
 import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
 import { Input } from "@/components/ui/input";
@@ -253,7 +253,7 @@ function useGetLocation() {
   const [loading, setLoading] = useState(false);
   const fetch = () => {
     if (!("geolocation" in navigator)) {
-      if (getHostAudience() !== "client") toast.error(t.deals.nearError);
+      toast.error(t.deals.nearError);
       return;
     }
     setLoading(true);
@@ -269,7 +269,7 @@ function useGetLocation() {
       () => {
         toast.dismiss(toastId);
         setLoading(false);
-        if (getHostAudience() !== "client") toast.error(t.deals.nearError);
+        toast.error(t.deals.nearError);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );

@@ -12,6 +12,7 @@ import {
   canNotify, markNotified, type NotificationPrefs,
 } from "@/lib/notifications";
 import type { CategorySlug } from "@/lib/categories";
+import { useI18n } from "@/i18n/use-i18n";
 
 export const Route = createFileRoute("/nearby")({
   head: () => ({
@@ -38,6 +39,7 @@ type Deal = {
 };
 
 function NearbyPage() {
+  const { t } = useI18n();
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [watching, setWatching] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +55,7 @@ function NearbyPage() {
 
   const startWatch = async () => {
     if (!("geolocation" in navigator)) {
-      setError("Geolocation is not supported in this browser.");
+      setError(t.deals.nearError);
       return;
     }
     // Ask for notification permission once we start tracking
@@ -62,8 +64,8 @@ function NearbyPage() {
     setWatching(true);
     watchId.current = navigator.geolocation.watchPosition(
       (p) => setPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      (e) => {
-        setError(e.message || "Could not get your location.");
+      () => {
+        setError(t.deals.nearError);
         setWatching(false);
       },
       { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
