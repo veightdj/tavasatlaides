@@ -187,7 +187,7 @@ export function Footer() {
   const { t } = useI18n();
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-border/60 bg-muted/30 mt-16 pb-[env(safe-area-inset-bottom)]">
+    <footer className="hidden md:block border-t border-border/60 bg-muted/30 mt-16 pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.2fr_1fr_1fr] gap-8 md:gap-12">
           <div className="space-y-3">

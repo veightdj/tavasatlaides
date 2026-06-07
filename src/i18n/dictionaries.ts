@@ -11,6 +11,7 @@ export const dict = {
     appName: "TavasAtlaides",
     tagline: "Atlaides un piedāvājumi tuvākajos veikalos",
     nav: { deals: "Piedāvājumi", stores: "Veikali", map: "Karte", favorites: "Saglabātie", about: "Par mums", forMerchants: "Veikaliem", privacy: "Privātums", terms: "Noteikumi", cookies: "Sīkdatnes", deleteAccount: "Konta dzēšana", settings: "Iestatījumi", switchToMerchant: "Pārslēgties uz veikala portālu" },
+    bottomNav: { home: "Sākums", nearMe: "Tuvumā", map: "Karte", saved: "Saglabātie", settings: "Iestatījumi" },
     cta: { browse: "Skatīt piedāvājumus", postAd: "Ievietot sludinājumu", signIn: "Ienākt", signUp: "Reģistrēties", signOut: "Iziet", dashboard: "Mans veikals" },
     city: { all: "Visas pilsētas", jurmala: "Jūrmala", riga: "Rīga" },
     home: {
@@ -90,6 +91,7 @@ export const dict = {
     appName: "TavasAtlaides",
     tagline: "Local store deals & discounts",
     nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants", privacy: "Privacy", terms: "Terms", cookies: "Cookies", deleteAccount: "Delete account", settings: "Settings", switchToMerchant: "Switch to merchant portal" },
+    bottomNav: { home: "Home", nearMe: "Near Me", map: "Map", saved: "Saved", settings: "Settings" },
     cta: { browse: "Browse deals", postAd: "Post a deal", signIn: "Sign in", signUp: "Sign up", signOut: "Sign out", dashboard: "My store" },
     city: { all: "All cities", jurmala: "Jurmala", riga: "Riga" },
     home: {
@@ -169,6 +171,7 @@ export const dict = {
     appName: "TavasAtlaides",
     tagline: "Скидки и акции местных магазинов",
     nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам", privacy: "Конфиденциальность", terms: "Условия", cookies: "Cookies", deleteAccount: "Удаление аккаунта", settings: "Настройки", switchToMerchant: "Перейти в портал магазина" },
+    bottomNav: { home: "Главная", nearMe: "Рядом", map: "Карта", saved: "Сохранённое", settings: "Настройки" },
     cta: { browse: "Смотреть акции", postAd: "Разместить", signIn: "Войти", signUp: "Регистрация", signOut: "Выйти", dashboard: "Мой магазин" },
     city: { all: "Все города", jurmala: "Юрмала", riga: "Рига" },
     home: {
