@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as MapRouteImport } from './routes/map'
@@ -57,11 +56,6 @@ const SignupRoute = SignupRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -226,7 +220,6 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
@@ -261,7 +254,6 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
@@ -298,7 +290,6 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRouteWithChildren
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
@@ -335,7 +326,6 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
-    | '/profile'
     | '/settings'
     | '/signup'
     | '/terms'
@@ -370,7 +360,6 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
-    | '/profile'
     | '/settings'
     | '/signup'
     | '/terms'
@@ -406,7 +395,6 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby'
     | '/privacy'
-    | '/profile'
     | '/settings'
     | '/signup'
     | '/terms'
@@ -443,7 +431,6 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   NearbyRoute: typeof NearbyRoute
   PrivacyRoute: typeof PrivacyRoute
-  ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
@@ -483,13 +470,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -749,7 +729,6 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   NearbyRoute: NearbyRoute,
   PrivacyRoute: PrivacyRoute,
-  ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRouteWithChildren,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
@@ -770,3 +749,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

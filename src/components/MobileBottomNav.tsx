@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, MapPin, Map as MapIcon, Heart, User as UserIcon } from "lucide-react";
+import { Home, MapPin, Map as MapIcon, Heart, Settings } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
 
 type Tab = {
