@@ -294,8 +294,28 @@ function Marketing() {
         </div>
       </section>
 
+      {/* Featured deals */}
+      <section className="mx-auto max-w-6xl px-5 pb-14 md:pb-20">
+        <div className="flex items-end justify-between mb-6 gap-3">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
+          <a href="https://app.tavasatlaides.lv/deals" className="text-sm text-primary font-medium hover:underline shrink-0">
+            {t.home.seeAll} →
+          </a>
+        </div>
+        {featured.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border p-8 text-center text-muted-foreground">
+            {t.deals.empty}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.map((d) => <DealCard key={d.id} deal={d as any} />)}
+          </div>
+        )}
+      </section>
+
       {/* For business */}
       <section className="mx-auto max-w-6xl px-5 pb-14 md:pb-20">
+
         <div className="rounded-3xl bg-gradient-warm text-primary-foreground p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">{t.forMerchants.title}</h2>
