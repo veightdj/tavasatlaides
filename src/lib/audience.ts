@@ -28,11 +28,12 @@ export const AUDIENCE_HOSTS: Record<Audience, string> = {
 };
 
 /** Returns the audience for the current hostname, or null when the host is
- *  not a recognised production host (preview, localhost, etc). */
-export function getHostAudience(hostname?: string): Audience | null {
-  if (typeof window === "undefined" && !hostname) return null;
-  const h = (hostname ?? window.location.hostname).toLowerCase();
-  return PROD_HOSTS[h] ?? null;
+ *  not a recognised production host (preview, localhost, etc).
+ *
+ *  NOTE: Subdomain split disabled — the app now runs entirely on the main
+ *  domain. Always returns null so no cross-host redirects fire. */
+export function getHostAudience(_hostname?: string): Audience | null {
+  return null;
 }
 
 /** Paths that should live under each audience. The first matching rule wins. */
