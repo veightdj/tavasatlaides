@@ -160,19 +160,6 @@ function NotificationSettings() {
         )}
       </div>
 
-      {/* Device access */}
-      <div className="rounded-2xl border p-4 space-y-4">
-        <div>
-          <Label className="text-base">Device access</Label>
-          <p className="text-sm text-muted-foreground">
-            Share your location and enable push notifications. On Android, the native app uses system-level permissions.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <LocationButton variant="outline" />
-          <PushNotificationToggle />
-        </div>
-      </div>
 
       {/* Master toggle */}
       <Setting label="Enable notifications" desc="Master switch for all alerts.">
