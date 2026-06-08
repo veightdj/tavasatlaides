@@ -1,28 +1,57 @@
-## Add "Switch to merchant portal" link in the client app user menu
+# Plan: trust + ads + analytics + app settings
 
-### Goal
-Give logged-in users on the client app (tavasatlaides.lv) a clear way to jump to the merchant portal (partner.tavasatlaides.lv).
+Four independent slices. I'll ship them in this order; each is usable on its own.
 
-### Changes
+## 1. App settings (anonymous, device-based) — `app.tavasatlaides.lv/settings`
+Smallest slice, unblocks push targeting.
+- New route `src/routes/settings.index.tsx` (the app's settings hub; the existing `settings/notifications` stays as deep link).
+- Device-local prefs in `localStorage` (`tavasatlaides.prefs`):
+  - radius (km, slider 1–50)
+  - selected category slugs (multi)
+  - push ON/OFF (wires existing `PushNotificationToggle`)
+  - manual fallback city (used when GPS denied)
+- Tiny `usePrefs()` hook (read/write/subscribe).
+- Feed + Near Me + Map read prefs to filter; existing GPS fallback uses `prefs.fallbackCity`.
 
-1. **Translations**
-   - Add `nav.switchToMerchant` key to `src/i18n/dictionaries.ts` in `lv`, `en`, and `ru`:
-     - LV: "Pārslēgties uz veikala portālu"
-     - EN: "Switch to merchant portal"
-     - RU: "Перейти в портал магазина"
+## 2. Banner ads system — admin CRUD + public render
+- `banners` table already exists (12 cols, 5 policies). I'll add a small server fn surface:
+  - `listActiveBanners({ placement })` — public, via `supabaseAdmin`, filters by date window + `is_active`.
+  - `recordBannerImpression / recordBannerClick` — public anon insert into existing `ad_*` tables or a `banner_events` table (will check schema first).
+- Admin page `src/routes/admin.banners.tsx` already exists — wire it to upload (storage bucket `banners` exists), set placement (`home_top`, `home_inline`, `app_feed`), schedule window, link URL.
+- Render component `<BannerSlot placement="..."/>`:
+  - mounted in marketing Home (`/`) and in app feed.
 
-2. **Header component (`src/components/layout/Header.tsx`)**
-   - Import `getHostAudience` and `buildAudienceUrl` from `@/lib/audience`.
-   - In the **desktop** logged-in dropdown menu (below the existing merchant items, above Settings or as a distinct separator row), add:
-     - A `DropdownMenuItem` with label from `t.nav.switchToMerchant`.
-     - On production client host (`getHostAudience() === "client"`), render an `<a>` with `href={buildAudienceUrl("merchant", "/dashboard")}`.
-     - On preview/localhost, render `<Link to="/dashboard">` so it works on single-domain previews.
-     - Icon: `Store` (or `ArrowUpRight` if preferred).
-   - In the **mobile** logged-in menu block, add the same link as a full-width button above the existing Dashboard/Settings buttons.
+## 3. Partner analytics — `partners.tavasatlaides.lv/dashboard`
+- Server fn `getPartnerAnalytics({ range })`:
+  - aggregates `ad_views`, `ad_clicks`, `ad_shares`, `ad_saves` for ads owned by the caller (RLS via `requireSupabaseAuth`).
+  - returns totals + 14-day daily series + per-deal breakdown.
+- Dashboard cards: total views/clicks/CTR/saves + sparkline + top deals table.
+- Uses `recharts` (already in shadcn chart).
 
-3. **No other files touched.**
+## 4. Anti-fraud + trust score
+Schema migration:
+- `partner_trust_scores` (user_id PK, score int 0–100, level enum bronze/silver/gold, factors jsonb, updated_at).
+- `deal_reports` (id, ad_id, reporter_fingerprint, reason enum, note, created_at, status).
+- `fraud_signals` (id, ad_id, signal text, severity, payload jsonb, created_at).
+Server fns:
+- `submitDealReport` (anonymous, fingerprint-rate-limited in handler via existing tables; ack the no-backend-rate-limit caveat — best-effort soft limit by IP+fingerprint dedupe).
+- `recalculateTrustScore(userId)` — runs on deal create, on report resolved, on admin verify/block. Factors: account age, # active deals, verified business, reports/active ratio, geo-validity rate, duplicate rate.
+- `detectDealFraud(adId)` — runs on insert (deferred): duplicate title+geo within 7d, geo outside Baltics bounding box, suspiciously short title, excessive special chars.
+Admin UI additions on `admin.deals.tsx` / `admin.companies.tsx`:
+- Trust score badge + factors drawer.
+- Reports queue with resolve/dismiss; resolve → trust recalc.
+- Fraud signals column with severity dot.
+Anonymous "Report deal" button on deal detail page.
 
-### Behavior
-- On `tavasatlaides.lv` (production client host), clicking the link navigates to `https://partner.tavasatlaides.lv/dashboard`.
-- On preview/localhost, clicking the link navigates to `/dashboard` within the same preview domain.
-- The link only appears when the user is authenticated (same guard as the existing user menu).
+## Technical notes
+- All public reads go through `createServerFn` + `supabaseAdmin` (server only). No new broad `TO anon` policies.
+- Trust recalculation lives in a server fn called from admin actions and from `notify_new_deal`-style triggers (I'll add one trigger after the fn exists).
+- No new edge functions. No rate-limit infra (project lacks a primitive — soft dedupe only; flagged to user).
+- App settings are device-local; nothing hits backend except push token (already wired via OneSignal).
+
+## Out of scope (call out if you want them)
+- Hard rate limiting (needs infra).
+- ML-based fraud — only rule-based signals.
+- Email notifications for reports/verification.
+
+I'll do them in order 1 → 2 → 3 → 4 and check in after each, so you can redirect early.
