@@ -351,6 +351,7 @@ function AdminBannersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminShell>
+
   );
 }
