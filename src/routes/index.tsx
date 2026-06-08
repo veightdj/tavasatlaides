@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store, Check, Search, Heart, ShieldCheck, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
@@ -9,6 +9,7 @@ import { CategoryCircles } from "@/components/CategoryCircles";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
 import { HomeBannerSlider } from "@/components/HomeBannerSlider";
+import { getHostAudience } from "@/lib/audience";
 
 export const Route = createFileRoute("/")({
   head: () => ({
