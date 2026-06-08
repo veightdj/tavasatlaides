@@ -261,9 +261,9 @@ function Marketing() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild size="lg" className="rounded-full">
-              <a href="https://app.tavasatlaides.lv/">
-                Atvērt lietotni <ArrowRight className="h-4 w-4 ml-1.5" />
-              </a>
+              <Link to="/deals">
+                {t.home.heroCtaPrimary} <ArrowRight className="h-4 w-4 ml-1.5" />
+              </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full">
               <Link to="/for-merchants">{t.forMerchants.cta}</Link>
@@ -295,9 +295,9 @@ function Marketing() {
       <section className="mx-auto max-w-6xl px-5 pb-14 md:pb-20">
         <div className="flex items-end justify-between mb-6 gap-3">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
-          <a href="https://app.tavasatlaides.lv/deals" className="text-sm text-primary font-medium hover:underline shrink-0">
+          <Link to="/deals" className="text-sm text-primary font-medium hover:underline shrink-0">
             {t.home.seeAll} →
-          </a>
+          </Link>
         </div>
         {featured.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border p-8 text-center text-muted-foreground">
