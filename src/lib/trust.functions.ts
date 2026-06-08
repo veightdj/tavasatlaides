@@ -95,7 +95,7 @@ export const setStoreTrust = createServerFn({ method: "POST" })
       .from("user_roles").select("role").eq("user_id", context.userId).eq("role", "admin").maybeSingle();
     if (!roles) throw new Error("Forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, boolean> = {};
+    const patch: { is_verified?: boolean; is_blocked?: boolean } = {};
     if (data.isVerified !== undefined) patch.is_verified = data.isVerified;
     if (data.isBlocked !== undefined) patch.is_blocked = data.isBlocked;
     const { data: store, error } = await supabaseAdmin
