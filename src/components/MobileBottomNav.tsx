@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, MapPin, Map as MapIcon, Heart, Settings as SettingsIcon } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
+import { getHostAudience } from "@/lib/audience";
+
 
 type Tab = {
   to: string;
