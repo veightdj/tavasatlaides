@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useI18n } from "@/i18n/use-i18n";
+import { AUDIENCE_HOME, getHostAudience } from "@/lib/audience";
+
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -30,26 +32,34 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // After auth, land on the home of whichever host we're on. Sessions are
+  // localStorage-per-origin, so we must NOT cross-host redirect here.
+  const destination = (() => {
+    const h = getHostAudience();
+    return h ? AUDIENCE_HOME[h] : "/dashboard";
+  })();
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return toast.error(error.message);
-    navigate({ to: "/dashboard" });
+    window.location.assign(destination);
   };
 
   const onGoogle = async () => {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/dashboard" });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + destination });
     if (result.error) {
       setLoading(false);
       toast.error(String(result.error));
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/dashboard" });
+    window.location.assign(destination);
   };
+
 
   return (
     <AuthShell title={t.auth.signIn}>
