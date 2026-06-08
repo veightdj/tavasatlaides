@@ -97,31 +97,37 @@ export function Header() {
           </DropdownMenu>
 
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm"><StoreIcon className="h-4 w-4 mr-2" /> {t.cta.dashboard}</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {getHostAudience() === "client" ? (
-                  <DropdownMenuItem asChild>
-                    <a href={buildAudienceUrl("merchant", "/dashboard")}>
-                      <ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}
-                    </a>
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard"><ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}</Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/ads">{t.merchant.ads}</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/store">{t.merchant.store}</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/settings">{t.nav.settings}</Link></DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            (() => {
+              const onMerchant = getHostAudience() === "merchant";
+              const merchantHref = onMerchant ? null : buildAudienceUrl("merchant", "/dashboard");
+              return (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm"><StoreIcon className="h-4 w-4 mr-2" /> {t.cta.dashboard}</Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {merchantHref ? (
+                      <DropdownMenuItem asChild>
+                        <a href={merchantHref}>
+                          <ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}
+                        </a>
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem asChild>
+                        <Link to="/dashboard"><ArrowUpRight className="h-4 w-4 mr-2" />{t.nav.switchToMerchant}</Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild><Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/ads">{t.merchant.ads}</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/store">{t.merchant.store}</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/settings">{t.nav.settings}</Link></DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            })()
           ) : isMarketing ? (
             <>
               <Button asChild size="sm" className="rounded-full">
