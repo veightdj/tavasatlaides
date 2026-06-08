@@ -30,7 +30,13 @@ export function AppNativePrompts() {
     };
 
     const saveAlertLocation = async (lat: number, lng: number) => {
-      const prefs = { ...loadPrefs(), enabled: true, newDeals: true, latitude: lat, longitude: lng };
+      const prefs = {
+        ...loadPrefs(),
+        enabled: true,
+        newDeals: true,
+        latitude: lat,
+        longitude: lng,
+      };
       savePrefs(prefs);
       if (await currentUserId()) {
         await savePrefsServer({ data: prefs });
@@ -122,7 +128,7 @@ export function AppNativePrompts() {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
-  }, []);
+  }, [savePrefsServer, saveSub]);
 
   return null;
 }
