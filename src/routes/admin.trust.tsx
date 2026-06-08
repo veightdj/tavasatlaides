@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { listDealReports, resolveReport, setStoreTrust } from "@/lib/trust.functions";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export const Route = createFileRoute("/admin/trust")({
   head: () => ({
@@ -23,11 +24,8 @@ export const Route = createFileRoute("/admin/trust")({
 function AdminTrustPage() {
   const [tab, setTab] = useState<"reports" | "partners">("reports");
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Trust & Reports</h1>
-        <p className="text-sm text-muted-foreground">Review user-submitted deal reports and partner trust scores.</p>
-      </header>
+    <AdminShell title="Trust & Reports">
+      <p className="text-sm text-muted-foreground mb-4">Review user-submitted deal reports and partner trust scores.</p>
       <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
         <TabsList>
           <TabsTrigger value="reports"><Flag className="h-4 w-4 mr-1.5" />Reports</TabsTrigger>
@@ -36,7 +34,7 @@ function AdminTrustPage() {
         <TabsContent value="reports" className="mt-4"><ReportsTab /></TabsContent>
         <TabsContent value="partners" className="mt-4"><PartnersTab /></TabsContent>
       </Tabs>
-    </div>
+    </AdminShell>
   );
 }
 
