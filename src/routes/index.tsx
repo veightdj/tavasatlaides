@@ -262,7 +262,7 @@ function Marketing() {
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild size="lg" className="rounded-full">
               <Link to="/deals">
-                {t.home.openApp ?? "Atvērt lietotni"} <ArrowRight className="h-4 w-4 ml-1.5" />
+                {t.home.heroCtaPrimary} <ArrowRight className="h-4 w-4 ml-1.5" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full">
