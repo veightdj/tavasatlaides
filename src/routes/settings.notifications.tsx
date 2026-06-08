@@ -17,8 +17,6 @@ import {
 import {
   loadNotificationPrefs, saveNotificationPrefs,
 } from "@/lib/notification-prefs.functions";
-import { PushNotificationToggle } from "@/components/PushNotificationToggle";
-import { LocationButton } from "@/components/LocationButton";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/settings/notifications")({
