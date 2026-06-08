@@ -12,6 +12,7 @@ import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
 import { useCountdown } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
+import { ReportDealButton } from "@/components/ReportDealButton";
 
 function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: string | null }) {
   const { t } = useI18n();
@@ -280,6 +281,10 @@ function DealDetail() {
               </div>
             </Link>
           )}
+
+          <div className="mt-6 flex justify-end">
+            <ReportDealButton adId={deal.id} />
+          </div>
         </div>
       </div>
     </div>
