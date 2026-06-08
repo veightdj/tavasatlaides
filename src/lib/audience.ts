@@ -1,25 +1,28 @@
 // Host / audience routing for the multi-subdomain split.
 //
 // Production hosts:
-//   tavasatlaides.lv / www.tavasatlaides.lv → client
-//   partner.tavasatlaides.lv               → merchant
-//   admin.tavasatlaides.lv                 → admin
+//   tavasatlaides.lv / www.tavasatlaides.lv → client  (marketing / SEO)
+//   app.tavasatlaides.lv                    → app     (anonymous consumer app)
+//   partner.tavasatlaides.lv                → merchant
+//   admin.tavasatlaides.lv                  → admin
 //
 // Preview/localhost/Lovable preview subdomains are treated as "any" — no
 // cross-host redirects so we can develop everything from one URL.
 
-export type Audience = "client" | "merchant" | "admin";
+export type Audience = "client" | "app" | "merchant" | "admin";
 
 const PROD_HOSTS: Record<string, Audience> = {
   "tavasatlaides.lv": "client",
   "www.tavasatlaides.lv": "client",
   "tavasatlaides.lovable.app": "client",
+  "app.tavasatlaides.lv": "app",
   "partner.tavasatlaides.lv": "merchant",
   "admin.tavasatlaides.lv": "admin",
 };
 
 export const AUDIENCE_HOSTS: Record<Audience, string> = {
   client: "tavasatlaides.lv",
+  app: "app.tavasatlaides.lv",
   merchant: "partner.tavasatlaides.lv",
   admin: "admin.tavasatlaides.lv",
 };
@@ -36,6 +39,26 @@ export function getHostAudience(hostname?: string): Audience | null {
 const MERCHANT_PREFIXES = ["/dashboard", "/ads", "/store"];
 const ADMIN_PREFIXES = ["/admin"];
 
+/** Consumer-app paths — anonymous browsing, GPS feed, saved deals, map. */
+const APP_PREFIXES = [
+  "/nearby",
+  "/near-me",
+  "/map",
+  "/favorites",
+  "/saved",
+  "/deals",
+  "/categories",
+  "/stores",
+];
+
+/** Marketing / SEO paths — live on www. */
+const CLIENT_PREFIXES = [
+  "/about",
+  "/for-merchants",
+  "/contact",
+  "/faq",
+];
+
 /** Paths that are allowed on any host (auth, legal, shared CTAs). */
 const SHARED_PREFIXES = [
   "/login",
@@ -44,7 +67,7 @@ const SHARED_PREFIXES = [
   "/terms",
   "/cookie-policy",
   "/delete-account",
-  "/for-merchants",
+  "/settings/notifications",
   "/lovable", // internal hooks/preview endpoints
   "/api",
   "/sitemap.xml",
@@ -56,11 +79,13 @@ export function audienceForPath(pathname: string): Audience | "shared" {
   if (SHARED_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "shared";
   if (ADMIN_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "admin";
   if (MERCHANT_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "merchant";
-  // /settings is merchant; /settings/notifications is shared user setting → keep on client
-  if (p === "/settings" || p.startsWith("/settings/") && !p.startsWith("/settings/notifications")) {
-    return "merchant";
-  }
-  return "client";
+  // /settings is the merchant settings hub
+  if (p === "/settings" || p.startsWith("/settings/")) return "merchant";
+  if (CLIENT_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "client";
+  if (APP_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "app";
+  // Root path: consumer feed lives on the app subdomain.
+  if (p === "/") return "app";
+  return "app";
 }
 
 /** Build an absolute URL on the target audience's production host, preserving
