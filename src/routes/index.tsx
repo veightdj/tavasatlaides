@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store, Check, Search, Heart, ShieldCheck, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
@@ -9,6 +9,7 @@ import { CategoryCircles } from "@/components/CategoryCircles";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
 import { HomeBannerSlider } from "@/components/HomeBannerSlider";
+import { getHostAudience } from "@/lib/audience";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -53,6 +54,14 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  // www.tavasatlaides.lv = marketing landing; app subdomain & previews = feed.
+  const [host, setHost] = useState<ReturnType<typeof getHostAudience>>(null);
+  useEffect(() => setHost(getHostAudience()), []);
+  if (host === "client") return <Marketing />;
+  return <Feed />;
+}
+
+function Feed() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [locating, setLocating] = useState(false);
@@ -205,6 +214,97 @@ function Home() {
           <Button asChild size="lg" variant="secondary" className="rounded-full shrink-0 w-full md:w-auto">
             <Link to="/signup">{t.forMerchants.cta} <ArrowRight className="h-4 w-4 ml-1" /></Link>
           </Button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Marketing() {
+  const { t } = useI18n();
+  return (
+    <div className="bg-background">
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
+        <div className="relative mx-auto max-w-6xl px-5 py-20 md:py-28 text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="h-3.5 w-3.5" /> Latvija · Baltija
+          </span>
+          <h1 className="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.05]">
+            {t.home.heroTitle}
+          </h1>
+          <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-balance">
+            {t.home.heroSub}
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild size="lg" className="rounded-full">
+              <a href="https://app.tavasatlaides.lv/">
+                Atvērt lietotni <ArrowRight className="h-4 w-4 ml-1.5" />
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full">
+              <Link to="/for-merchants">{t.forMerchants.cta}</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Value props */}
+      <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            { icon: MapPin, title: "Tuvumā tavai atrašanās vietai", body: "Atrodi piedāvājumus pēc GPS un kartes Rīgā un visā Baltijā." },
+            { icon: Zap, title: "Atjaunoti katru dienu", body: "Akcijas un atlaides parādās uzreiz, tiklīdz veikals tās publicē." },
+            { icon: ShieldCheck, title: "Uzticami vietējie veikali", body: "Verificēti partneri, caurspīdīga moderācija, godīgi piedāvājumi." },
+          ].map(({ icon: Icon, title, body }) => (
+            <div key={title} className="rounded-2xl border border-border bg-card p-6">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <Icon className="h-5 w-5" />
+              </div>
+              <h3 className="mt-4 text-lg font-bold">{title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* For business */}
+      <section className="mx-auto max-w-6xl px-5 pb-14 md:pb-20">
+        <div className="rounded-3xl bg-gradient-warm text-primary-foreground p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold">{t.forMerchants.title}</h2>
+            <p className="mt-3 text-primary-foreground/90">{t.forMerchants.body}</p>
+            <Button asChild size="lg" variant="secondary" className="mt-6 rounded-full">
+              <Link to="/for-merchants">{t.forMerchants.cta} <ArrowRight className="h-4 w-4 ml-1" /></Link>
+            </Button>
+          </div>
+          <ul className="space-y-3">
+            {t.forMerchants.benefits.map((line) => (
+              <li key={line} className="flex items-start gap-2.5">
+                <Check className="h-5 w-5 mt-0.5 shrink-0" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Quick links */}
+      <section className="mx-auto max-w-6xl px-5 pb-20">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Link to="/about" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
+            <h3 className="font-bold">{t.nav.about}</h3>
+            <p className="text-sm text-muted-foreground mt-1">Par projektu un mūsu misiju.</p>
+          </Link>
+          <Link to="/faq" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
+            <h3 className="font-bold">FAQ</h3>
+            <p className="text-sm text-muted-foreground mt-1">Biežāk uzdotie jautājumi.</p>
+          </Link>
+          <Link to="/contact" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
+            <h3 className="font-bold">Kontakti</h3>
+            <p className="text-sm text-muted-foreground mt-1">Sazinies ar mums.</p>
+          </Link>
         </div>
       </section>
     </div>
