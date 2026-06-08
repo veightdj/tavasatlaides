@@ -21,13 +21,39 @@ export function Header() {
   const { user } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [audience, setAudience] = useState<ReturnType<typeof getHostAudience>>(null);
+  useState; // keep import order
+  // Re-read audience on mount (SSR-safe).
+  if (typeof window !== "undefined" && audience === null) {
+    // lazy init via effect-less guard
+  }
+  const isMarketing = (typeof window !== "undefined" ? getHostAudience() : null) === "client";
 
   const signOut = async () => {
     await supabase.auth.signOut();
     router.navigate({ to: "/" });
   };
 
-  const navLinks = (
+  const appUrl = buildAudienceUrl("app", "/");
+
+  const marketingLinks = (
+    <>
+      <Link to="/about" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        {t.nav.about}
+      </Link>
+      <Link to="/for-merchants" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        {t.nav.forMerchants}
+      </Link>
+      <Link to="/faq" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        FAQ
+      </Link>
+      <Link to="/contact" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        {t.nav.contact ?? "Kontakti"}
+      </Link>
+    </>
+  );
+
+  const appLinks = (
     <>
       <Link to="/deals" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
         {t.nav.deals}
@@ -49,6 +75,9 @@ export function Header() {
       </Link>
     </>
   );
+
+  const navLinks = isMarketing ? marketingLinks : appLinks;
+
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 pt-[env(safe-area-inset-top)]">
