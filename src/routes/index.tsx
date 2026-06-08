@@ -54,6 +54,14 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  // www.tavasatlaides.lv = marketing landing; app subdomain & previews = feed.
+  const [host, setHost] = useState<ReturnType<typeof getHostAudience>>(null);
+  useEffect(() => setHost(getHostAudience()), []);
+  if (host === "client") return <Marketing />;
+  return <Feed />;
+}
+
+function Feed() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [locating, setLocating] = useState(false);
