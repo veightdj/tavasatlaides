@@ -59,11 +59,12 @@ export function MobileBottomNav() {
       match: (p) => p.startsWith("/favorites") || p.startsWith("/saved"),
     },
     {
-      to: "/settings",
+      to: "/settings/notifications",
       label: t.bottomNav.settings,
       icon: SettingsIcon,
       match: (p) => p.startsWith("/settings"),
     },
+
   ];
 
   return (
