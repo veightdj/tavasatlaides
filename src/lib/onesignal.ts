@@ -101,7 +101,7 @@ export async function registerOneSignal(): Promise<OneSignalRegistration> {
   }
 
   await initWeb();
-  const OneSignal = (await import("react-onesignal")).default as OneSignalSdk;
+  const OneSignal = (await import("react-onesignal")).default as unknown as OneSignalSdk;
 
   // Show the OneSignal slidedown / native prompt
   try {
@@ -140,7 +140,7 @@ export async function setOneSignalExternalId(externalId: string) {
       return;
     }
     await initWeb();
-    const OneSignal = (await import("react-onesignal")).default as OneSignalSdk;
+    const OneSignal = (await import("react-onesignal")).default as unknown as OneSignalSdk;
     await OneSignal.login?.(externalId);
   } catch {
     /* non-blocking */
@@ -157,7 +157,7 @@ export async function logoutOneSignal() {
       return;
     }
     if (typeof window === "undefined") return;
-    const OneSignal = (await import("react-onesignal")).default as OneSignalSdk;
+    const OneSignal = (await import("react-onesignal")).default as unknown as OneSignalSdk;
     await OneSignal.logout?.();
   } catch {
     /* non-blocking */
