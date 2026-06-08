@@ -21,12 +21,6 @@ export function Header() {
   const { user } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [audience, setAudience] = useState<ReturnType<typeof getHostAudience>>(null);
-  useState; // keep import order
-  // Re-read audience on mount (SSR-safe).
-  if (typeof window !== "undefined" && audience === null) {
-    // lazy init via effect-less guard
-  }
   const isMarketing = (typeof window !== "undefined" ? getHostAudience() : null) === "client";
 
   const signOut = async () => {
@@ -35,6 +29,7 @@ export function Header() {
   };
 
   const appUrl = buildAudienceUrl("app", "/");
+
 
   const marketingLinks = (
     <>
@@ -48,7 +43,7 @@ export function Header() {
         FAQ
       </Link>
       <Link to="/contact" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
-        {t.nav.contact ?? "Kontakti"}
+        Kontakti
       </Link>
     </>
   );
