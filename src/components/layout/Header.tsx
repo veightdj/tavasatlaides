@@ -21,13 +21,34 @@ export function Header() {
   const { user } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const isMarketing = (typeof window !== "undefined" ? getHostAudience() : null) === "client";
 
   const signOut = async () => {
     await supabase.auth.signOut();
     router.navigate({ to: "/" });
   };
 
-  const navLinks = (
+  const appUrl = buildAudienceUrl("app", "/");
+
+
+  const marketingLinks = (
+    <>
+      <Link to="/about" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        {t.nav.about}
+      </Link>
+      <Link to="/for-merchants" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        {t.nav.forMerchants}
+      </Link>
+      <Link to="/faq" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        FAQ
+      </Link>
+      <Link to="/contact" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
+        Kontakti
+      </Link>
+    </>
+  );
+
+  const appLinks = (
     <>
       <Link to="/deals" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
         {t.nav.deals}
@@ -49,6 +70,9 @@ export function Header() {
       </Link>
     </>
   );
+
+  const navLinks = isMarketing ? marketingLinks : appLinks;
+
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 pt-[env(safe-area-inset-top)]">
@@ -98,6 +122,13 @@ export function Header() {
                 <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          ) : isMarketing ? (
+            <>
+              <Button asChild size="sm" className="rounded-full">
+                <a href={appUrl}>Atvērt lietotni <ArrowUpRight className="h-4 w-4 ml-1" /></a>
+              </Button>
+              <Button asChild variant="outline" size="sm"><Link to="/for-merchants">{t.nav.forMerchants}</Link></Button>
+            </>
           ) : (
             <>
               <Button asChild variant="ghost" size="sm"><Link to="/login">{t.cta.signIn}</Link></Button>
@@ -126,14 +157,22 @@ export function Header() {
           <div className="md:hidden fixed inset-x-0 top-16 z-40 border-t border-border/60 bg-background max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
             <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-2">
               <div className="flex flex-col" onClick={() => setOpen(false)}>
-                {[
-                  { to: "/deals", label: t.nav.deals },
-                  { to: "/stores", label: t.nav.stores },
-                  { to: "/nearby", label: "Near me", icon: Bell },
-                  { to: "/map", label: t.nav.map, icon: MapPin },
-                  { to: "/favorites", label: t.nav.favorites, icon: Heart },
-                  { to: "/for-merchants", label: t.nav.forMerchants },
-                ].map((l) => (
+                {(isMarketing
+                  ? [
+                      { to: "/about", label: t.nav.about },
+                      { to: "/for-merchants", label: t.nav.forMerchants },
+                      { to: "/faq", label: "FAQ" },
+                      { to: "/contact", label: "Kontakti" },
+                    ]
+                  : [
+                      { to: "/deals", label: t.nav.deals },
+                      { to: "/stores", label: t.nav.stores },
+                      { to: "/nearby", label: "Near me", icon: Bell },
+                      { to: "/map", label: t.nav.map, icon: MapPin },
+                      { to: "/favorites", label: t.nav.favorites, icon: Heart },
+                      { to: "/for-merchants", label: t.nav.forMerchants },
+                    ]
+                ).map((l: any) => (
                   <Link
                     key={l.to}
                     to={l.to}
@@ -144,6 +183,14 @@ export function Header() {
                     {l.label}
                   </Link>
                 ))}
+                {isMarketing && (
+                  <a
+                    href={appUrl}
+                    className="flex items-center gap-2 min-h-11 px-2 py-3 rounded-md text-base font-semibold text-primary hover:bg-muted active:bg-muted transition"
+                  >
+                    <ArrowUpRight className="h-5 w-5" /> Atvērt lietotni
+                  </a>
+                )}
               </div>
               <div className="flex items-center gap-2 pt-3 mt-1 border-t border-border/60">
                 {LANGS.map((l) => (
