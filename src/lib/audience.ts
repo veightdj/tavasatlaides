@@ -83,8 +83,8 @@ export function audienceForPath(pathname: string): Audience | "shared" {
   if (p === "/settings" || p.startsWith("/settings/")) return "merchant";
   if (CLIENT_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "client";
   if (APP_PREFIXES.some((s) => p === s || p.startsWith(s + "/"))) return "app";
-  // Root path: consumer feed lives on the app subdomain.
-  if (p === "/") return "app";
+  // Root path is rendered on both client (marketing) and app (feed) hosts.
+  if (p === "/") return "shared";
   return "app";
 }
 
