@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 import { getHostAudience } from "@/lib/audience";
 import { registerOneSignal, setOneSignalExternalId } from "@/lib/onesignal";
 import { getCurrentLocation } from "@/lib/location";
+import { loadPrefs, savePrefs } from "@/lib/notifications";
+import { saveNotificationPrefs } from "@/lib/notification-prefs.functions";
+import { saveOneSignalSubscription } from "@/lib/subscriptions.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 const NOTIF_KEY = "app:asked-notifications";
@@ -13,9 +17,25 @@ const GEO_KEY = "app:asked-geolocation";
  * site feels native. Marketing (www) and other hosts never see these.
  */
 export function AppNativePrompts() {
+  const savePrefsServer = useServerFn(saveNotificationPrefs);
+  const saveSub = useServerFn(saveOneSignalSubscription);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (getHostAudience() !== "app") return;
+
+    const currentUserId = async () => {
+      const { data } = await supabase.auth.getSession();
+      return data.session?.user?.id ?? null;
+    };
+
+    const saveAlertLocation = async (lat: number, lng: number) => {
+      const prefs = { ...loadPrefs(), enabled: true, newDeals: true, latitude: lat, longitude: lng };
+      savePrefs(prefs);
+      if (await currentUserId()) {
+        await savePrefsServer({ data: prefs });
+      }
+    };
 
     // Location — quick, silent if already granted, otherwise gentle prompt.
     const askLocation = async () => {
@@ -26,7 +46,9 @@ export function AppNativePrompts() {
           .catch(() => null);
         if (perm?.state === "granted") {
           localStorage.setItem(GEO_KEY, "granted");
-          getCurrentLocation().catch(() => {});
+          getCurrentLocation()
+            .then((coords) => saveAlertLocation(coords.lat, coords.lng))
+            .catch(() => {});
           return;
         }
         if (perm?.state === "denied") {
@@ -40,7 +62,9 @@ export function AppNativePrompts() {
             label: "Share",
             onClick: () => {
               localStorage.setItem(GEO_KEY, "asked");
-              getCurrentLocation().catch(() => {});
+              getCurrentLocation()
+                .then((coords) => saveAlertLocation(coords.lat, coords.lng))
+                .catch(() => {});
             },
           },
           cancel: {
@@ -70,9 +94,13 @@ export function AppNativePrompts() {
             localStorage.setItem(NOTIF_KEY, "asked");
             try {
               const reg = await registerOneSignal();
-              const { data } = await supabase.auth.getSession();
-              const uid = data.session?.user?.id;
-              if (uid) await setOneSignalExternalId(uid);
+              const uid = await currentUserId();
+              if (uid) {
+                await setOneSignalExternalId(uid);
+                await saveSub({
+                  data: { onesignalSubscriptionId: reg.playerId, platform: reg.platform },
+                });
+              }
               toast.success("Notifications enabled");
               void reg;
             } catch {
