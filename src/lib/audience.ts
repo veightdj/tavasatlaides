@@ -94,3 +94,25 @@ export function buildAudienceUrl(target: Audience, pathname: string, search = ""
   const host = AUDIENCE_HOSTS[target];
   return `https://${host}${pathname}${search}${hash}`;
 }
+
+/** Where each audience host should land when the user hits "/". */
+export const AUDIENCE_HOME: Record<Audience, string> = {
+  client: "/",
+  app: "/",
+  merchant: "/dashboard",
+  admin: "/admin",
+};
+
+/** Navigate the browser to a path on the appropriate host for the destination
+ *  audience. If we're already on that host, do a same-origin assign so cookies
+ *  & Supabase session stay intact. */
+export function gotoAudience(target: Audience, pathname: string) {
+  if (typeof window === "undefined") return;
+  const current = getHostAudience();
+  if (current === target || current === null) {
+    window.location.assign(pathname);
+  } else {
+    window.location.assign(buildAudienceUrl(target, pathname));
+  }
+}
+
