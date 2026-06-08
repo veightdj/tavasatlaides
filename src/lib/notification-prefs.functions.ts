@@ -7,9 +7,12 @@ const CategorySchema = z.enum(CATEGORY_SLUGS as unknown as [string, ...string[]]
 
 const PrefsSchema = z.object({
   enabled: z.boolean(),
-  radiusKm: z.number().int().refine((v) => [1, 3, 5, 10, 25, 50].includes(v), {
-    message: "Invalid radius",
-  }),
+  radiusKm: z
+    .number()
+    .int()
+    .refine((v) => [1, 3, 5, 10, 25, 50].includes(v), {
+      message: "Invalid radius",
+    }),
   categories: z.array(CategorySchema).min(0).max(32),
   latitude: z.number().min(-90).max(90).nullable().optional(),
   longitude: z.number().min(-180).max(180).nullable().optional(),
