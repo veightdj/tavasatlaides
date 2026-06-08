@@ -54,23 +54,10 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  // Per-audience landing:
-  //   client (www)  → Marketing
-  //   app           → Feed
-  //   merchant host → redirect /dashboard (session lives on that origin)
-  //   admin host    → redirect /admin
-  //   preview/null  → Marketing (safe default)
-  const [host, setHost] = useState<ReturnType<typeof getHostAudience>>(null);
-  useEffect(() => {
-    const h = getHostAudience();
-    setHost(h);
-    if (h === "merchant") window.location.replace("/dashboard");
-    else if (h === "admin") window.location.replace("/admin");
-  }, []);
-  if (host === "app") return <Feed />;
-  if (host === "merchant" || host === "admin") return null; // redirecting
-  return <Marketing />;
+  // Single-domain mode: the home page is the app feed (hero + categories + featured).
+  return <Feed />;
 }
+
 
 
 function Feed() {
