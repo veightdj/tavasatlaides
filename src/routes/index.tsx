@@ -253,9 +253,6 @@ function Marketing() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
         <div className="relative mx-auto max-w-6xl px-5 py-20 md:py-28 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5" /> Latvija · Baltija
-          </span>
           <h1 className="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.05]">
             {t.home.heroTitle}
           </h1>
