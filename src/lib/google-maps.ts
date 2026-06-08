@@ -4,7 +4,13 @@
 // Google Maps JavaScript API multiple times" warning and race conditions
 // between components.
 
-let loaderPromise: Promise<any> | null = null;
+type GoogleMapsWindow = Window &
+  typeof globalThis & {
+    google?: { maps?: { Map?: unknown; importLibrary?: unknown } };
+    [key: string]: unknown;
+  };
+
+let loaderPromise: Promise<unknown> | null = null;
 
 function isLovableHost(hostname: string): boolean {
   return hostname.endsWith(".lovable.app") || hostname.endsWith(".lovableproject.com");
@@ -12,8 +18,7 @@ function isLovableHost(hostname: string): boolean {
 
 async function resolveGoogleMapsKey(): Promise<string> {
   const managedKey = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
-  const customPublicKey =
-    import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY ?? import.meta.env.VITE_MAPS;
+  const customPublicKey = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY ?? import.meta.env.VITE_MAPS;
 
   if (customPublicKey) return customPublicKey;
 
@@ -21,7 +26,9 @@ async function resolveGoogleMapsKey(): Promise<string> {
   // The managed connector key is restricted to Lovable preview/published hosts.
   if (!isLovableHost(window.location.hostname)) {
     try {
-      const res = await fetch("/api/public/config/maps", { headers: { accept: "application/json" } });
+      const res = await fetch("/api/public/config/maps", {
+        headers: { accept: "application/json" },
+      });
       if (res.ok) {
         const data = (await res.json()) as { key?: string };
         if (data.key) return data.key;
@@ -35,11 +42,11 @@ async function resolveGoogleMapsKey(): Promise<string> {
   throw new Error("Missing Google Maps browser key");
 }
 
-export function loadGoogleMaps(): Promise<any> {
+export function loadGoogleMaps(): Promise<unknown> {
   if (typeof window === "undefined") {
     return Promise.reject(new Error("Google Maps can only load in the browser"));
   }
-  const w = window as any;
+  const w = window as GoogleMapsWindow;
   if (w.google?.maps?.Map && w.google?.maps?.importLibrary) {
     return Promise.resolve(w.google);
   }
