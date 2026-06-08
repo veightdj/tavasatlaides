@@ -54,11 +54,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  // www.tavasatlaides.lv = marketing landing; app subdomain & previews = feed.
+  // app.tavasatlaides.lv = anonymous feed; everything else (www, previews) = marketing.
   const [host, setHost] = useState<ReturnType<typeof getHostAudience>>(null);
   useEffect(() => setHost(getHostAudience()), []);
-  if (host === "client") return <Marketing />;
-  return <Feed />;
+  if (host === "app") return <Feed />;
+  return <Marketing />;
 }
 
 function Feed() {

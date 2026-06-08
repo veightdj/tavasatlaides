@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Pencil, Plus, Trash2, Upload } from "lucide-react";
@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export const Route = createFileRoute("/admin/banners")({
   head: () => ({
@@ -72,35 +73,13 @@ function toLocalInput(d: Date) {
 
 function AdminBannersPage() {
   const qc = useQueryClient();
-  const [authState, setAuthState] = useState<"checking" | "anon" | "not-admin" | "admin">("checking");
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!mounted) return;
-      if (!session) {
-        setAuthState("anon");
-        window.location.href = "/login?redirect=" + encodeURIComponent("/admin/banners");
-        return;
-      }
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id);
-      if (!mounted) return;
-      setAuthState(roles?.some((r) => r.role === "admin") ? "admin" : "not-admin");
-    })();
-    return () => { mounted = false; };
-  }, []);
-
   const { data: banners = [], isLoading } = useQuery({
     queryKey: ["admin-banners"],
-    enabled: authState === "admin",
     queryFn: async () => {
       const { data, error } = await supabase
         .from("banners")
@@ -221,33 +200,14 @@ function AdminBannersPage() {
     refresh();
   };
 
-  if (authState === "checking" || authState === "anon") {
-    return <div className="p-10 text-center text-muted-foreground">Loading…</div>;
-  }
-
-  if (authState === "not-admin") {
-    return (
-      <div className="mx-auto max-w-md p-10 text-center space-y-4">
-        <h1 className="text-xl font-bold">Admin access required</h1>
-        <p className="text-muted-foreground text-sm">
-          Your account doesn't have admin privileges. Sign in with an admin account.
-        </p>
-        <Button asChild variant="outline">
-          <Link to="/login">Sign in</Link>
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <AdminShell title="Homepage Banners">
       <header className="flex items-center justify-between mb-6 gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Homepage Banners</h1>
-          <p className="text-sm text-muted-foreground">Manage the top slider on the homepage.</p>
-        </div>
-        <Button onClick={openNew}><Plus className="h-4 w-4" /> Add banner</Button>
+        <p className="text-sm text-muted-foreground">Manage the top slider on the homepage.</p>
+        <Button onClick={openNew}><Plus className="h-4 w-4 mr-1" /> Add banner</Button>
       </header>
+
+
 
       {isLoading ? (
         <div className="text-center text-muted-foreground py-12">Loading…</div>
@@ -391,6 +351,7 @@ function AdminBannersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminShell>
+
   );
 }
