@@ -18,6 +18,7 @@ import { AnalyticsLoader } from "@/components/AnalyticsLoader";
 import { supabase } from "@/integrations/supabase/client";
 import { HostGuard } from "@/components/HostGuard";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { AppNativePrompts } from "@/components/AppNativePrompts";
 import { getHostAudience } from "@/lib/audience";
 
 function NotFoundComponent() {
@@ -158,6 +159,7 @@ function RootComponent() {
         <Toaster position="top-right" richColors />
         <CookieConsent />
         <AnalyticsLoader />
+        <AppNativePrompts />
       </I18nProvider>
     </QueryClientProvider>
   );
