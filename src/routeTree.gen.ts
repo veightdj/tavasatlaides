@@ -45,6 +45,7 @@ import { Route as AuthenticatedAdsIdRouteImport } from './routes/_authenticated/
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicHooksNotifyDealRouteImport } from './routes/api/public/hooks/notify-deal'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -226,6 +227,12 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksNotifyDealRoute =
+  ApiPublicHooksNotifyDealRouteImport.update({
+    id: '/api/public/hooks/notify-deal',
+    path: '/api/public/hooks/notify-deal',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -260,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/ads/': typeof AuthenticatedAdsIndexRoute
+  '/api/public/hooks/notify-deal': typeof ApiPublicHooksNotifyDealRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -297,6 +305,7 @@ export interface FileRoutesByTo {
   '/ads/new': typeof AuthenticatedAdsNewRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/ads': typeof AuthenticatedAdsIndexRoute
+  '/api/public/hooks/notify-deal': typeof ApiPublicHooksNotifyDealRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -336,6 +345,7 @@ export interface FileRoutesById {
   '/_authenticated/ads/new': typeof AuthenticatedAdsNewRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/_authenticated/ads/': typeof AuthenticatedAdsIndexRoute
+  '/api/public/hooks/notify-deal': typeof ApiPublicHooksNotifyDealRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -375,6 +385,7 @@ export interface FileRouteTypes {
     | '/ads/new'
     | '/admin/notifications/debug'
     | '/ads/'
+    | '/api/public/hooks/notify-deal'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/ads/new'
     | '/admin/notifications/debug'
     | '/ads'
+    | '/api/public/hooks/notify-deal'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -450,6 +462,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ads/new'
     | '/admin/notifications/debug'
     | '/_authenticated/ads/'
+    | '/api/public/hooks/notify-deal'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -483,6 +496,7 @@ export interface RootRouteChildren {
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
   AdminNotificationsDebugRoute: typeof AdminNotificationsDebugRoute
+  ApiPublicHooksNotifyDealRoute: typeof ApiPublicHooksNotifyDealRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -742,6 +756,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/notify-deal': {
+      id: '/api/public/hooks/notify-deal'
+      path: '/api/public/hooks/notify-deal'
+      fullPath: '/api/public/hooks/notify-deal'
+      preLoaderRoute: typeof ApiPublicHooksNotifyDealRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -795,6 +816,7 @@ const rootRouteChildren: RootRouteChildren = {
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
   AdminNotificationsDebugRoute: AdminNotificationsDebugRoute,
+  ApiPublicHooksNotifyDealRoute: ApiPublicHooksNotifyDealRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
