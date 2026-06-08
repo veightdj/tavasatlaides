@@ -234,6 +234,19 @@ function Feed() {
 
 function Marketing() {
   const { t } = useI18n();
+  const { data: featured = [] } = useQuery({
+    queryKey: ["marketing-featured-deals"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ads")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,hours_json)")
+        .eq("status", "active")
+        .order("discount_pct", { ascending: false, nullsFirst: false })
+        .limit(8);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
   return (
     <div className="bg-background">
       {/* Hero */}
