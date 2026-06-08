@@ -17,8 +17,10 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -83,6 +85,11 @@ const FavoritesRoute = FavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DeleteAccountRoute = DeleteAccountRouteImport.update({
   id: '/delete-account',
   path: '/delete-account',
@@ -91,6 +98,11 @@ const DeleteAccountRoute = DeleteAccountRouteImport.update({
 const CookiePolicyRoute = CookiePolicyRouteImport.update({
   id: '/cookie-policy',
   path: '/cookie-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -212,8 +224,10 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/delete-account': typeof DeleteAccountRoute
+  '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -246,8 +260,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/delete-account': typeof DeleteAccountRoute
+  '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -282,8 +298,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/delete-account': typeof DeleteAccountRoute
+  '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
   '/login': typeof LoginRoute
@@ -318,8 +336,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/contact'
     | '/cookie-policy'
     | '/delete-account'
+    | '/faq'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -352,8 +372,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/contact'
     | '/cookie-policy'
     | '/delete-account'
+    | '/faq'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -387,8 +409,10 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/contact'
     | '/cookie-policy'
     | '/delete-account'
+    | '/faq'
     | '/favorites'
     | '/for-merchants'
     | '/login'
@@ -423,8 +447,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
   CookiePolicyRoute: typeof CookiePolicyRoute
   DeleteAccountRoute: typeof DeleteAccountRoute
+  FaqRoute: typeof FaqRoute
   FavoritesRoute: typeof FavoritesRoute
   ForMerchantsRoute: typeof ForMerchantsRoute
   LoginRoute: typeof LoginRoute
@@ -507,6 +533,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/delete-account': {
       id: '/delete-account'
       path: '/delete-account'
@@ -519,6 +552,13 @@ declare module '@tanstack/react-router' {
       path: '/cookie-policy'
       fullPath: '/cookie-policy'
       preLoaderRoute: typeof CookiePolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -711,8 +751,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
   CookiePolicyRoute: CookiePolicyRoute,
   DeleteAccountRoute: DeleteAccountRoute,
+  FaqRoute: FaqRoute,
   FavoritesRoute: FavoritesRoute,
   ForMerchantsRoute: ForMerchantsRoute,
   LoginRoute: LoginRoute,
@@ -739,3 +781,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
