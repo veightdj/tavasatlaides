@@ -352,6 +352,53 @@ export type Database = {
         }
         Relationships: []
       }
+      deal_reports: {
+        Row: {
+          ad_id: string
+          created_at: string
+          id: string
+          note: string | null
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_fingerprint: string | null
+          reporter_ip: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database["public"]["Enums"]["report_status"]
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_fingerprint?: string | null
+          reporter_ip?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          reason?: Database["public"]["Enums"]["report_reason"]
+          reporter_fingerprint?: string | null
+          reporter_ip?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_reports_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -438,6 +485,41 @@ export type Database = {
           used_at?: string | null
         }
         Relationships: []
+      }
+      fraud_signals: {
+        Row: {
+          ad_id: string
+          created_at: string
+          id: string
+          payload: Json
+          severity: number
+          signal: string
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          severity?: number
+          signal: string
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          severity?: number
+          signal?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_signals_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notification_events: {
         Row: {
@@ -630,6 +712,30 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_trust_scores: {
+        Row: {
+          factors: Json
+          level: Database["public"]["Enums"]["trust_level"]
+          score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          factors?: Json
+          level?: Database["public"]["Enums"]["trust_level"]
+          score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          factors?: Json
+          level?: Database["public"]["Enums"]["trust_level"]
+          score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pending_deal_notifications: {
         Row: {
           ad_id: string
@@ -743,7 +849,9 @@ export type Database = {
           description: string | null
           hours_json: Json | null
           id: string
+          is_blocked: boolean
           is_hidden: boolean
+          is_verified: boolean
           lat: number | null
           lng: number | null
           logo_url: string | null
@@ -766,7 +874,9 @@ export type Database = {
           description?: string | null
           hours_json?: Json | null
           id?: string
+          is_blocked?: boolean
           is_hidden?: boolean
+          is_verified?: boolean
           lat?: number | null
           lng?: number | null
           logo_url?: string | null
@@ -789,7 +899,9 @@ export type Database = {
           description?: string | null
           hours_json?: Json | null
           id?: string
+          is_blocked?: boolean
           is_hidden?: boolean
+          is_verified?: boolean
           lat?: number | null
           lng?: number | null
           logo_url?: string | null
@@ -893,6 +1005,7 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      detect_deal_fraud: { Args: { _ad_id: string }; Returns: number }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -927,9 +1040,35 @@ export type Database = {
           read_ct: number
         }[]
       }
+      recalculate_trust_score: {
+        Args: { _user_id: string }
+        Returns: {
+          factors: Json
+          level: Database["public"]["Enums"]["trust_level"]
+          score: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "partner_trust_scores"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       app_role: "admin"
+      report_reason:
+        | "spam"
+        | "scam"
+        | "expired"
+        | "wrong_info"
+        | "inappropriate"
+        | "duplicate"
+        | "other"
+      report_status: "open" | "resolved" | "dismissed"
+      trust_level: "bronze" | "silver" | "gold"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1058,6 +1197,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      report_reason: [
+        "spam",
+        "scam",
+        "expired",
+        "wrong_info",
+        "inappropriate",
+        "duplicate",
+        "other",
+      ],
+      report_status: ["open", "resolved", "dismissed"],
+      trust_level: ["bronze", "silver", "gold"],
     },
   },
 } as const
