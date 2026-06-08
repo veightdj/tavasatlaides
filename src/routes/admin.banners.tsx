@@ -200,33 +200,14 @@ function AdminBannersPage() {
     refresh();
   };
 
-  if (authState === "checking" || authState === "anon") {
-    return <div className="p-10 text-center text-muted-foreground">Loading…</div>;
-  }
-
-  if (authState === "not-admin") {
-    return (
-      <div className="mx-auto max-w-md p-10 text-center space-y-4">
-        <h1 className="text-xl font-bold">Admin access required</h1>
-        <p className="text-muted-foreground text-sm">
-          Your account doesn't have admin privileges. Sign in with an admin account.
-        </p>
-        <Button asChild variant="outline">
-          <Link to="/login">Sign in</Link>
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <AdminShell title="Homepage Banners">
       <header className="flex items-center justify-between mb-6 gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Homepage Banners</h1>
-          <p className="text-sm text-muted-foreground">Manage the top slider on the homepage.</p>
-        </div>
-        <Button onClick={openNew}><Plus className="h-4 w-4" /> Add banner</Button>
+        <p className="text-sm text-muted-foreground">Manage the top slider on the homepage.</p>
+        <Button onClick={openNew}><Plus className="h-4 w-4 mr-1" /> Add banner</Button>
       </header>
+
+
 
       {isLoading ? (
         <div className="text-center text-muted-foreground py-12">Loading…</div>
