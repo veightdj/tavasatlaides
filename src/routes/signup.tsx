@@ -61,8 +61,9 @@ function SignupPage() {
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/dashboard" });
     if (result.error) { setLoading(false); toast.error(String(result.error)); return; }
     if (result.redirected) return;
-    navigate({ to: "/dashboard" });
+    window.location.assign("/dashboard");
   };
+
 
   return (
     <AuthShell title={t.auth.signUp}>
