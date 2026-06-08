@@ -29,7 +29,7 @@ async function initWeb() {
         appId: ONESIGNAL_APP_ID,
         allowLocalhostAsSecureOrigin: true,
         serviceWorkerParam: { scope: "/" },
-        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerPath: "/OneSignalSDKWorker.js",
       });
     })().catch((e) => {
       webInitPromise = null;
@@ -88,6 +88,11 @@ export async function registerOneSignal(): Promise<OneSignalRegistration> {
     await OneSignal.Slidedown?.promptPush?.();
   } catch {
     /* ignore — fallback to opt-in below */
+  }
+  try {
+    await OneSignal.Notifications?.requestPermission?.();
+  } catch {
+    /* ignore */
   }
   try {
     await OneSignal.User?.PushSubscription?.optIn?.();

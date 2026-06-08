@@ -34,6 +34,11 @@ function inQuietHours(hour: number, start: number, end: number): boolean {
   return hour >= start || hour < end; // wraps midnight
 }
 
+function notificationCategoryKeys(category: string): string[] {
+  if (category === "cafe") return ["cafe", "cafes"];
+  return [category];
+}
+
 export const Route = createFileRoute("/api/public/hooks/notify-deal")({
   server: {
     handlers: {
@@ -96,6 +101,7 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
         }
 
         // Candidate users: instant new_deals subscribers in this category with location
+        const categoryKeys = notificationCategoryKeys(ad.category);
         const { data: prefs, error: prefErr } = await supabaseAdmin
           .from("notification_preferences")
           .select(
@@ -104,12 +110,27 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
           .eq("enabled", true)
           .eq("new_deals", true)
           .eq("notification_frequency", "instant")
-          .contains("categories", [ad.category])
+          .overlaps("categories", categoryKeys)
           .not("latitude", "is", null)
           .not("longitude", "is", null);
         if (prefErr) {
           return new Response(prefErr.message, { status: 500 });
         }
+
+        const candidateUserIds = [...new Set((prefs ?? []).map((p) => p.user_id))];
+        if (candidateUserIds.length === 0) {
+          return Response.json({ ok: true, recipients: 0 });
+        }
+
+        const { data: subscriptions, error: subErr } = await supabaseAdmin
+          .from("user_subscriptions")
+          .select("user_id")
+          .eq("is_active", true)
+          .in("user_id", candidateUserIds);
+        if (subErr) {
+          return new Response(subErr.message, { status: 500 });
+        }
+        const subscribedUsers = new Set((subscriptions ?? []).map((s) => s.user_id));
 
         const hour = rigaHour();
         const sinceMidnight = new Date();
@@ -126,6 +147,7 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
         const matches: Match[] = [];
 
         for (const p of prefs ?? []) {
+          if (!subscribedUsers.has(p.user_id)) continue;
           if (already.has(p.user_id)) continue;
           if (inQuietHours(hour, p.quiet_start, p.quiet_end)) continue;
           const dist = haversineMeters(

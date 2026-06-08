@@ -7,6 +7,8 @@ export type NotificationPrefs = {
   enabled: boolean;
   radiusKm: Radius;
   categories: CategorySlug[];
+  latitude: number | null;
+  longitude: number | null;
   quietStart: number; // 0–23
   quietEnd: number; // 0–23
   maxPerDay: number;
@@ -24,6 +26,8 @@ export const DEFAULT_PREFS: NotificationPrefs = {
   enabled: true,
   radiusKm: 5,
   categories: [...CATEGORY_SLUGS],
+  latitude: null,
+  longitude: null,
   quietStart: 22,
   quietEnd: 8,
   maxPerDay: 5,
