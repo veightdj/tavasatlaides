@@ -4,12 +4,7 @@ const ONESIGNAL_APP_ID = "60ddea51-e254-4626-bfb2-888c3ec55efe";
 const ONESIGNAL_API = "https://api.onesignal.com/notifications";
 const SITE_BASE_URL = "https://tavasatlaides.lv";
 
-function haversineMeters(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-): number {
+function haversineMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const toRad = (d: number) => (d * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
@@ -32,6 +27,11 @@ function inQuietHours(hour: number, start: number, end: number): boolean {
   if (start === end) return false;
   if (start < end) return hour >= start && hour < end;
   return hour >= start || hour < end; // wraps midnight
+}
+
+function notificationCategoryKeys(category: string): string[] {
+  if (category === "cafe") return ["cafe", "cafes"];
+  return [category];
 }
 
 export const Route = createFileRoute("/api/public/hooks/notify-deal")({
@@ -60,16 +60,12 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
           return new Response("OneSignal not configured", { status: 500 });
         }
 
-        const { supabaseAdmin } = await import(
-          "@/integrations/supabase/client.server"
-        );
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         // Load ad + store
         const { data: ad, error: adErr } = await supabaseAdmin
           .from("ads")
-          .select(
-            "id,title,category,status,is_hidden,deleted_at,store_id,cover_image_url",
-          )
+          .select("id,title,category,status,is_hidden,deleted_at,store_id,cover_image_url")
           .eq("id", adId)
           .maybeSingle();
         if (adErr || !ad) {
@@ -96,20 +92,34 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
         }
 
         // Candidate users: instant new_deals subscribers in this category with location
+        const categoryKeys = notificationCategoryKeys(ad.category);
         const { data: prefs, error: prefErr } = await supabaseAdmin
           .from("notification_preferences")
-          .select(
-            "user_id,radius_km,latitude,longitude,quiet_start,quiet_end,max_per_day",
-          )
+          .select("user_id,radius_km,latitude,longitude,quiet_start,quiet_end,max_per_day")
           .eq("enabled", true)
           .eq("new_deals", true)
           .eq("notification_frequency", "instant")
-          .contains("categories", [ad.category])
+          .overlaps("categories", categoryKeys)
           .not("latitude", "is", null)
           .not("longitude", "is", null);
         if (prefErr) {
           return new Response(prefErr.message, { status: 500 });
         }
+
+        const candidateUserIds = [...new Set((prefs ?? []).map((p) => p.user_id))];
+        if (candidateUserIds.length === 0) {
+          return Response.json({ ok: true, recipients: 0 });
+        }
+
+        const { data: subscriptions, error: subErr } = await supabaseAdmin
+          .from("user_subscriptions")
+          .select("user_id")
+          .eq("is_active", true)
+          .in("user_id", candidateUserIds);
+        if (subErr) {
+          return new Response(subErr.message, { status: 500 });
+        }
+        const subscribedUsers = new Set((subscriptions ?? []).map((s) => s.user_id));
 
         const hour = rigaHour();
         const sinceMidnight = new Date();
@@ -126,6 +136,7 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
         const matches: Match[] = [];
 
         for (const p of prefs ?? []) {
+          if (!subscribedUsers.has(p.user_id)) continue;
           if (already.has(p.user_id)) continue;
           if (inQuietHours(hour, p.quiet_start, p.quiet_end)) continue;
           const dist = haversineMeters(
@@ -206,24 +217,22 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
         await supabaseAdmin.from("notification_logs").insert(pendingRows);
 
         // Aggregate history row (dedup per ad)
-        await supabaseAdmin
-          .from("notification_history")
-          .upsert(
-            {
-              title,
-              body: message,
-              url,
-              target_type: "auto",
-              target_payload: { ad_id: adId, store_id: store.id },
-              onesignal_notification_id: oneSignalId,
-              status: lastError ? "failed" : "sent",
-              recipients: totalRecipients,
-              sent_at: new Date().toISOString(),
-              dedup_key: `new_deal:${adId}`,
-              error: lastError,
-            },
-            { onConflict: "dedup_key" },
-          );
+        await supabaseAdmin.from("notification_history").upsert(
+          {
+            title,
+            body: message,
+            url,
+            target_type: "auto",
+            target_payload: { ad_id: adId, store_id: store.id },
+            onesignal_notification_id: oneSignalId,
+            status: lastError ? "failed" : "sent",
+            recipients: totalRecipients,
+            sent_at: new Date().toISOString(),
+            dedup_key: `new_deal:${adId}`,
+            error: lastError,
+          },
+          { onConflict: "dedup_key" },
+        );
 
         return Response.json({
           ok: !lastError,

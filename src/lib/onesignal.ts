@@ -20,6 +20,26 @@ export type OneSignalRegistration = {
   platform: "ios" | "android" | "web";
 };
 
+type OneSignalSdk = {
+  initialize?: (appId: string) => void;
+  init?: (options: Record<string, unknown>) => Promise<void>;
+  login?: (externalId: string) => Promise<void> | void;
+  logout?: () => Promise<void> | void;
+  Slidedown?: { promptPush?: () => Promise<void> | void };
+  Notifications?: {
+    requestPermission?: (
+      fallbackToSettings?: boolean,
+      callback?: (granted: boolean) => void,
+    ) => Promise<boolean | void> | void;
+  };
+  User?: {
+    pushSubscription?: { id?: string | null };
+    PushSubscription?: { id?: string | null; optIn?: () => Promise<void> | void };
+  };
+};
+
+type OneSignalModule = OneSignalSdk & { default?: OneSignalSdk };
+
 async function initWeb() {
   if (typeof window === "undefined") throw new OneSignalError("unsupported", "No window");
   if (!webInitPromise) {
@@ -29,7 +49,7 @@ async function initWeb() {
         appId: ONESIGNAL_APP_ID,
         allowLocalhostAsSecureOrigin: true,
         serviceWorkerParam: { scope: "/" },
-        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerPath: "/OneSignalSDKWorker.js",
       });
     })().catch((e) => {
       webInitPromise = null;
@@ -41,9 +61,9 @@ async function initWeb() {
 
 async function initNative() {
   if (nativeInitDone) return;
-  const mod: any = await import("onesignal-cordova-plugin");
+  const mod = (await import("onesignal-cordova-plugin")) as OneSignalModule;
   const OneSignal = mod.default ?? mod;
-  OneSignal.initialize(ONESIGNAL_APP_ID);
+  OneSignal.initialize?.(ONESIGNAL_APP_ID);
   nativeInitDone = true;
 }
 
@@ -54,12 +74,12 @@ async function initNative() {
 export async function registerOneSignal(): Promise<OneSignalRegistration> {
   if (isNativePlatform()) {
     await initNative();
-    const mod: any = await import("onesignal-cordova-plugin");
+    const mod = (await import("onesignal-cordova-plugin")) as OneSignalModule;
     const OneSignal = mod.default ?? mod;
 
     const accepted: boolean = await new Promise((resolve) => {
       try {
-        OneSignal.Notifications.requestPermission(true, (granted: boolean) => resolve(granted));
+        OneSignal.Notifications?.requestPermission?.(true, (granted: boolean) => resolve(granted));
       } catch {
         resolve(false);
       }
@@ -81,13 +101,18 @@ export async function registerOneSignal(): Promise<OneSignalRegistration> {
   }
 
   await initWeb();
-  const OneSignal = (await import("react-onesignal")).default as any;
+  const OneSignal = (await import("react-onesignal")).default as unknown as OneSignalSdk;
 
   // Show the OneSignal slidedown / native prompt
   try {
     await OneSignal.Slidedown?.promptPush?.();
   } catch {
     /* ignore — fallback to opt-in below */
+  }
+  try {
+    await OneSignal.Notifications?.requestPermission?.();
+  } catch {
+    /* ignore */
   }
   try {
     await OneSignal.User?.PushSubscription?.optIn?.();
@@ -109,13 +134,13 @@ export async function registerOneSignal(): Promise<OneSignalRegistration> {
 export async function setOneSignalExternalId(externalId: string) {
   try {
     if (isNativePlatform()) {
-      const mod: any = await import("onesignal-cordova-plugin");
+      const mod = (await import("onesignal-cordova-plugin")) as OneSignalModule;
       const OneSignal = mod.default ?? mod;
-      OneSignal.login(externalId);
+      OneSignal.login?.(externalId);
       return;
     }
     await initWeb();
-    const OneSignal = (await import("react-onesignal")).default as any;
+    const OneSignal = (await import("react-onesignal")).default as unknown as OneSignalSdk;
     await OneSignal.login?.(externalId);
   } catch {
     /* non-blocking */
@@ -126,13 +151,13 @@ export async function setOneSignalExternalId(externalId: string) {
 export async function logoutOneSignal() {
   try {
     if (isNativePlatform()) {
-      const mod: any = await import("onesignal-cordova-plugin");
+      const mod = (await import("onesignal-cordova-plugin")) as OneSignalModule;
       const OneSignal = mod.default ?? mod;
       OneSignal.logout?.();
       return;
     }
     if (typeof window === "undefined") return;
-    const OneSignal = (await import("react-onesignal")).default as any;
+    const OneSignal = (await import("react-onesignal")).default as unknown as OneSignalSdk;
     await OneSignal.logout?.();
   } catch {
     /* non-blocking */
