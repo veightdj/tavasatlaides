@@ -15,6 +15,12 @@ type Tab = {
 export function MobileBottomNav() {
   const { t } = useI18n();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [host, setHost] = useState<ReturnType<typeof getHostAudience>>(null);
+  useEffect(() => setHost(getHostAudience()), []);
+
+  // Hide on the marketing site (www.tavasatlaides.lv) — bottom nav is an app-only chrome.
+  if (host === "client") return null;
+
 
   // Hide on merchant/admin sections — they have their own shell.
   const isMerchant =
