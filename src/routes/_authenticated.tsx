@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { LayoutDashboard, Store, Megaphone, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/use-i18n";
+import { audienceForPath, buildAudienceUrl, getHostAudience } from "@/lib/audience";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -16,6 +17,26 @@ function AuthenticatedLayout() {
 
   useEffect(() => {
     let mounted = true;
+
+    // Cross-host guard: if this path belongs to a different audience host,
+    // redirect there first. Sessions are localStorage-per-origin, so the
+    // dashboard MUST be served on partner.* and admin pages on admin.*.
+    const currentHost = getHostAudience();
+    const pathAudience = audienceForPath(window.location.pathname);
+    if (
+      currentHost &&
+      pathAudience !== "shared" &&
+      pathAudience !== currentHost
+    ) {
+      window.location.replace(
+        buildAudienceUrl(
+          pathAudience,
+          window.location.pathname + window.location.search + window.location.hash,
+        ),
+      );
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
       setAuthed(!!session);
@@ -29,6 +50,7 @@ function AuthenticatedLayout() {
     });
     return () => { mounted = false; subscription.unsubscribe(); };
   }, []);
+
 
   if (checking) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
   if (!authed) return null;
