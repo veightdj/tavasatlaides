@@ -12,14 +12,13 @@ export const Route = createFileRoute("/_authenticated/profile/notifications")({
 function Inbox_() {
   const { user } = useAuth();
   const { data: items } = useQuery({
-    queryKey: ["notif-history", user?.id],
+    queryKey: ["notif-logs", user?.id],
     enabled: !!user,
     queryFn: async () => {
       const { data } = await supabase
-        .from("notification_history")
-        .select("id,title,body,sent_at,kind")
-        .eq("user_id", user!.id)
-        .order("sent_at", { ascending: false })
+        .from("notification_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(50);
       return data ?? [];
     },
@@ -41,9 +40,9 @@ function Inbox_() {
         <ul className="space-y-2">
           {items.map((n: any) => (
             <li key={n.id} className="rounded-2xl border bg-card p-4">
-              <p className="text-sm font-semibold">{n.title ?? "Notification"}</p>
+              <p className="text-sm font-semibold">{n.title ?? n.kind ?? "Notification"}</p>
               {n.body && <p className="text-sm text-muted-foreground mt-0.5">{n.body}</p>}
-              <p className="text-[11px] text-muted-foreground mt-2">{new Date(n.sent_at).toLocaleString()}</p>
+              <p className="text-[11px] text-muted-foreground mt-2">{new Date(n.created_at ?? n.sent_at).toLocaleString()}</p>
             </li>
           ))}
         </ul>

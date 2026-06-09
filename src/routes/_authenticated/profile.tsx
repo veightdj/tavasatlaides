@@ -42,7 +42,7 @@ function ProfileHub() {
     queryKey: ["my-profile", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("full_name,avatar_url").eq("id", user!.id).maybeSingle();
+      const { data } = await supabase.from("profiles").select("full_name").eq("id", user!.id).maybeSingle();
       return data;
     },
   });
@@ -61,9 +61,8 @@ function ProfileHub() {
     enabled: !!user,
     queryFn: async () => {
       const { data } = await supabase.from("user_roles").select("role").eq("user_id", user!.id);
-      const roles = (data ?? []).map((r) => r.role);
-      // anyone with a store row OR explicit partner-ish role is a partner
-      return roles.includes("admin") || roles.includes("moderator") || !!store;
+      const roles = (data ?? []).map((r) => r.role as string);
+      return roles.includes("admin") || !!store;
     },
   });
 
@@ -73,9 +72,7 @@ function ProfileHub() {
     <div className="mx-auto max-w-2xl space-y-8">
       <header className="flex items-center gap-4">
         <div className="h-16 w-16 rounded-2xl bg-brand-soft text-primary grid place-items-center overflow-hidden shrink-0">
-          {profile?.avatar_url
-            ? <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
-            : <User className="h-8 w-8" />}
+          <User className="h-8 w-8" />
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">
