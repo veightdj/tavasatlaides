@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, MapPin, Map as MapIcon, Heart, Settings as SettingsIcon } from "lucide-react";
+import { Home, MapPin, Map as MapIcon, Heart, User } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
 import { getHostAudience } from "@/lib/audience";
-
 
 type Tab = {
   to: string;
@@ -18,53 +17,19 @@ export function MobileBottomNav() {
   const [host, setHost] = useState<ReturnType<typeof getHostAudience>>(null);
   useEffect(() => setHost(getHostAudience()), []);
 
-  // Hide on the marketing site (www.tavasatlaides.lv) — bottom nav is an app-only chrome.
+  // Hide on the marketing site
   if (host === "client") return null;
 
-
-  // Hide on merchant/admin sections — they have their own shell.
-  const isMerchant =
-    pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/ads") ||
-    pathname.startsWith("/store");
-  const isAdmin = pathname.startsWith("/admin");
-  if (isMerchant || isAdmin) return null;
-
-  // Hide on auth flows
+  // Hide on admin sections and auth flows; otherwise always visible
+  if (pathname.startsWith("/admin")) return null;
   if (pathname.startsWith("/login") || pathname.startsWith("/signup")) return null;
 
   const tabs: Tab[] = [
-    {
-      to: "/",
-      label: t.bottomNav.home,
-      icon: Home,
-      match: (p) => p === "/",
-    },
-    {
-      to: "/nearby",
-      label: t.bottomNav.nearMe,
-      icon: MapPin,
-      match: (p) => p.startsWith("/nearby") || p.startsWith("/near-me"),
-    },
-    {
-      to: "/map",
-      label: t.bottomNav.map,
-      icon: MapIcon,
-      match: (p) => p.startsWith("/map"),
-    },
-    {
-      to: "/favorites",
-      label: t.bottomNav.saved,
-      icon: Heart,
-      match: (p) => p.startsWith("/favorites") || p.startsWith("/saved"),
-    },
-    {
-      to: "/settings/notifications",
-      label: t.bottomNav.settings,
-      icon: SettingsIcon,
-      match: (p) => p.startsWith("/settings"),
-    },
-
+    { to: "/", label: t.bottomNav.home, icon: Home, match: (p) => p === "/" },
+    { to: "/nearby", label: t.bottomNav.nearMe, icon: MapPin, match: (p) => p.startsWith("/nearby") || p.startsWith("/near-me") },
+    { to: "/map", label: t.bottomNav.map, icon: MapIcon, match: (p) => p.startsWith("/map") },
+    { to: "/favorites", label: t.bottomNav.saved, icon: Heart, match: (p) => p.startsWith("/favorites") || p.startsWith("/saved") },
+    { to: "/profile", label: t.bottomNav.profile, icon: User, match: (p) => p.startsWith("/profile") },
   ];
 
   return (
@@ -91,16 +56,9 @@ export function MobileBottomNav() {
                     active ? "bg-primary/10" : "bg-transparent"
                   }`}
                 >
-                  <Icon
-                    className={`h-5 w-5 transition-transform ${active ? "scale-110" : ""}`}
-                    strokeWidth={active ? 2.4 : 2}
-                  />
+                  <Icon className={`h-5 w-5 transition-transform ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.4 : 2} />
                 </span>
-                <span
-                  className={`text-[10.5px] leading-none font-medium tracking-tight min-[360px]:block hidden ${
-                    active ? "" : "opacity-90"
-                  }`}
-                >
+                <span className={`text-[10.5px] leading-none font-medium tracking-tight min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
                   {tab.label}
                 </span>
               </Link>
