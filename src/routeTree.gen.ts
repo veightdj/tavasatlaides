@@ -34,9 +34,13 @@ import { Route as AdminTrustRouteImport } from './routes/admin.trust'
 import { Route as AdminDealsRouteImport } from './routes/admin.deals'
 import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
 import { Route as AuthenticatedProfileStoreRouteImport } from './routes/_authenticated/profile.store'
+import { Route as AuthenticatedProfileNotificationsRouteImport } from './routes/_authenticated/profile.notifications'
 import { Route as AuthenticatedProfileDashboardRouteImport } from './routes/_authenticated/profile.dashboard'
+import { Route as AuthenticatedProfileBillingRouteImport } from './routes/_authenticated/profile.billing'
+import { Route as AuthenticatedProfileAnalyticsRouteImport } from './routes/_authenticated/profile.analytics'
 import { Route as AuthenticatedProfileAdsIndexRouteImport } from './routes/_authenticated/profile.ads.index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -170,6 +174,11 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
   path: '/admin/banners',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AdminNotificationsDebugRoute = AdminNotificationsDebugRouteImport.update({
   id: '/admin/notifications/debug',
   path: '/admin/notifications/debug',
@@ -177,21 +186,39 @@ const AdminNotificationsDebugRoute = AdminNotificationsDebugRouteImport.update({
 } as any)
 const AuthenticatedProfileStoreRoute =
   AuthenticatedProfileStoreRouteImport.update({
-    id: '/profile/store',
-    path: '/profile/store',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/store',
+    path: '/store',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
+const AuthenticatedProfileNotificationsRoute =
+  AuthenticatedProfileNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedProfileRoute,
   } as any)
 const AuthenticatedProfileDashboardRoute =
   AuthenticatedProfileDashboardRouteImport.update({
-    id: '/profile/dashboard',
-    path: '/profile/dashboard',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
+const AuthenticatedProfileBillingRoute =
+  AuthenticatedProfileBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
+const AuthenticatedProfileAnalyticsRoute =
+  AuthenticatedProfileAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedProfileRoute,
   } as any)
 const AuthenticatedProfileAdsIndexRoute =
   AuthenticatedProfileAdsIndexRouteImport.update({
-    id: '/profile/ads/',
-    path: '/profile/ads/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/ads/',
+    path: '/ads/',
+    getParentRoute: () => AuthenticatedProfileRoute,
   } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
@@ -222,15 +249,15 @@ const ApiPublicConfigMapsRoute = ApiPublicConfigMapsRouteImport.update({
 } as any)
 const AuthenticatedProfileAdsNewRoute =
   AuthenticatedProfileAdsNewRouteImport.update({
-    id: '/profile/ads/new',
-    path: '/profile/ads/new',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/ads/new',
+    path: '/ads/new',
+    getParentRoute: () => AuthenticatedProfileRoute,
   } as any)
 const AuthenticatedProfileAdsIdRoute =
   AuthenticatedProfileAdsIdRouteImport.update({
-    id: '/profile/ads/$id',
-    path: '/profile/ads/$id',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/ads/$id',
+    path: '/ads/$id',
+    getParentRoute: () => AuthenticatedProfileRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -248,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
@@ -258,7 +286,10 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
+  '/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
+  '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
+  '/profile/notifications': typeof AuthenticatedProfileNotificationsRoute
   '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
@@ -285,6 +316,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
@@ -295,7 +327,10 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/deals': typeof DealsIndexRoute
   '/stores': typeof StoresIndexRoute
+  '/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
+  '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
+  '/profile/notifications': typeof AuthenticatedProfileNotificationsRoute
   '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
@@ -324,6 +359,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
@@ -334,7 +370,10 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
+  '/_authenticated/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
+  '/_authenticated/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/_authenticated/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
+  '/_authenticated/profile/notifications': typeof AuthenticatedProfileNotificationsRoute
   '/_authenticated/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/_authenticated/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
@@ -363,6 +402,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/terms'
+    | '/profile'
     | '/admin/banners'
     | '/admin/companies'
     | '/admin/deals'
@@ -373,7 +413,10 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/deals/'
     | '/stores/'
+    | '/profile/analytics'
+    | '/profile/billing'
     | '/profile/dashboard'
+    | '/profile/notifications'
     | '/profile/store'
     | '/admin/notifications/debug'
     | '/profile/ads/$id'
@@ -400,6 +443,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/terms'
+    | '/profile'
     | '/admin/banners'
     | '/admin/companies'
     | '/admin/deals'
@@ -410,7 +454,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/deals'
     | '/stores'
+    | '/profile/analytics'
+    | '/profile/billing'
     | '/profile/dashboard'
+    | '/profile/notifications'
     | '/profile/store'
     | '/admin/notifications/debug'
     | '/profile/ads/$id'
@@ -438,6 +485,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/terms'
+    | '/_authenticated/profile'
     | '/admin/banners'
     | '/admin/companies'
     | '/admin/deals'
@@ -448,7 +496,10 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/deals/'
     | '/stores/'
+    | '/_authenticated/profile/analytics'
+    | '/_authenticated/profile/billing'
     | '/_authenticated/profile/dashboard'
+    | '/_authenticated/profile/notifications'
     | '/_authenticated/profile/store'
     | '/admin/notifications/debug'
     | '/_authenticated/profile/ads/$id'
@@ -672,6 +723,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/admin/notifications/debug': {
       id: '/admin/notifications/debug'
       path: '/admin/notifications/debug'
@@ -681,24 +739,45 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/profile/store': {
       id: '/_authenticated/profile/store'
-      path: '/profile/store'
+      path: '/store'
       fullPath: '/profile/store'
       preLoaderRoute: typeof AuthenticatedProfileStoreRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
+    '/_authenticated/profile/notifications': {
+      id: '/_authenticated/profile/notifications'
+      path: '/notifications'
+      fullPath: '/profile/notifications'
+      preLoaderRoute: typeof AuthenticatedProfileNotificationsRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
     }
     '/_authenticated/profile/dashboard': {
       id: '/_authenticated/profile/dashboard'
-      path: '/profile/dashboard'
+      path: '/dashboard'
       fullPath: '/profile/dashboard'
       preLoaderRoute: typeof AuthenticatedProfileDashboardRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
+    '/_authenticated/profile/billing': {
+      id: '/_authenticated/profile/billing'
+      path: '/billing'
+      fullPath: '/profile/billing'
+      preLoaderRoute: typeof AuthenticatedProfileBillingRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
+    '/_authenticated/profile/analytics': {
+      id: '/_authenticated/profile/analytics'
+      path: '/analytics'
+      fullPath: '/profile/analytics'
+      preLoaderRoute: typeof AuthenticatedProfileAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
     }
     '/_authenticated/profile/ads/': {
       id: '/_authenticated/profile/ads/'
-      path: '/profile/ads'
+      path: '/ads'
       fullPath: '/profile/ads/'
       preLoaderRoute: typeof AuthenticatedProfileAdsIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedProfileRoute
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -737,35 +816,53 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/profile/ads/new': {
       id: '/_authenticated/profile/ads/new'
-      path: '/profile/ads/new'
+      path: '/ads/new'
       fullPath: '/profile/ads/new'
       preLoaderRoute: typeof AuthenticatedProfileAdsNewRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedProfileRoute
     }
     '/_authenticated/profile/ads/$id': {
       id: '/_authenticated/profile/ads/$id'
-      path: '/profile/ads/$id'
+      path: '/ads/$id'
       fullPath: '/profile/ads/$id'
       preLoaderRoute: typeof AuthenticatedProfileAdsIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedProfileRoute
     }
   }
 }
 
-interface AuthenticatedRouteChildren {
+interface AuthenticatedProfileRouteChildren {
+  AuthenticatedProfileAnalyticsRoute: typeof AuthenticatedProfileAnalyticsRoute
+  AuthenticatedProfileBillingRoute: typeof AuthenticatedProfileBillingRoute
   AuthenticatedProfileDashboardRoute: typeof AuthenticatedProfileDashboardRoute
+  AuthenticatedProfileNotificationsRoute: typeof AuthenticatedProfileNotificationsRoute
   AuthenticatedProfileStoreRoute: typeof AuthenticatedProfileStoreRoute
   AuthenticatedProfileAdsIdRoute: typeof AuthenticatedProfileAdsIdRoute
   AuthenticatedProfileAdsNewRoute: typeof AuthenticatedProfileAdsNewRoute
   AuthenticatedProfileAdsIndexRoute: typeof AuthenticatedProfileAdsIndexRoute
 }
 
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
+  AuthenticatedProfileAnalyticsRoute: AuthenticatedProfileAnalyticsRoute,
+  AuthenticatedProfileBillingRoute: AuthenticatedProfileBillingRoute,
   AuthenticatedProfileDashboardRoute: AuthenticatedProfileDashboardRoute,
+  AuthenticatedProfileNotificationsRoute:
+    AuthenticatedProfileNotificationsRoute,
   AuthenticatedProfileStoreRoute: AuthenticatedProfileStoreRoute,
   AuthenticatedProfileAdsIdRoute: AuthenticatedProfileAdsIdRoute,
   AuthenticatedProfileAdsNewRoute: AuthenticatedProfileAdsNewRoute,
   AuthenticatedProfileAdsIndexRoute: AuthenticatedProfileAdsIndexRoute,
+}
+
+const AuthenticatedProfileRouteWithChildren =
+  AuthenticatedProfileRoute._addFileChildren(AuthenticatedProfileRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -808,3 +905,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
