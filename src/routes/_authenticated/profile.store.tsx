@@ -111,7 +111,7 @@ function StoreEditor() {
       if (geocodeStatus === "FAILED") toast.warning(t.merchant.geocodeFailed);
       qc.invalidateQueries({ queryKey: ["my-store", user?.id] });
       qc.invalidateQueries({ queryKey: ["my-store-edit", user?.id] });
-      if (!store) navigate({ to: "/dashboard" });
+      if (!store) navigate({ to: "/profile/dashboard" });
     },
     onError: (e: any) => toast.error(e.message),
   });

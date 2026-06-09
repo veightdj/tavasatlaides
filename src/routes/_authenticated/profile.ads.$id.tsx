@@ -6,6 +6,6 @@ export const Route = createFileRoute("/_authenticated/profile/ads/$id")({
 });
 
 function EditAdRoute() {
-  const { id } = useParams({ from: "/_authenticated/ads/$id" });
+  const { id } = useParams({ from: "/_authenticated/profile/ads/$id" });
   return <AdEditor adId={id} />;
 }

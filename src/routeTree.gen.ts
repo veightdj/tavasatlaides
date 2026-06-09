@@ -28,16 +28,14 @@ import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as DealsIndexRouteImport } from './routes/deals.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as StoresIdRouteImport } from './routes/stores.$id'
-import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AdminTrustRouteImport } from './routes/admin.trust'
 import { Route as AdminDealsRouteImport } from './routes/admin.deals'
 import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
-import { Route as AuthenticatedStoreRouteImport } from './routes/_authenticated/store'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
+import { Route as AuthenticatedProfileStoreRouteImport } from './routes/_authenticated/profile.store'
 import { Route as AuthenticatedProfileDashboardRouteImport } from './routes/_authenticated/profile.dashboard'
 import { Route as AuthenticatedProfileAdsIndexRouteImport } from './routes/_authenticated/profile.ads.index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -142,11 +140,6 @@ const StoresIdRoute = StoresIdRouteImport.update({
   path: '/stores/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
-  id: '/settings/notifications',
-  path: '/settings/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/deals/$id',
   path: '/deals/$id',
@@ -177,21 +170,17 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
   path: '/admin/banners',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedStoreRoute = AuthenticatedStoreRouteImport.update({
-  id: '/store',
-  path: '/store',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AdminNotificationsDebugRoute = AdminNotificationsDebugRouteImport.update({
   id: '/admin/notifications/debug',
   path: '/admin/notifications/debug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedProfileStoreRoute =
+  AuthenticatedProfileStoreRouteImport.update({
+    id: '/profile/store',
+    path: '/profile/store',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProfileDashboardRoute =
   AuthenticatedProfileDashboardRouteImport.update({
     id: '/profile/dashboard',
@@ -259,20 +248,18 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/settings': typeof AuthenticatedSettingsRoute
-  '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
   '/admin/trust': typeof AdminTrustRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
-  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
+  '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
   '/profile/ads/new': typeof AuthenticatedProfileAdsNewRoute
@@ -298,20 +285,18 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/settings': typeof AuthenticatedSettingsRoute
-  '/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
   '/admin/trust': typeof AdminTrustRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
-  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/admin': typeof AdminIndexRoute
   '/deals': typeof DealsIndexRoute
   '/stores': typeof StoresIndexRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
+  '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
   '/profile/ads/new': typeof AuthenticatedProfileAdsNewRoute
@@ -339,20 +324,18 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/store': typeof AuthenticatedStoreRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
   '/admin/trust': typeof AdminTrustRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
-  '/settings/notifications': typeof SettingsNotificationsRoute
   '/stores/$id': typeof StoresIdRoute
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
   '/_authenticated/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
+  '/_authenticated/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/_authenticated/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
   '/_authenticated/profile/ads/new': typeof AuthenticatedProfileAdsNewRoute
@@ -380,20 +363,18 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/terms'
-    | '/settings'
-    | '/store'
     | '/admin/banners'
     | '/admin/companies'
     | '/admin/deals'
     | '/admin/trust'
     | '/categories/$slug'
     | '/deals/$id'
-    | '/settings/notifications'
     | '/stores/$id'
     | '/admin/'
     | '/deals/'
     | '/stores/'
     | '/profile/dashboard'
+    | '/profile/store'
     | '/admin/notifications/debug'
     | '/profile/ads/$id'
     | '/profile/ads/new'
@@ -419,20 +400,18 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/terms'
-    | '/settings'
-    | '/store'
     | '/admin/banners'
     | '/admin/companies'
     | '/admin/deals'
     | '/admin/trust'
     | '/categories/$slug'
     | '/deals/$id'
-    | '/settings/notifications'
     | '/stores/$id'
     | '/admin'
     | '/deals'
     | '/stores'
     | '/profile/dashboard'
+    | '/profile/store'
     | '/admin/notifications/debug'
     | '/profile/ads/$id'
     | '/profile/ads/new'
@@ -459,20 +438,18 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/signup'
     | '/terms'
-    | '/_authenticated/settings'
-    | '/_authenticated/store'
     | '/admin/banners'
     | '/admin/companies'
     | '/admin/deals'
     | '/admin/trust'
     | '/categories/$slug'
     | '/deals/$id'
-    | '/settings/notifications'
     | '/stores/$id'
     | '/admin/'
     | '/deals/'
     | '/stores/'
     | '/_authenticated/profile/dashboard'
+    | '/_authenticated/profile/store'
     | '/admin/notifications/debug'
     | '/_authenticated/profile/ads/$id'
     | '/_authenticated/profile/ads/new'
@@ -506,7 +483,6 @@ export interface RootRouteChildren {
   AdminTrustRoute: typeof AdminTrustRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   DealsIdRoute: typeof DealsIdRoute
-  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   StoresIdRoute: typeof StoresIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
@@ -654,13 +630,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoresIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/notifications': {
-      id: '/settings/notifications'
-      path: '/settings/notifications'
-      fullPath: '/settings/notifications'
-      preLoaderRoute: typeof SettingsNotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/deals/$id': {
       id: '/deals/$id'
       path: '/deals/$id'
@@ -703,26 +672,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/store': {
-      id: '/_authenticated/store'
-      path: '/store'
-      fullPath: '/store'
-      preLoaderRoute: typeof AuthenticatedStoreRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/admin/notifications/debug': {
       id: '/admin/notifications/debug'
       path: '/admin/notifications/debug'
       fullPath: '/admin/notifications/debug'
       preLoaderRoute: typeof AdminNotificationsDebugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/profile/store': {
+      id: '/_authenticated/profile/store'
+      path: '/profile/store'
+      fullPath: '/profile/store'
+      preLoaderRoute: typeof AuthenticatedProfileStoreRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/dashboard': {
       id: '/_authenticated/profile/dashboard'
@@ -791,18 +753,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedStoreRoute: typeof AuthenticatedStoreRoute
   AuthenticatedProfileDashboardRoute: typeof AuthenticatedProfileDashboardRoute
+  AuthenticatedProfileStoreRoute: typeof AuthenticatedProfileStoreRoute
   AuthenticatedProfileAdsIdRoute: typeof AuthenticatedProfileAdsIdRoute
   AuthenticatedProfileAdsNewRoute: typeof AuthenticatedProfileAdsNewRoute
   AuthenticatedProfileAdsIndexRoute: typeof AuthenticatedProfileAdsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedStoreRoute: AuthenticatedStoreRoute,
   AuthenticatedProfileDashboardRoute: AuthenticatedProfileDashboardRoute,
+  AuthenticatedProfileStoreRoute: AuthenticatedProfileStoreRoute,
   AuthenticatedProfileAdsIdRoute: AuthenticatedProfileAdsIdRoute,
   AuthenticatedProfileAdsNewRoute: AuthenticatedProfileAdsNewRoute,
   AuthenticatedProfileAdsIndexRoute: AuthenticatedProfileAdsIndexRoute,
@@ -834,7 +794,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminTrustRoute: AdminTrustRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   DealsIdRoute: DealsIdRoute,
-  SettingsNotificationsRoute: SettingsNotificationsRoute,
   StoresIdRoute: StoresIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,

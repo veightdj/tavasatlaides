@@ -87,7 +87,7 @@ function Dashboard() {
         <Store className="h-10 w-10 text-primary mx-auto" />
         <h2 className="mt-4 text-xl font-bold">{t.merchant.setupStore}</h2>
         <p className="mt-2 text-muted-foreground">{t.merchant.setupStoreSub}</p>
-        <Button asChild className="mt-5"><Link to="/store">{t.merchant.setupStore} <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
+        <Button asChild className="mt-5"><Link to="/profile/store">{t.merchant.setupStore} <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
       </div>
     );
   }
@@ -114,9 +114,9 @@ function Dashboard() {
 
       {/* Quick actions — sticky-feeling card */}
       <section aria-label="Quick actions" className="grid grid-cols-3 gap-2 md:gap-3">
-        <QuickAction to="/ads/new" icon={Plus} label={t.merchant.newAd} primary />
-        <QuickAction to="/ads" icon={Megaphone} label={t.merchant.ads} />
-        <QuickAction to="/store" icon={Store} label={t.merchant.store} />
+        <QuickAction to="/profile/ads/new" icon={Plus} label={t.merchant.newAd} primary />
+        <QuickAction to="/profile/ads" icon={Megaphone} label={t.merchant.ads} />
+        <QuickAction to="/profile/store" icon={Store} label={t.merchant.store} />
       </section>
 
       {/* Top performing deals */}
@@ -140,7 +140,7 @@ function Dashboard() {
               return (
                 <li key={ad.id}>
                   <Link
-                    to="/ads/$id"
+                    to="/profile/ads/$id"
                     params={{ id: ad.id }}
                     className="flex items-center gap-3 rounded-xl border bg-background/60 p-3 min-h-[64px] active:bg-muted/60 hover:border-primary transition"
                   >
