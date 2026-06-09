@@ -97,7 +97,7 @@ export function buildAudienceUrl(target: Audience, pathname: string, search = ""
 export const AUDIENCE_HOME: Record<Audience, string> = {
   client: "/",
   app: "/",
-  merchant: "/dashboard",
+  merchant: "/profile/dashboard",
   admin: "/admin",
 };
 
