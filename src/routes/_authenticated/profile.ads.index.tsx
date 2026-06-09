@@ -14,7 +14,7 @@ type StatusFilter = "all" | "active" | "draft" | "expired";
 const PAGE_SIZE = 25;
 const isExpired = (ad: any) => !!ad.ends_at && new Date(ad.ends_at).getTime() <= Date.now();
 
-export const Route = createFileRoute("/_authenticated/ads/")({
+export const Route = createFileRoute("/_authenticated/profile/ads/")({
   component: AdsList,
 });
 
