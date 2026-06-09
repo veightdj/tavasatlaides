@@ -17,7 +17,7 @@ import { AddressAutocomplete } from "@/components/merchant/AddressAutocomplete";
 import { HoursEditor } from "@/components/merchant/HoursEditor";
 import { DEFAULT_HOURS, parseHours, type Hours } from "@/lib/hours";
 
-export const Route = createFileRoute("/_authenticated/store")({
+export const Route = createFileRoute("/_authenticated/profile/store")({
   component: StoreEditor,
 });
 
@@ -111,7 +111,7 @@ function StoreEditor() {
       if (geocodeStatus === "FAILED") toast.warning(t.merchant.geocodeFailed);
       qc.invalidateQueries({ queryKey: ["my-store", user?.id] });
       qc.invalidateQueries({ queryKey: ["my-store-edit", user?.id] });
-      if (!store) navigate({ to: "/dashboard" });
+      if (!store) navigate({ to: "/profile/dashboard" });
     },
     onError: (e: any) => toast.error(e.message),
   });

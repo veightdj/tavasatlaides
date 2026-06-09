@@ -175,7 +175,7 @@ function NearbyPage() {
           <p className="text-muted-foreground mt-1">Live alerts within {prefs.radiusKm} km · {prefs.categories.length} categories</p>
         </div>
         <Button asChild variant="ghost" size="sm">
-          <Link to="/settings/notifications"><SettingsIcon className="h-4 w-4 mr-1.5" />Settings</Link>
+          <Link to="/profile"><SettingsIcon className="h-4 w-4 mr-1.5" />Settings</Link>
         </Button>
       </div>
 
@@ -201,7 +201,7 @@ function NearbyPage() {
       {!prefs.enabled && (
         <div className="rounded-2xl border border-dashed p-4 text-sm flex items-center gap-3">
           <Bell className="h-5 w-5 shrink-0 text-muted-foreground" />
-          Notifications are disabled. <Link to="/settings/notifications" className="underline">Enable in settings</Link>.
+          Notifications are disabled. <Link to="/profile" className="underline">Enable in settings</Link>.
         </div>
       )}
 
@@ -213,7 +213,7 @@ function NearbyPage() {
         {pos && ranked.length === 0 && (
           <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
             No active deals in your {prefs.radiusKm} km radius right now.
-            <div className="mt-2 text-sm">Try increasing your radius in <Link to="/settings/notifications" className="underline">settings</Link>.</div>
+            <div className="mt-2 text-sm">Try increasing your radius in <Link to="/profile" className="underline">settings</Link>.</div>
           </div>
         )}
         <div className="grid gap-5 sm:grid-cols-2">

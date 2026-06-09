@@ -33,7 +33,7 @@ function DeleteAccountInfo() {
           <li>Ielogojies savā TavasAtlaides kontā.</li>
           <li>
             Atver{" "}
-            <Link to="/settings" className="underline">
+            <Link to="/profile" className="underline">
               Iestatījumi → Privātums un konts
             </Link>
             .

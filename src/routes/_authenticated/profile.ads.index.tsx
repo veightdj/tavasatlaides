@@ -14,7 +14,7 @@ type StatusFilter = "all" | "active" | "draft" | "expired";
 const PAGE_SIZE = 25;
 const isExpired = (ad: any) => !!ad.ends_at && new Date(ad.ends_at).getTime() <= Date.now();
 
-export const Route = createFileRoute("/_authenticated/ads/")({
+export const Route = createFileRoute("/_authenticated/profile/ads/")({
   component: AdsList,
 });
 
@@ -120,7 +120,7 @@ function AdsList() {
     },
   });
 
-  if (!store) return <div>{t.merchant.setupStore} → <Link to="/store" className="text-primary">{t.merchant.store}</Link></div>;
+  if (!store) return <div>{t.merchant.setupStore} → <Link to="/profile/store" className="text-primary">{t.merchant.store}</Link></div>;
 
   return (
     <div className="space-y-6">
@@ -136,7 +136,7 @@ function AdsList() {
               <SelectItem value="expired">Expired</SelectItem>
             </SelectContent>
           </Select>
-          <Button asChild className="h-11 md:h-10"><Link to="/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
+          <Button asChild className="h-11 md:h-10"><Link to="/profile/ads/new"><Plus className="h-4 w-4 mr-1" />{t.merchant.newAd}</Link></Button>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ function AdRow({ ad, expired, metrics: m, t, onDelete }: { ad: any; expired: boo
           </div>
           {ad.ends_at && <p className="text-xs text-muted-foreground mt-1">{t.deals.validUntil}: {new Date(ad.ends_at).toLocaleDateString()}</p>}
         </div>
-        <Button asChild size="sm" variant="ghost" className="h-11 w-11 p-0 shrink-0"><Link to="/ads/$id" params={{ id: ad.id }}><Edit className="h-4 w-4" /></Link></Button>
+        <Button asChild size="sm" variant="ghost" className="h-11 w-11 p-0 shrink-0"><Link to="/profile/ads/$id" params={{ id: ad.id }}><Edit className="h-4 w-4" /></Link></Button>
         <Button size="sm" variant="ghost" className="h-11 w-11 p-0 shrink-0" onClick={onDelete}>
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
