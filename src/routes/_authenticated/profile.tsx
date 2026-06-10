@@ -16,6 +16,16 @@ import { useI18n } from "@/i18n/use-i18n";
 import { NotificationPrefsSection } from "@/components/profile/NotificationPrefsSection";
 import { AccountActionsSection } from "@/components/profile/AccountActionsSection";
 import { PreferencesMisc } from "@/components/profile/PreferencesMisc";
+import { getProfileVisibility, PARTNER_TILES } from "@/lib/profile-visibility";
+
+const TILE_ICONS: Record<string, any> = {
+  dashboard: LayoutDashboard, ads: Megaphone, "ads-new": Plus,
+  store: StoreIcon, analytics: TrendingUp, billing: CreditCard,
+};
+const TILE_LABEL_KEY: Record<string, "dashboard" | "ads" | "newAd" | "store" | null> = {
+  dashboard: "dashboard", ads: "ads", "ads-new": "newAd", store: "store",
+  analytics: null, billing: null,
+};
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
