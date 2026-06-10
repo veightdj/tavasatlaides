@@ -40,7 +40,7 @@ export function DealShareButton({ dealId, title, description, discountPct, class
     // Haptic feedback if supported
     try { (navigator as any)?.vibrate?.(10); } catch { /* noop */ }
 
-    const url = `${SITE_URL}/deal/${dealId}`;
+    const url = `${SITE_URL}/deals/${dealId}`;
     const discountLine = discountPct ? `-${discountPct}% atlaide` : "";
     const text = [title, discountLine, description].filter(Boolean).join("\n");
     const shareData: ShareData = { title, text, url };

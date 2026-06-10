@@ -36,7 +36,7 @@ function LoginPage() {
   // localStorage-per-origin, so we must NOT cross-host redirect here.
   const destination = (() => {
     const h = getHostAudience();
-    return h ? AUDIENCE_HOME[h] : "/dashboard";
+    return h ? AUDIENCE_HOME[h] : "/profile";
   })();
 
   const onSubmit = async (e: React.FormEvent) => {
