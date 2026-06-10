@@ -66,17 +66,20 @@ function ProfileHub() {
     },
   });
 
-  const { data: isPartner } = useQuery({
-    queryKey: ["is-partner", user?.id],
+  const { data: roleRows } = useQuery({
+    queryKey: ["my-roles", user?.id],
     enabled: !!user,
     queryFn: async () => {
       const { data } = await supabase.from("user_roles").select("role").eq("user_id", user!.id);
-      const roles = (data ?? []).map((r) => r.role as string);
-      return roles.includes("admin") || !!store;
+      return (data ?? []).map((r) => r.role as string);
     },
   });
 
-  const partner = Boolean(isPartner) || !!store;
+  const vis = getProfileVisibility({
+    userId: user?.id ?? null,
+    roles: roleRows ?? [],
+    hasStore: !!store,
+  });
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
@@ -89,20 +92,20 @@ function ProfileHub() {
             {profile?.full_name || user?.email?.split("@")[0] || t.nav.profile}
           </h1>
           <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
-          {partner && <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary text-xs font-semibold px-2 py-0.5"><Building2 className="h-3 w-3" />Partner</span>}
+          {vis.showPartnerBadge && <span data-testid="partner-badge" className="mt-1 inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary text-xs font-semibold px-2 py-0.5"><Building2 className="h-3 w-3" />Partner</span>}
         </div>
       </header>
 
-      {partner && (
+      {vis.businessTiles.length > 0 && (
         <Section title="Business">
           <PartnerOverview store={store} />
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <Tile to="/profile/dashboard" icon={LayoutDashboard} label={t.merchant.dashboard} />
-            <Tile to="/profile/ads" icon={Megaphone} label={t.merchant.ads} />
-            <Tile to="/profile/ads/new" icon={Plus} label={t.merchant.newAd} primary />
-            <Tile to="/profile/store" icon={StoreIcon} label={t.merchant.store} />
-            <Tile to="/profile/analytics" icon={TrendingUp} label="Performance" />
-            <Tile to="/profile/billing" icon={CreditCard} label="Billing" />
+            {vis.businessTiles.map((tile) => {
+              const Icon = TILE_ICONS[tile.id] ?? LayoutDashboard;
+              const i18nKey = TILE_LABEL_KEY[tile.id];
+              const label = i18nKey ? (t.merchant as any)[i18nKey] : tile.label;
+              return <Tile key={tile.id} to={tile.to} icon={Icon} label={label} primary={tile.id === "ads-new"} />;
+            })}
           </div>
         </Section>
       )}
