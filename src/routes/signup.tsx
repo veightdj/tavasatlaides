@@ -43,7 +43,7 @@ function SignupPage() {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin + "/dashboard",
+        emailRedirectTo: window.location.origin + "/profile",
         data: { full_name: fullName, terms_accepted_at: acceptedAt },
       },
     });
@@ -58,10 +58,10 @@ function SignupPage() {
 
   const onGoogle = async () => {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/dashboard" });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/profile" });
     if (result.error) { setLoading(false); toast.error(String(result.error)); return; }
     if (result.redirected) return;
-    window.location.assign("/dashboard");
+    window.location.assign("/profile");
   };
 
 
