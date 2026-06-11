@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { CategoryCircles } from "@/components/CategoryCircles";
+import { PopularStores } from "@/components/PopularStores";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
 import { HomeBannerSlider } from "@/components/HomeBannerSlider";
@@ -182,6 +183,10 @@ function Feed() {
       <section className="py-4 md:py-6">
         <CategoryCircles />
       </section>
+
+      {/* Popular stores */}
+      <PopularStores />
+
 
       {/* Featured */}
       <section className="mx-auto max-w-6xl px-4 py-6 md:py-10">
