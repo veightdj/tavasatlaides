@@ -98,7 +98,7 @@ function DealsPage() {
       let query = supabase
         .from("ads")
         .select(
-          "id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng,hours_json)"
+          "id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng,logo_url,is_verified,category,hours_json)"
         )
         .eq("status", "active");
 
