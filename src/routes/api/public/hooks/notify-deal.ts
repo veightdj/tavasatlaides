@@ -39,8 +39,11 @@ export const Route = createFileRoute("/api/public/hooks/notify-deal")({
     handlers: {
       POST: async ({ request }) => {
         const apiKey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!apiKey || !expected || apiKey !== expected) {
+        const expected = process.env.NOTIFY_WEBHOOK_SECRET;
+        if (!expected) {
+          return new Response("Webhook secret not configured", { status: 500 });
+        }
+        if (!apiKey || apiKey.length !== expected.length || apiKey !== expected) {
           return new Response("Unauthorized", { status: 401 });
         }
 
