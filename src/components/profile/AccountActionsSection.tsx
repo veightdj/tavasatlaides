@@ -63,42 +63,49 @@ export function AccountActionsSection() {
     <div className="space-y-4">
       <Button variant="outline" className="w-full min-h-11" onClick={onLogout}>Iziet</Button>
 
-      <div className="rounded-2xl border p-5 space-y-3 bg-card">
-        <div className="flex items-start gap-3">
-          <ShieldOff className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
-          <div className="flex-1 space-y-1 min-w-0">
-            <h3 className="font-semibold">Deaktivizēt kontu</h3>
-            <p className="text-sm text-muted-foreground">
-              Īslaicīgi atslēdz kontu. Dati paliek saglabāti un atjaunojas, kad ielogojies atkal.
-            </p>
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button variant="outline" className="min-h-11" onClick={() => setDeactivateOpen(true)}>Deaktivizēt</Button>
-        </div>
-      </div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="danger-zone" className="border-0 rounded-2xl border overflow-hidden">
+          <AccordionTrigger className="px-5 py-4 text-base font-semibold bg-muted/40 hover:no-underline hover:bg-muted/60">
+            Bīstamās darbības
+          </AccordionTrigger>
+          <AccordionContent className="p-5 space-y-4 bg-card">
+            <div className="flex items-start gap-3">
+              <ShieldOff className="h-5 w-5 mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <div className="flex-1 space-y-1 min-w-0">
+                <h3 className="font-semibold">Deaktivizēt kontu</h3>
+                <p className="text-sm text-muted-foreground">
+                  Īslaicīgi atslēdz kontu. Dati paliek saglabāti un atjaunojas, kad ielogojies atkal.
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="outline" className="min-h-11" onClick={() => setDeactivateOpen(true)}>Deaktivizēt</Button>
+            </div>
 
-      <div className="rounded-2xl border-2 border-destructive/40 p-5 space-y-3 bg-destructive/5">
-        <div className="flex items-start gap-3">
-          <Trash2 className="h-5 w-5 mt-1 shrink-0 text-destructive" aria-hidden="true" />
-          <div className="flex-1 space-y-1 min-w-0">
-            <h3 className="font-semibold text-destructive flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />Dzēst kontu
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Visi tavi personas dati tiks pilnībā izdzēsti. Šo darbību nevar atsaukt.
-            </p>
-            <p className="text-sm">
-              <Link to="/delete-account" className="underline underline-offset-2">Sīkāk par konta dzēšanu</Link>
-            </p>
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button variant="destructive" className="min-h-11" onClick={() => { setConfirmText(""); setDeleteOpen(true); }}>
-            <Trash2 className="h-4 w-4 mr-2" />Dzēst kontu
-          </Button>
-        </div>
-      </div>
+            <div className="rounded-2xl border-2 border-destructive/40 p-5 space-y-3 bg-destructive/5">
+              <div className="flex items-start gap-3">
+                <Trash2 className="h-5 w-5 mt-1 shrink-0 text-destructive" aria-hidden="true" />
+                <div className="flex-1 space-y-1 min-w-0">
+                  <h3 className="font-semibold text-destructive flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />Dzēst kontu
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Visi tavi personas dati tiks pilnībā izdzēsti. Šo darbību nevar atsaukt.
+                  </p>
+                  <p className="text-sm">
+                    <Link to="/delete-account" className="underline underline-offset-2">Sīkāk par konta dzēšanu</Link>
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button variant="destructive" className="min-h-11" onClick={() => { setConfirmText(""); setDeleteOpen(true); }}>
+                  <Trash2 className="h-4 w-4 mr-2" />Dzēst kontu
+                </Button>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <AlertDialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
         <AlertDialogContent>
