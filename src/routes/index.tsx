@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { CategoryCircles } from "@/components/CategoryCircles";
+import { PopularStores } from "@/components/PopularStores";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
 import { HomeBannerSlider } from "@/components/HomeBannerSlider";
@@ -95,7 +96,7 @@ function Feed() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,hours_json)")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json)")
         .eq("status", "active")
         .order("discount_pct", { ascending: false, nullsFirst: false })
         .limit(8);
@@ -183,6 +184,10 @@ function Feed() {
         <CategoryCircles />
       </section>
 
+      {/* Popular stores */}
+      <PopularStores />
+
+
       {/* Featured */}
       <section className="mx-auto max-w-6xl px-4 py-6 md:py-10">
         <div className="flex items-end justify-between mb-5 md:mb-6 gap-3">
@@ -226,7 +231,7 @@ function Marketing() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,hours_json)")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json)")
         .eq("status", "active")
         .order("discount_pct", { ascending: false, nullsFirst: false })
         .limit(8);
