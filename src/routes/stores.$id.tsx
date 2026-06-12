@@ -101,6 +101,19 @@ function StorePage() {
     },
   });
 
+  const { data: gallery = [] } = useQuery({
+    queryKey: ["store-gallery", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("store_gallery")
+        .select("id,image_url,sort_order")
+        .eq("store_id", id)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   if (!store) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
 
   const bestOffer = ads.length > 0
