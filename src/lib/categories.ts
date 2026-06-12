@@ -1,3 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+// Fallback static list — kept for typing & i18n keys. Source of truth is the
+// `categories` table managed by admins.
 export const CATEGORY_SLUGS = [
   "food",
   "auto",
@@ -22,4 +27,54 @@ export function slugify(input: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "")
     .slice(0, 60);
+}
+
+export type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+  sort_order: number;
+  active: boolean;
+};
+
+const FALLBACK_CATEGORIES: Category[] = CATEGORY_SLUGS.map((slug, i) => ({
+  id: slug,
+  name: slug,
+  slug,
+  icon: "Tag",
+  sort_order: (i + 1) * 10,
+  active: true,
+}));
+
+/** Active categories, ordered by sort_order. */
+export function useCategories() {
+  return useQuery({
+    queryKey: ["categories", "active"],
+    queryFn: async (): Promise<Category[]> => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id,name,slug,icon,sort_order,active")
+        .eq("active", true)
+        .order("sort_order", { ascending: true });
+      if (error || !data || data.length === 0) return FALLBACK_CATEGORIES;
+      return data as Category[];
+    },
+    staleTime: 60_000,
+  });
+}
+
+/** All categories (admin). */
+export function useAllCategories() {
+  return useQuery({
+    queryKey: ["categories", "all"],
+    queryFn: async (): Promise<Category[]> => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id,name,slug,icon,sort_order,active")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as Category[];
+    },
+  });
 }

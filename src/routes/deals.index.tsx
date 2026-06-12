@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { CATEGORY_SLUGS, CITIES } from "@/lib/categories";
+import { CITIES, useCategories } from "@/lib/categories";
 import { distanceKm as haversineKm } from "@/lib/distance";
 
 type SortMode = "newest" | "discount" | "expiring" | "nearest";
@@ -61,6 +61,7 @@ function DealsPage() {
   const [cat, setCat] = useState<string>("all");
   const [sort, setSort] = useState<SortMode>("newest");
   const [radius, setRadius] = useState<Radius>("any");
+  const { data: categories } = useCategories();
 
   // Debounce the search query for server-side filtering
   const [debouncedQ, setDebouncedQ] = useState("");
@@ -181,7 +182,7 @@ function DealsPage() {
           <SelectTrigger className="min-w-[150px]"><SelectValue placeholder={t.deals.category} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.cat.all}</SelectItem>
-            {CATEGORY_SLUGS.map((c) => <SelectItem key={c} value={c}>{(t.cat as any)[c]}</SelectItem>)}
+            {(categories ?? []).map((c) => <SelectItem key={c.slug} value={c.slug}>{(t.cat as any)[c.slug] ?? c.name}</SelectItem>)}
           </SelectContent>
         </Select>
         {origin && (

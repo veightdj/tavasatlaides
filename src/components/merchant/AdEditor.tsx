@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS } from "@/lib/categories";
+import { useCategories } from "@/lib/categories";
 import { uploadImage } from "@/lib/upload";
 
 export function AdEditor({ adId }: { adId?: string }) {
@@ -25,6 +25,7 @@ export function AdEditor({ adId }: { adId?: string }) {
     enabled: !!user,
     queryFn: async () => (await supabase.from("stores").select("id,category").eq("owner_id", user!.id).maybeSingle()).data,
   });
+  const { data: categories } = useCategories();
 
   const { data: ad } = useQuery({
     queryKey: ["ad", adId],
@@ -139,7 +140,7 @@ export function AdEditor({ adId }: { adId?: string }) {
       <F label={t.merchant.category}>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>{CATEGORY_SLUGS.map((c) => <SelectItem key={c} value={c}>{(t.cat as any)[c]}</SelectItem>)}</SelectContent>
+          <SelectContent>{(categories ?? []).map((c) => <SelectItem key={c.slug} value={c.slug}>{(t.cat as any)[c.slug] ?? c.name}</SelectItem>)}</SelectContent>
         </Select>
       </F>
 

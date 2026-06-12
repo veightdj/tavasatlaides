@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
+import { CITIES, slugify, useCategories } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
 import { StoreGalleryManager } from "@/components/merchant/StoreGalleryManager";
 import { geocodeAddress } from "@/lib/geocode.functions";
@@ -45,6 +45,7 @@ function StoreEditor() {
   const [hours, setHours] = useState<Hours>(DEFAULT_HOURS);
   // lat/lng captured directly from address autocomplete (skips server geocode)
   const [pickedCoords, setPickedCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const { data: categories } = useCategories();
 
   useEffect(() => {
     if (store) {
@@ -154,7 +155,7 @@ function StoreEditor() {
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            {CATEGORY_SLUGS.map((c) => <SelectItem key={c} value={c}>{(t.cat as any)[c]}</SelectItem>)}
+            {(categories ?? []).map((c) => <SelectItem key={c.slug} value={c.slug}>{(t.cat as any)[c.slug] ?? c.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </Field>

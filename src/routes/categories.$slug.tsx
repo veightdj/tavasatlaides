@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/categories";
+import { useCategories, type CategorySlug } from "@/lib/categories";
 import { CategoryCircles } from "@/components/CategoryCircles";
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -42,8 +42,10 @@ export const Route = createFileRoute("/categories/$slug")({
 function CategoryPage() {
   const { slug } = Route.useParams();
   const { t } = useI18n();
+  const { data: cats, isLoading: catsLoading } = useCategories();
 
-  const valid = (CATEGORY_SLUGS as readonly string[]).includes(slug);
+  const valid = !catsLoading && (cats ?? []).some((c) => c.slug === slug);
+  const label = (cats ?? []).find((c) => c.slug === slug)?.name;
 
   const { data: ads = [] } = useQuery({
     queryKey: ["category", slug],
@@ -60,11 +62,12 @@ function CategoryPage() {
     },
   });
 
+  if (catsLoading) return <div className="p-10 text-center text-muted-foreground">Loading…</div>;
   if (!valid) return <div className="p-10 text-center">404</div>;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight px-4">{(t.cat as any)[slug as CategorySlug]}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight px-4">{(t.cat as any)[slug] ?? label ?? slug}</h1>
       <p className="mt-1 text-muted-foreground px-4">{t.deals.title}</p>
 
       <div className="mt-6 mb-8">
