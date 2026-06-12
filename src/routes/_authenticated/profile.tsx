@@ -110,6 +110,20 @@ function ProfileHub() {
         </Section>
       )}
 
+      {user && !store && vis.businessTiles.length === 0 && (
+        <Section title="Become a partner">
+          <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-brand-soft p-5 text-center">
+            <StoreIcon className="h-8 w-8 mx-auto text-primary mb-2" />
+            <p className="text-sm font-medium">Have a business? Create your store to start posting deals.</p>
+            <Button asChild className="mt-3">
+              <Link to="/profile/store">
+                <Plus className="h-4 w-4 mr-1" /> Create My Store
+              </Link>
+            </Button>
+          </div>
+        </Section>
+      )}
+
       <Section title="Activity">
         <NavRow to="/favorites" icon={Heart} label={t.favorites.title} />
         <NavRow to="/profile/notifications" icon={Inbox} label="Notifications" />
