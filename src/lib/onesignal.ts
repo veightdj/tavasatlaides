@@ -54,8 +54,7 @@ async function initWeb() {
           serviceWorkerPath: "/OneSignalSDKWorker.js",
           // Do NOT auto-show the bell on init — prevents intrusive prompts
           // and avoids any rendering side-effects during app boot.
-          notifyButton: { enable: false },
-        });
+          notifyButton: { enable: false, prenotify: false, showCredit: false, text: {} as never },
         console.log("ONESIGNAL INIT OK");
       } catch (e) {
         webInitPromise = null;
