@@ -5,7 +5,7 @@ import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store, Check, Sea
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
-import { CategoryPills } from "@/components/CategoryPills";
+import { CategoryCirclesFilter } from "@/components/CategoryCirclesFilter";
 import { PopularStores } from "@/components/PopularStores";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
@@ -186,7 +186,7 @@ function Feed() {
       {/* Categories — sticky pill bar */}
       <section className="sticky top-0 z-30 bg-background/85 backdrop-blur-md border-b border-border/50">
         <div className="mx-auto max-w-6xl">
-          <CategoryPills activeSlug={selectedCategory} onSelect={setSelectedCategory} />
+          <CategoryCirclesFilter activeSlug={selectedCategory} onSelect={setSelectedCategory} />
         </div>
       </section>
 
