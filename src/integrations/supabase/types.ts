@@ -355,6 +355,7 @@ export type Database = {
       categories: {
         Row: {
           active: boolean
+          color: string
           created_at: string
           icon: string
           id: string
@@ -365,6 +366,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          color?: string
           created_at?: string
           icon?: string
           id?: string
@@ -375,6 +377,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          color?: string
           created_at?: string
           icon?: string
           id?: string
