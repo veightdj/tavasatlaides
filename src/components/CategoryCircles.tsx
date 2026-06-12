@@ -16,17 +16,6 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 type Meta = { bg: string; iconColor: string; ring: string };
-
-const CATEGORY_META: Record<string, Meta> = {
-  food:        { bg: "bg-[oklch(0.65_0.16_55)]",  iconColor: "text-white", ring: "ring-[oklch(0.65_0.16_55)]/40" },
-  auto:        { bg: "bg-[oklch(0.6_0.12_245)]",  iconColor: "text-white", ring: "ring-[oklch(0.6_0.12_245)]/40" },
-  beauty:      { bg: "bg-[oklch(0.7_0.14_345)]",  iconColor: "text-white", ring: "ring-[oklch(0.7_0.14_345)]/40" },
-  electronics: { bg: "bg-[oklch(0.6_0.14_295)]",  iconColor: "text-white", ring: "ring-[oklch(0.6_0.14_295)]/40" },
-  home:        { bg: "bg-[oklch(0.65_0.12_145)]", iconColor: "text-white", ring: "ring-[oklch(0.65_0.12_145)]/40" },
-  kids:        { bg: "bg-[oklch(0.75_0.16_85)]",  iconColor: "text-white", ring: "ring-[oklch(0.75_0.16_85)]/40" },
-  cafes:       { bg: "bg-[oklch(0.55_0.1_55)]",   iconColor: "text-white", ring: "ring-[oklch(0.55_0.1_55)]/40" },
-  events:      { bg: "bg-[oklch(0.65_0.16_25)]",  iconColor: "text-white", ring: "ring-[oklch(0.65_0.16_25)]/40" },
-};
 const DEFAULT_META: Meta = { bg: "bg-muted", iconColor: "text-foreground", ring: "ring-muted-foreground/30" };
 
 export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug | string }) {
@@ -37,7 +26,8 @@ export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug | st
     slug: c.slug,
     name: c.name,
     Icon: ICONS[c.icon] ?? Tag,
-    meta: CATEGORY_META[c.slug] ?? DEFAULT_META,
+    color: c.color,
+    meta: DEFAULT_META,
     label: (t.cat as any)[c.slug] ?? c.name,
   }));
 
