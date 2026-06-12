@@ -61,6 +61,7 @@ function DealsPage() {
   const [cat, setCat] = useState<string>("all");
   const [sort, setSort] = useState<SortMode>("newest");
   const [radius, setRadius] = useState<Radius>("any");
+  const { data: categories } = useCategories();
 
   // Debounce the search query for server-side filtering
   const [debouncedQ, setDebouncedQ] = useState("");
