@@ -121,9 +121,16 @@ function AuthSync() {
       }
       // Bind / unbind OneSignal external id so server-side targeting works.
       try {
-        const { setOneSignalExternalId, logoutOneSignal } = await import("@/lib/onesignal");
+        const { setOneSignalExternalId, logoutOneSignal, setOneSignalTags } = await import("@/lib/onesignal");
         if (event === "SIGNED_IN" && session?.user?.id) {
           await setOneSignalExternalId(session.user.id);
+          try {
+            const { getOneSignalTagsForCurrentUser } = await import("@/lib/onesignal-tags.functions");
+            const tags = await getOneSignalTagsForCurrentUser();
+            await setOneSignalTags(tags);
+          } catch (e) {
+            console.warn("[onesignal] tag sync failed", e);
+          }
         } else if (event === "SIGNED_OUT") {
           await logoutOneSignal();
         }

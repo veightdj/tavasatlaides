@@ -149,6 +149,37 @@ export async function setOneSignalExternalId(externalId: string) {
   }
 }
 
+/** Detect the current platform string used for OneSignal tag targeting. */
+export function oneSignalPlatformTag(): "web" | "ios" | "android" {
+  if (isNativePlatform()) return nativePlatformName() as "ios" | "android";
+  return "web";
+}
+
+type AddTagsSdk = {
+  User?: { addTags?: (tags: Record<string, string>) => Promise<void> | void };
+};
+
+/** Send a flat string→string tag map to OneSignal (best-effort, non-throwing). */
+export async function setOneSignalTags(tags: Record<string, string>) {
+  const enriched = { platform: oneSignalPlatformTag(), ...tags };
+  try {
+    if (isNativePlatform()) {
+      const mod = (await import("onesignal-cordova-plugin")) as OneSignalModule & AddTagsSdk;
+      const OneSignal = (mod.default ?? mod) as AddTagsSdk;
+      await OneSignal.User?.addTags?.(enriched);
+      return;
+    }
+    if (typeof window === "undefined") return;
+    await initWeb();
+    const OneSignal = (await import("react-onesignal")).default as unknown as AddTagsSdk;
+    await OneSignal.User?.addTags?.(enriched);
+  } catch (e) {
+    console.warn("[onesignal] setOneSignalTags failed", e);
+  }
+}
+
+
+
 /** Unbind the OneSignal user from this device (called on sign-out). */
 export async function logoutOneSignal() {
   try {
