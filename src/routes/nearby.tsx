@@ -63,22 +63,32 @@ function NearbyPage() {
   }, []);
 
   const startWatch = async () => {
-    if (!("geolocation" in navigator)) {
-      setError("Geolocation is not supported in this browser.");
-      return;
+    try {
+      if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+        setError("Geolocation is not supported in this browser.");
+        return;
+      }
+      // Ask for notification permission once we start tracking (non-blocking failure)
+      try { await requestNotificationPermission(); } catch { /* ignore */ }
+      setError(null);
+      setWatching(true);
+      watchId.current = navigator.geolocation.watchPosition(
+        (p) => setPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
+        (e) => {
+          const msg =
+            e.code === 1 ? "Location permission denied. Enable it in your browser settings."
+            : e.code === 2 ? "Location unavailable. Check your GPS or network."
+            : e.code === 3 ? "Location request timed out. Try again."
+            : (e.message || "Could not get your location.");
+          setError(msg);
+          setWatching(false);
+        },
+        { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
+      );
+    } catch (err: any) {
+      setError(err?.message || "Could not start location tracking.");
+      setWatching(false);
     }
-    // Ask for notification permission once we start tracking
-    await requestNotificationPermission();
-    setError(null);
-    setWatching(true);
-    watchId.current = navigator.geolocation.watchPosition(
-      (p) => setPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      (e) => {
-        setError(e.message || "Could not get your location.");
-        setWatching(false);
-      },
-      { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
-    );
   };
 
   const stopWatch = () => {
