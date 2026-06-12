@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { CATEGORY_SLUGS, CITIES } from "@/lib/categories";
+import { CITIES, useCategories } from "@/lib/categories";
 import { distanceKm as haversineKm } from "@/lib/distance";
 
 type SortMode = "newest" | "discount" | "expiring" | "nearest";
