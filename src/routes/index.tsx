@@ -183,9 +183,11 @@ function Feed() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-4 md:py-6">
-        <CategoryCircles />
+      {/* Categories — sticky pill bar */}
+      <section className="sticky top-0 z-30 bg-background/85 backdrop-blur-md border-b border-border/50">
+        <div className="mx-auto max-w-6xl">
+          <CategoryPills activeSlug={selectedCategory} onSelect={setSelectedCategory} />
+        </div>
       </section>
 
       {/* Popular stores */}
