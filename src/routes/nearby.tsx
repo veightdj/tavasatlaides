@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bell, LocateFixed, Settings as SettingsIcon, Loader2, MapPin } from "lucide-react";
+import { AlertTriangle, Bell, LocateFixed, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DealCard } from "@/components/DealCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { distanceKm as haversineKm, formatDistance } from "@/lib/distance";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
