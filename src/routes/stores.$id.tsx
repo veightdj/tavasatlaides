@@ -161,30 +161,18 @@ function StorePage() {
         </div>
       </div>
 
-      {gallery.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-2xl font-bold">Gallery</h2>
-          <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {gallery.map((img: any) => (
-              <a
-                key={img.id}
-                href={img.image_url}
-                target="_blank"
-                rel="noreferrer"
-                className="relative block aspect-square overflow-hidden rounded-2xl border bg-card"
-              >
-                <img
-                  src={img.image_url}
-                  alt={`${store.name} gallery image`}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform hover:scale-105"
-                />
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
+      {(() => {
+        const imgs = [
+          ...(store.cover_image_url ? [store.cover_image_url] : []),
+          ...gallery.map((g: any) => g.image_url).filter((u: string) => u && u !== store.cover_image_url),
+        ];
+        if (imgs.length === 0) return null;
+        return (
+          <section className="mt-10">
+            <ShopGallerySlider images={imgs} alt={`${store.name} photo`} />
+          </section>
+        );
+      })()}
 
       <h2 className="mt-10 text-2xl font-bold">{t.home.featured}</h2>
       {ads.length === 0 ? (
