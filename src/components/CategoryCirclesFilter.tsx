@@ -24,12 +24,6 @@ export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
   const { data: categories = [] } = useCategories();
 
   const items: Array<{ slug: string; label: string; Icon: LucideIcon; color: string }> = [
-    {
-      slug: "all",
-      label: (t.cat as any).all ?? "All",
-      Icon: LayoutGrid,
-      color: "hsl(var(--primary))",
-    },
     ...categories.map((c) => ({
       slug: c.slug,
       label: (t.cat as any)[c.slug] ?? c.name,
