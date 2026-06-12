@@ -67,7 +67,7 @@ function CategoryPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight px-4">{(t.cat as any)[slug as CategorySlug]}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight px-4">{(t.cat as any)[slug] ?? label ?? slug}</h1>
       <p className="mt-1 text-muted-foreground px-4">{t.deals.title}</p>
 
       <div className="mt-6 mb-8">
