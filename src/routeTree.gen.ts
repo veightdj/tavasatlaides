@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SelectRoleRouteImport } from './routes/select-role'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ForMerchantsRouteImport } from './routes/for-merchants'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -39,6 +41,7 @@ import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
 import { Route as AuthenticatedProfileStoreRouteImport } from './routes/_authenticated/profile.store'
+import { Route as AuthenticatedProfileSecurityRouteImport } from './routes/_authenticated/profile.security'
 import { Route as AuthenticatedProfileNotificationsRouteImport } from './routes/_authenticated/profile.notifications'
 import { Route as AuthenticatedProfileDashboardRouteImport } from './routes/_authenticated/profile.dashboard'
 import { Route as AuthenticatedProfileBillingRouteImport } from './routes/_authenticated/profile.billing'
@@ -67,6 +70,11 @@ const SelectRoleRoute = SelectRoleRouteImport.update({
   path: '/select-role',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -90,6 +98,11 @@ const MapRoute = MapRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForMerchantsRoute = ForMerchantsRouteImport.update({
@@ -202,6 +215,12 @@ const AuthenticatedProfileStoreRoute =
     path: '/store',
     getParentRoute: () => AuthenticatedProfileRoute,
   } as any)
+const AuthenticatedProfileSecurityRoute =
+  AuthenticatedProfileSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => AuthenticatedProfileRoute,
+  } as any)
 const AuthenticatedProfileNotificationsRoute =
   AuthenticatedProfileNotificationsRouteImport.update({
     id: '/notifications',
@@ -281,11 +300,13 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
@@ -304,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
   '/profile/notifications': typeof AuthenticatedProfileNotificationsRoute
+  '/profile/security': typeof AuthenticatedProfileSecurityRoute
   '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
@@ -324,11 +346,13 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
@@ -347,6 +371,7 @@ export interface FileRoutesByTo {
   '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
   '/profile/notifications': typeof AuthenticatedProfileNotificationsRoute
+  '/profile/security': typeof AuthenticatedProfileSecurityRoute
   '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
@@ -369,11 +394,13 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/for-merchants': typeof ForMerchantsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
@@ -392,6 +419,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/_authenticated/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
   '/_authenticated/profile/notifications': typeof AuthenticatedProfileNotificationsRoute
+  '/_authenticated/profile/security': typeof AuthenticatedProfileSecurityRoute
   '/_authenticated/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
   '/_authenticated/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
@@ -414,11 +442,13 @@ export interface FileRouteTypes {
     | '/faq'
     | '/favorites'
     | '/for-merchants'
+    | '/forgot-password'
     | '/login'
     | '/map'
     | '/nearby'
     | '/partner'
     | '/privacy'
+    | '/reset-password'
     | '/select-role'
     | '/signup'
     | '/terms'
@@ -437,6 +467,7 @@ export interface FileRouteTypes {
     | '/profile/billing'
     | '/profile/dashboard'
     | '/profile/notifications'
+    | '/profile/security'
     | '/profile/store'
     | '/admin/notifications/debug'
     | '/profile/ads/$id'
@@ -457,11 +488,13 @@ export interface FileRouteTypes {
     | '/faq'
     | '/favorites'
     | '/for-merchants'
+    | '/forgot-password'
     | '/login'
     | '/map'
     | '/nearby'
     | '/partner'
     | '/privacy'
+    | '/reset-password'
     | '/select-role'
     | '/signup'
     | '/terms'
@@ -480,6 +513,7 @@ export interface FileRouteTypes {
     | '/profile/billing'
     | '/profile/dashboard'
     | '/profile/notifications'
+    | '/profile/security'
     | '/profile/store'
     | '/admin/notifications/debug'
     | '/profile/ads/$id'
@@ -501,11 +535,13 @@ export interface FileRouteTypes {
     | '/faq'
     | '/favorites'
     | '/for-merchants'
+    | '/forgot-password'
     | '/login'
     | '/map'
     | '/nearby'
     | '/partner'
     | '/privacy'
+    | '/reset-password'
     | '/select-role'
     | '/signup'
     | '/terms'
@@ -524,6 +560,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/billing'
     | '/_authenticated/profile/dashboard'
     | '/_authenticated/profile/notifications'
+    | '/_authenticated/profile/security'
     | '/_authenticated/profile/store'
     | '/admin/notifications/debug'
     | '/_authenticated/profile/ads/$id'
@@ -546,11 +583,13 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   FavoritesRoute: typeof FavoritesRoute
   ForMerchantsRoute: typeof ForMerchantsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
   NearbyRoute: typeof NearbyRoute
   PartnerRoute: typeof PartnerRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SelectRoleRoute: typeof SelectRoleRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
@@ -595,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SelectRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -628,6 +674,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/for-merchants': {
@@ -784,6 +837,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileStoreRouteImport
       parentRoute: typeof AuthenticatedProfileRoute
     }
+    '/_authenticated/profile/security': {
+      id: '/_authenticated/profile/security'
+      path: '/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof AuthenticatedProfileSecurityRouteImport
+      parentRoute: typeof AuthenticatedProfileRoute
+    }
     '/_authenticated/profile/notifications': {
       id: '/_authenticated/profile/notifications'
       path: '/notifications'
@@ -876,6 +936,7 @@ interface AuthenticatedProfileRouteChildren {
   AuthenticatedProfileBillingRoute: typeof AuthenticatedProfileBillingRoute
   AuthenticatedProfileDashboardRoute: typeof AuthenticatedProfileDashboardRoute
   AuthenticatedProfileNotificationsRoute: typeof AuthenticatedProfileNotificationsRoute
+  AuthenticatedProfileSecurityRoute: typeof AuthenticatedProfileSecurityRoute
   AuthenticatedProfileStoreRoute: typeof AuthenticatedProfileStoreRoute
   AuthenticatedProfileAdsIdRoute: typeof AuthenticatedProfileAdsIdRoute
   AuthenticatedProfileAdsNewRoute: typeof AuthenticatedProfileAdsNewRoute
@@ -888,6 +949,7 @@ const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
   AuthenticatedProfileDashboardRoute: AuthenticatedProfileDashboardRoute,
   AuthenticatedProfileNotificationsRoute:
     AuthenticatedProfileNotificationsRoute,
+  AuthenticatedProfileSecurityRoute: AuthenticatedProfileSecurityRoute,
   AuthenticatedProfileStoreRoute: AuthenticatedProfileStoreRoute,
   AuthenticatedProfileAdsIdRoute: AuthenticatedProfileAdsIdRoute,
   AuthenticatedProfileAdsNewRoute: AuthenticatedProfileAdsNewRoute,
@@ -919,11 +981,13 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   FavoritesRoute: FavoritesRoute,
   ForMerchantsRoute: ForMerchantsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   NearbyRoute: NearbyRoute,
   PartnerRoute: PartnerRoute,
   PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SelectRoleRoute: SelectRoleRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
