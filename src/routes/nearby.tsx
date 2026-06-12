@@ -7,11 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DealCard } from "@/components/DealCard";
 import { distanceKm as haversineKm, formatDistance } from "@/lib/distance";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   loadPrefs, requestNotificationPermission, showDealNotification,
-  canNotify, markNotified, type NotificationPrefs,
+  canNotify, markNotified, savePrefs, RADIUS_OPTIONS, type NotificationPrefs, type Radius,
 } from "@/lib/notifications";
 import type { CategorySlug } from "@/lib/categories";
+
 
 export const Route = createFileRoute("/nearby")({
   head: () => ({
@@ -174,9 +176,37 @@ function NearbyPage() {
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Deals Near Me</h1>
           <p className="text-muted-foreground mt-1">Live alerts within {prefs.radiusKm} km · {prefs.categories.length} categories</p>
         </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link to="/profile"><SettingsIcon className="h-4 w-4 mr-1.5" />Settings</Link>
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <SettingsIcon className="h-4 w-4 mr-1.5" />Distance
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-64">
+            <div className="space-y-3">
+              <div className="text-sm font-medium">Search radius</div>
+              <div className="grid grid-cols-3 gap-2">
+                {RADIUS_OPTIONS.map((r) => (
+                  <Button
+                    key={r}
+                    size="sm"
+                    variant={prefs.radiusKm === r ? "default" : "outline"}
+                    onClick={() => {
+                      const next = { ...prefs, radiusKm: r as Radius };
+                      setPrefs(next);
+                      savePrefs(next);
+                    }}
+                  >
+                    {r} km
+                  </Button>
+                ))}
+              </div>
+              <Link to="/profile/notifications" className="block text-xs text-muted-foreground underline pt-1">
+                More notification settings
+              </Link>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Status pill */}
