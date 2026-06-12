@@ -129,15 +129,20 @@ function NearbyPage() {
   // Compute and rank nearby deals
   const ranked = useMemo(() => {
     if (!pos) return [] as Array<Deal & { _km: number }>;
-    return deals
+    const safeDeals = Array.isArray(deals) ? deals : [];
+    const cats = new Set(prefs.categories ?? []);
+    return safeDeals
       .map((d) => {
+        if (!d || !d.stores) return null;
         const lat = d.stores?.lat, lng = d.stores?.lng;
         if (typeof lat !== "number" || typeof lng !== "number") return null;
         const km = haversineKm(pos, { lat, lng });
+        if (!Number.isFinite(km)) return null;
         return { ...d, _km: km };
       })
-      .filter((d): d is Deal & { _km: number } => !!d && d._km <= prefs.radiusKm)
-      .filter((d) => prefs.categories.includes(d.category as CategorySlug))
+      .filter((d): d is Deal & { _km: number } =>
+        !!d && d._km <= prefs.radiusKm && cats.has(d.category as CategorySlug),
+      )
       .sort((a, b) => a._km - b._km);
   }, [deals, pos, prefs.radiusKm, prefs.categories]);
 
