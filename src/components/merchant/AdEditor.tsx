@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS } from "@/lib/categories";
+import { useCategories } from "@/lib/categories";
 import { uploadImage } from "@/lib/upload";
 
 export function AdEditor({ adId }: { adId?: string }) {
