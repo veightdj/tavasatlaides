@@ -240,6 +240,34 @@ function AdminCategoriesPage() {
               </div>
             </div>
             <div className="grid gap-2">
+              <Label>Icon color</Label>
+              <div className="flex flex-wrap gap-2">
+                {COLOR_PRESETS.map((c) => (
+                  <button
+                    key={c} type="button"
+                    onClick={() => setForm((f) => ({ ...f, color: c }))}
+                    style={{ backgroundColor: c }}
+                    className={cn(
+                      "h-9 w-9 rounded-full border-2 transition-transform",
+                      form.color === c ? "border-foreground scale-110" : "border-transparent hover:scale-105"
+                    )}
+                    title={c}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  style={{ backgroundColor: form.color }}
+                  className="h-8 w-8 rounded-full border shrink-0"
+                />
+                <Input
+                  value={form.color}
+                  placeholder="oklch(0.6 0.12 245) or #RRGGBB"
+                  onChange={(e) => setForm((f) => ({ ...f, color: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
               <Label>Sort order</Label>
               <Input
                 type="number"
