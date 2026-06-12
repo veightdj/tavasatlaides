@@ -36,6 +36,7 @@ export type Category = {
   icon: string;
   sort_order: number;
   active: boolean;
+  color: string;
 };
 
 const FALLBACK_CATEGORIES: Category[] = CATEGORY_SLUGS.map((slug, i) => ({
@@ -45,6 +46,7 @@ const FALLBACK_CATEGORIES: Category[] = CATEGORY_SLUGS.map((slug, i) => ({
   icon: "Tag",
   sort_order: (i + 1) * 10,
   active: true,
+  color: "oklch(0.6 0.12 245)",
 }));
 
 /** Active categories, ordered by sort_order. */
@@ -54,7 +56,7 @@ export function useCategories() {
     queryFn: async (): Promise<Category[]> => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id,name,slug,icon,sort_order,active")
+        .select("id,name,slug,icon,sort_order,active,color")
         .eq("active", true)
         .order("sort_order", { ascending: true });
       if (error || !data || data.length === 0) return FALLBACK_CATEGORIES;
@@ -71,7 +73,7 @@ export function useAllCategories() {
     queryFn: async (): Promise<Category[]> => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id,name,slug,icon,sort_order,active")
+        .select("id,name,slug,icon,sort_order,active,color")
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return (data ?? []) as Category[];

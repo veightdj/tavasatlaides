@@ -36,9 +36,21 @@ type Form = {
   icon: string;
   sort_order: number;
   active: boolean;
+  color: string;
 };
 
-const EMPTY: Form = { name: "", slug: "", icon: "Tag", sort_order: 100, active: true };
+const COLOR_PRESETS = [
+  "oklch(0.65 0.16 55)",
+  "oklch(0.6 0.12 245)",
+  "oklch(0.7 0.14 345)",
+  "oklch(0.6 0.14 295)",
+  "oklch(0.65 0.12 145)",
+  "oklch(0.75 0.16 85)",
+  "oklch(0.55 0.1 55)",
+  "oklch(0.65 0.16 25)",
+];
+
+const EMPTY: Form = { name: "", slug: "", icon: "Tag", sort_order: 100, active: true, color: COLOR_PRESETS[1] };
 
 function AdminCategoriesPage() {
   const qc = useQueryClient();
@@ -54,6 +66,7 @@ function AdminCategoriesPage() {
         setForm({
           name: editing.name, slug: editing.slug, icon: editing.icon,
           sort_order: editing.sort_order, active: editing.active,
+          color: editing.color || COLOR_PRESETS[1],
         });
         setSlugEdited(true);
       } else {
@@ -71,6 +84,7 @@ function AdminCategoriesPage() {
         icon: f.icon,
         sort_order: Number(f.sort_order) || 0,
         active: f.active,
+        color: f.color,
       };
       if (!payload.name || !payload.slug) throw new Error("Name and slug are required");
       if (editing) {
@@ -147,7 +161,14 @@ function AdminCategoriesPage() {
                 return (
                   <tr key={c.id} className="border-t">
                     <td className="px-4 py-3 tabular-nums">{c.sort_order}</td>
-                    <td className="px-4 py-3"><Icon className="h-4 w-4" /></td>
+                    <td className="px-4 py-3">
+                      <span
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full"
+                        style={{ backgroundColor: c.color }}
+                      >
+                        <Icon className="h-4 w-4 text-white" />
+                      </span>
+                    </td>
                     <td className="px-4 py-3 font-medium">{c.name}</td>
                     <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
                     <td className="px-4 py-3">
@@ -223,6 +244,34 @@ function AdminCategoriesPage() {
                     <Icon className="h-4 w-4" />
                   </button>
                 ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Icon color</Label>
+              <div className="flex flex-wrap gap-2">
+                {COLOR_PRESETS.map((c) => (
+                  <button
+                    key={c} type="button"
+                    onClick={() => setForm((f) => ({ ...f, color: c }))}
+                    style={{ backgroundColor: c }}
+                    className={cn(
+                      "h-9 w-9 rounded-full border-2 transition-transform",
+                      form.color === c ? "border-foreground scale-110" : "border-transparent hover:scale-105"
+                    )}
+                    title={c}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  style={{ backgroundColor: form.color }}
+                  className="h-8 w-8 rounded-full border shrink-0"
+                />
+                <Input
+                  value={form.color}
+                  placeholder="oklch(0.6 0.12 245) or #RRGGBB"
+                  onChange={(e) => setForm((f) => ({ ...f, color: e.target.value }))}
+                />
               </div>
             </div>
             <div className="grid gap-2">

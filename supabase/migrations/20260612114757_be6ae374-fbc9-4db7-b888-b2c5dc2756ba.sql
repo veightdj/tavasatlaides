@@ -1,0 +1,1 @@
+ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS color text NOT NULL DEFAULT 'oklch(0.6 0.12 245)';
