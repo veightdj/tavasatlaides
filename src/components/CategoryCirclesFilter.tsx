@@ -1,7 +1,7 @@
 import {
   Baby, CalendarDays, Car, Coffee, Gem, Home, Smartphone, Tag, UtensilsCrossed,
   ShoppingBag, Heart, Sparkles, Bike, Plane, Music, Dumbbell, Briefcase,
-  Pizza, Wine, BookOpen, Camera, Gamepad2, PawPrint, LayoutGrid,
+  Pizza, Wine, BookOpen, Camera, Gamepad2, PawPrint,
   type LucideIcon,
 } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
@@ -24,12 +24,6 @@ export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
   const { data: categories = [] } = useCategories();
 
   const items: Array<{ slug: string; label: string; Icon: LucideIcon; color: string }> = [
-    {
-      slug: "all",
-      label: (t.cat as any).all ?? "All",
-      Icon: LayoutGrid,
-      color: "hsl(var(--primary))",
-    },
     ...categories.map((c) => ({
       slug: c.slug,
       label: (t.cat as any)[c.slug] ?? c.name,
