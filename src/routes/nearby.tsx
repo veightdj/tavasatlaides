@@ -271,20 +271,42 @@ function NearbyPage() {
         <h2 className="text-lg font-semibold">
           {pos ? `${ranked.length} deal${ranked.length === 1 ? "" : "s"} within ${prefs.radiusKm} km` : "Start tracking to see nearby deals"}
         </h2>
-        {pos && ranked.length === 0 && (
-          <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
-            No active deals in your {prefs.radiusKm} km radius right now.
-            <div className="mt-2 text-sm">Try increasing your radius in <Link to="/profile" className="underline">settings</Link>.</div>
+
+        {isError && (
+          <div className="rounded-2xl border border-destructive/40 bg-destructive/5 p-4 text-sm space-y-2">
+            <p className="text-destructive font-medium">Couldn't load deals.</p>
+            <p className="text-muted-foreground text-xs break-words">
+              {(queryError as Error)?.message ?? "Network or server error."}
+            </p>
+            <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
           </div>
         )}
-        <div className="mt-5 grid gap-5 sm:grid-cols-2">
-          {ranked.map((d) => (
-            <div key={d.id} className="space-y-1">
-              <DealCard deal={d as any} distanceKm={d._km} />
-              <p className="text-xs text-muted-foreground px-1">{formatDistance(d._km)}</p>
-            </div>
-          ))}
-        </div>
+
+        {isLoading && !isError && (
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-64 w-full rounded-2xl" />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && !isError && pos && ranked.length === 0 && (
+          <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
+            No active deals in your {prefs.radiusKm} km radius right now.
+            <div className="mt-2 text-sm">Try increasing your radius above.</div>
+          </div>
+        )}
+
+        {!isLoading && !isError && ranked.length > 0 && (
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            {ranked.map((d) => (
+              <div key={d.id} className="space-y-1 min-w-0">
+                <DealCard deal={d as any} distanceKm={d._km} />
+                <p className="text-xs text-muted-foreground px-1">{formatDistance(d._km)}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <p className="text-xs text-muted-foreground pt-4 border-t">
