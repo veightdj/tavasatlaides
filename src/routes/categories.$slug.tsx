@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/categories";
+import { useCategories, type CategorySlug } from "@/lib/categories";
 import { CategoryCircles } from "@/components/CategoryCircles";
 
 const CATEGORY_LABEL: Record<string, string> = {
