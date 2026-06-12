@@ -36,9 +36,21 @@ type Form = {
   icon: string;
   sort_order: number;
   active: boolean;
+  color: string;
 };
 
-const EMPTY: Form = { name: "", slug: "", icon: "Tag", sort_order: 100, active: true };
+const COLOR_PRESETS = [
+  "oklch(0.65 0.16 55)",
+  "oklch(0.6 0.12 245)",
+  "oklch(0.7 0.14 345)",
+  "oklch(0.6 0.14 295)",
+  "oklch(0.65 0.12 145)",
+  "oklch(0.75 0.16 85)",
+  "oklch(0.55 0.1 55)",
+  "oklch(0.65 0.16 25)",
+];
+
+const EMPTY: Form = { name: "", slug: "", icon: "Tag", sort_order: 100, active: true, color: COLOR_PRESETS[1] };
 
 function AdminCategoriesPage() {
   const qc = useQueryClient();
