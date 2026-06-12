@@ -101,6 +101,19 @@ function StorePage() {
     },
   });
 
+  const { data: gallery = [] } = useQuery({
+    queryKey: ["store-gallery", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("store_gallery")
+        .select("id,image_url,sort_order")
+        .eq("store_id", id)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   if (!store) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
 
   const bestOffer = ads.length > 0
@@ -146,6 +159,31 @@ function StorePage() {
           {store.description && <p className="mt-4 text-foreground/80 max-w-2xl">{store.description}</p>}
         </div>
       </div>
+
+      {gallery.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold">Gallery</h2>
+          <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {gallery.map((img: any) => (
+              <a
+                key={img.id}
+                href={img.image_url}
+                target="_blank"
+                rel="noreferrer"
+                className="relative block aspect-square overflow-hidden rounded-2xl border bg-card"
+              >
+                <img
+                  src={img.image_url}
+                  alt={`${store.name} gallery image`}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform hover:scale-105"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       <h2 className="mt-10 text-2xl font-bold">{t.home.featured}</h2>
       {ads.length === 0 ? (

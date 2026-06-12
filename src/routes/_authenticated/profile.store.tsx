@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useI18n } from "@/i18n/use-i18n";
 import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
+import { StoreGalleryManager } from "@/components/merchant/StoreGalleryManager";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { AddressAutocomplete } from "@/components/merchant/AddressAutocomplete";
 import { HoursEditor } from "@/components/merchant/HoursEditor";
@@ -195,6 +196,15 @@ function StoreEditor() {
       <Field label={t.merchant.description}><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
 
       <HoursEditor value={hours} onChange={setHours} />
+
+      {store?.id && user && (
+        <div className="space-y-2">
+          <Label>Gallery</Label>
+          <StoreGalleryManager storeId={store.id} userId={user.id} />
+        </div>
+      )}
+
+
 
 
 
