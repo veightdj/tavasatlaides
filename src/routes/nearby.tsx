@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bell, LocateFixed, Settings as SettingsIcon, Loader2, MapPin } from "lucide-react";
+import { AlertTriangle, Bell, LocateFixed, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DealCard } from "@/components/DealCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { distanceKm as haversineKm, formatDistance } from "@/lib/distance";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
@@ -24,6 +25,14 @@ export const Route = createFileRoute("/nearby")({
     links: [{ rel: "canonical", href: "https://superatlaides.lovable.app/nearby" }],
   }),
   component: NearbyPage,
+  errorComponent: ({ error, reset }) => (
+    <div className="mx-auto max-w-md px-4 py-16 text-center space-y-4">
+      <AlertTriangle className="h-10 w-10 mx-auto text-destructive" />
+      <h1 className="text-xl font-semibold">Something went wrong</h1>
+      <p className="text-sm text-muted-foreground break-words">{error?.message ?? "Could not load nearby deals."}</p>
+      <Button onClick={reset} variant="outline">Try again</Button>
+    </div>
+  ),
 });
 
 type Deal = {
@@ -54,22 +63,32 @@ function NearbyPage() {
   }, []);
 
   const startWatch = async () => {
-    if (!("geolocation" in navigator)) {
-      setError("Geolocation is not supported in this browser.");
-      return;
+    try {
+      if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+        setError("Geolocation is not supported in this browser.");
+        return;
+      }
+      // Ask for notification permission once we start tracking (non-blocking failure)
+      try { await requestNotificationPermission(); } catch { /* ignore */ }
+      setError(null);
+      setWatching(true);
+      watchId.current = navigator.geolocation.watchPosition(
+        (p) => setPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
+        (e) => {
+          const msg =
+            e.code === 1 ? "Location permission denied. Enable it in your browser settings."
+            : e.code === 2 ? "Location unavailable. Check your GPS or network."
+            : e.code === 3 ? "Location request timed out. Try again."
+            : (e.message || "Could not get your location.");
+          setError(msg);
+          setWatching(false);
+        },
+        { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
+      );
+    } catch (err: any) {
+      setError(err?.message || "Could not start location tracking.");
+      setWatching(false);
     }
-    // Ask for notification permission once we start tracking
-    await requestNotificationPermission();
-    setError(null);
-    setWatching(true);
-    watchId.current = navigator.geolocation.watchPosition(
-      (p) => setPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      (e) => {
-        setError(e.message || "Could not get your location.");
-        setWatching(false);
-      },
-      { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
-    );
   };
 
   const stopWatch = () => {
@@ -81,7 +100,7 @@ function NearbyPage() {
   useEffect(() => () => stopWatch(), []);
 
   // Load active deals (cached). Realtime subscription appends new ones.
-  const { data: deals = [], refetch } = useQuery({
+  const { data: deals = [], refetch, isLoading, isError, error: queryError } = useQuery({
     queryKey: ["nearby-deals"],
     queryFn: async (): Promise<Deal[]> => {
       const { data, error } = await supabase
@@ -90,8 +109,10 @@ function NearbyPage() {
         .eq("status", "active")
         .limit(300);
       if (error) throw error;
-      return (data ?? []) as unknown as Deal[];
+      return (Array.isArray(data) ? data : []) as unknown as Deal[];
     },
+    retry: 1,
+    staleTime: 30_000,
   });
 
   // Subscribe to new active ads in realtime — only triggers a refetch.
@@ -108,15 +129,20 @@ function NearbyPage() {
   // Compute and rank nearby deals
   const ranked = useMemo(() => {
     if (!pos) return [] as Array<Deal & { _km: number }>;
-    return deals
+    const safeDeals = Array.isArray(deals) ? deals : [];
+    const cats = new Set(prefs.categories ?? []);
+    return safeDeals
       .map((d) => {
+        if (!d || !d.stores) return null;
         const lat = d.stores?.lat, lng = d.stores?.lng;
         if (typeof lat !== "number" || typeof lng !== "number") return null;
         const km = haversineKm(pos, { lat, lng });
+        if (!Number.isFinite(km)) return null;
         return { ...d, _km: km };
       })
-      .filter((d): d is Deal & { _km: number } => !!d && d._km <= prefs.radiusKm)
-      .filter((d) => prefs.categories.includes(d.category as CategorySlug))
+      .filter((d): d is Deal & { _km: number } =>
+        !!d && d._km <= prefs.radiusKm && cats.has(d.category as CategorySlug),
+      )
       .sort((a, b) => a._km - b._km);
   }, [deals, pos, prefs.radiusKm, prefs.categories]);
 
@@ -136,35 +162,40 @@ function NearbyPage() {
 
     // Notify (respecting cooldown / daily cap / quiet hours)
     (async () => {
-      for (const d of entered.slice(0, 3)) {
-        if (!canNotify(d.id, prefs)) continue;
-        const dist = Math.round(d._km * 1000);
-        const distLabel = dist < 1000 ? `${dist} m` : `${(d._km).toFixed(1)} km`;
-        const pct = d.discount_pct ? `${d.discount_pct}% off ` : "";
-        await showDealNotification(
-          {
-            adId: d.id,
-            title: `🔥 ${pct}${d.title}`,
-            body: `${d.stores?.name ?? ""} · ${distLabel} away`,
-            distanceM: dist,
-            url: `/deals/${d.id}`,
-            imageUrl: d.cover_image_url,
-          },
-          prefs,
-        );
-        markNotified(d.id);
+      try {
+        for (const d of entered.slice(0, 3)) {
+          if (!canNotify(d.id, prefs)) continue;
+          const dist = Math.round(d._km * 1000);
+          const distLabel = dist < 1000 ? `${dist} m` : `${(d._km).toFixed(1)} km`;
+          const pct = d.discount_pct ? `${d.discount_pct}% off ` : "";
+          try {
+            await showDealNotification(
+              {
+                adId: d.id,
+                title: `🔥 ${pct}${d.title}`,
+                body: `${d.stores?.name ?? ""} · ${distLabel} away`,
+                distanceM: dist,
+                url: `/deals/${d.id}`,
+                imageUrl: d.cover_image_url,
+              },
+              prefs,
+            );
+          } catch { /* notification API may fail — toast is fallback */ }
+          markNotified(d.id);
 
-        // Best-effort DB log if signed in
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            await supabase.from("notification_logs").insert({
-              user_id: user.id, ad_id: d.id, distance_m: dist,
-            });
-          }
-        } catch { /* ignore */ }
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              await supabase.from("notification_logs").insert({
+                user_id: user.id, ad_id: d.id, distance_m: dist,
+              });
+            }
+          } catch { /* ignore */ }
 
-        toast.message(`${pct}${d.title}`, { description: `${d.stores?.name} · ${distLabel} away` });
+          toast.message(`${pct}${d.title}`, { description: `${d.stores?.name ?? ""} · ${distLabel} away` });
+        }
+      } catch (e) {
+        console.warn("[nearby] notification loop failed", e);
       }
     })();
   }, [ranked, pos, prefs]);
@@ -240,20 +271,42 @@ function NearbyPage() {
         <h2 className="text-lg font-semibold">
           {pos ? `${ranked.length} deal${ranked.length === 1 ? "" : "s"} within ${prefs.radiusKm} km` : "Start tracking to see nearby deals"}
         </h2>
-        {pos && ranked.length === 0 && (
-          <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
-            No active deals in your {prefs.radiusKm} km radius right now.
-            <div className="mt-2 text-sm">Try increasing your radius in <Link to="/profile" className="underline">settings</Link>.</div>
+
+        {isError && (
+          <div className="rounded-2xl border border-destructive/40 bg-destructive/5 p-4 text-sm space-y-2">
+            <p className="text-destructive font-medium">Couldn't load deals.</p>
+            <p className="text-muted-foreground text-xs break-words">
+              {(queryError as Error)?.message ?? "Network or server error."}
+            </p>
+            <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
           </div>
         )}
-        <div className="mt-5 grid gap-5 sm:grid-cols-2">
-          {ranked.map((d) => (
-            <div key={d.id} className="space-y-1">
-              <DealCard deal={d as any} distanceKm={d._km} />
-              <p className="text-xs text-muted-foreground px-1">{formatDistance(d._km)}</p>
-            </div>
-          ))}
-        </div>
+
+        {isLoading && !isError && (
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-64 w-full rounded-2xl" />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && !isError && pos && ranked.length === 0 && (
+          <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
+            No active deals in your {prefs.radiusKm} km radius right now.
+            <div className="mt-2 text-sm">Try increasing your radius above.</div>
+          </div>
+        )}
+
+        {!isLoading && !isError && ranked.length > 0 && (
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            {ranked.map((d) => (
+              <div key={d.id} className="space-y-1 min-w-0">
+                <DealCard deal={d as any} distanceKm={d._km} />
+                <p className="text-xs text-muted-foreground px-1">{formatDistance(d._km)}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <p className="text-xs text-muted-foreground pt-4 border-t">
