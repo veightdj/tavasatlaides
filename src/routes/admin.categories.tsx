@@ -161,7 +161,14 @@ function AdminCategoriesPage() {
                 return (
                   <tr key={c.id} className="border-t">
                     <td className="px-4 py-3 tabular-nums">{c.sort_order}</td>
-                    <td className="px-4 py-3"><Icon className="h-4 w-4" /></td>
+                    <td className="px-4 py-3">
+                      <span
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full"
+                        style={{ backgroundColor: c.color }}
+                      >
+                        <Icon className="h-4 w-4 text-white" />
+                      </span>
+                    </td>
                     <td className="px-4 py-3 font-medium">{c.name}</td>
                     <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
                     <td className="px-4 py-3">
