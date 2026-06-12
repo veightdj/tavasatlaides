@@ -51,7 +51,7 @@ async function initWeb() {
         allowLocalhostAsSecureOrigin: true,
         serviceWorkerParam: { scope: "/" },
         serviceWorkerPath: "/OneSignalSDKWorker.js",
-        notifyButton: { enable: true },
+        notifyButton: { enable: true, prenotify: true, showCredit: false, text: {} as never },
       });
     })().catch((e) => {
       webInitPromise = null;
