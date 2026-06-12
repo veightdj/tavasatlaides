@@ -177,7 +177,8 @@ export async function setOneSignalTags(tags: Record<string, string>) {
     console.warn("[onesignal] setOneSignalTags failed", e);
   }
 }
-}
+
+
 
 /** Unbind the OneSignal user from this device (called on sign-out). */
 export async function logoutOneSignal() {
