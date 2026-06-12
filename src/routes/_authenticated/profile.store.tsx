@@ -197,6 +197,15 @@ function StoreEditor() {
 
       <HoursEditor value={hours} onChange={setHours} />
 
+      {store?.id && user && (
+        <div className="space-y-2">
+          <Label>Gallery</Label>
+          <StoreGalleryManager storeId={store.id} userId={user.id} />
+        </div>
+      )}
+
+
+
 
 
       <Button onClick={() => save.mutate()} disabled={save.isPending}>
