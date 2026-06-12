@@ -45,6 +45,7 @@ function StoreEditor() {
   const [hours, setHours] = useState<Hours>(DEFAULT_HOURS);
   // lat/lng captured directly from address autocomplete (skips server geocode)
   const [pickedCoords, setPickedCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const { data: categories } = useCategories();
 
   useEffect(() => {
     if (store) {
