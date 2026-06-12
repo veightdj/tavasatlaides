@@ -162,35 +162,40 @@ function NearbyPage() {
 
     // Notify (respecting cooldown / daily cap / quiet hours)
     (async () => {
-      for (const d of entered.slice(0, 3)) {
-        if (!canNotify(d.id, prefs)) continue;
-        const dist = Math.round(d._km * 1000);
-        const distLabel = dist < 1000 ? `${dist} m` : `${(d._km).toFixed(1)} km`;
-        const pct = d.discount_pct ? `${d.discount_pct}% off ` : "";
-        await showDealNotification(
-          {
-            adId: d.id,
-            title: `🔥 ${pct}${d.title}`,
-            body: `${d.stores?.name ?? ""} · ${distLabel} away`,
-            distanceM: dist,
-            url: `/deals/${d.id}`,
-            imageUrl: d.cover_image_url,
-          },
-          prefs,
-        );
-        markNotified(d.id);
+      try {
+        for (const d of entered.slice(0, 3)) {
+          if (!canNotify(d.id, prefs)) continue;
+          const dist = Math.round(d._km * 1000);
+          const distLabel = dist < 1000 ? `${dist} m` : `${(d._km).toFixed(1)} km`;
+          const pct = d.discount_pct ? `${d.discount_pct}% off ` : "";
+          try {
+            await showDealNotification(
+              {
+                adId: d.id,
+                title: `🔥 ${pct}${d.title}`,
+                body: `${d.stores?.name ?? ""} · ${distLabel} away`,
+                distanceM: dist,
+                url: `/deals/${d.id}`,
+                imageUrl: d.cover_image_url,
+              },
+              prefs,
+            );
+          } catch { /* notification API may fail — toast is fallback */ }
+          markNotified(d.id);
 
-        // Best-effort DB log if signed in
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            await supabase.from("notification_logs").insert({
-              user_id: user.id, ad_id: d.id, distance_m: dist,
-            });
-          }
-        } catch { /* ignore */ }
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              await supabase.from("notification_logs").insert({
+                user_id: user.id, ad_id: d.id, distance_m: dist,
+              });
+            }
+          } catch { /* ignore */ }
 
-        toast.message(`${pct}${d.title}`, { description: `${d.stores?.name} · ${distLabel} away` });
+          toast.message(`${pct}${d.title}`, { description: `${d.stores?.name ?? ""} · ${distLabel} away` });
+        }
+      } catch (e) {
+        console.warn("[nearby] notification loop failed", e);
       }
     })();
   }, [ranked, pos, prefs]);
