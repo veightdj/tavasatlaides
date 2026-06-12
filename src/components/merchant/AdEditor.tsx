@@ -25,6 +25,7 @@ export function AdEditor({ adId }: { adId?: string }) {
     enabled: !!user,
     queryFn: async () => (await supabase.from("stores").select("id,category").eq("owner_id", user!.id).maybeSingle()).data,
   });
+  const { data: categories } = useCategories();
 
   const { data: ad } = useQuery({
     queryKey: ["ad", adId],
