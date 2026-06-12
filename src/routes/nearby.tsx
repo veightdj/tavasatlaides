@@ -246,7 +246,7 @@ function NearbyPage() {
             <div className="mt-2 text-sm">Try increasing your radius in <Link to="/profile" className="underline">settings</Link>.</div>
           </div>
         )}
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="mt-5 grid gap-5 sm:grid-cols-2">
           {ranked.map((d) => (
             <div key={d.id} className="space-y-1">
               <DealCard deal={d as any} distanceKm={d._km} />
