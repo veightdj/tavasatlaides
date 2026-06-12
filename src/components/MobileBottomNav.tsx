@@ -21,19 +21,22 @@ export function MobileBottomNav() {
   const { user } = useAuth();
   useEffect(() => setHost(getHostAudience()), []);
 
-  const { data: partnerStore } = useQuery({
-    queryKey: ["bottom-nav-partner-store", user?.id],
+  const { data: partnerNav } = useQuery({
+    queryKey: ["bottom-nav-partner", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const [{ data: roles }, { data: store }] = await Promise.all([
-        supabase.from("user_roles").select("role").eq("user_id", user!.id),
-        supabase.from("stores").select("id").eq("owner_id", user!.id).maybeSingle(),
-      ]);
-      const isPartnerLike =
-        (roles ?? []).some((r) => r.role === "partner" || r.role === "admin") || !!store;
-      return isPartnerLike && store ? store : null;
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user!.id);
+      const isPartner = (roles ?? []).some(
+        (r) => r.role === "partner" || r.role === "admin"
+      );
+      return { isPartner };
     },
   });
+
+  const isPartner = partnerNav?.isPartner ?? false;
 
   // Hide on the marketing site
   if (host === "client") return null;
