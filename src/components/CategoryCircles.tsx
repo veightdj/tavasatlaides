@@ -62,7 +62,7 @@ export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug | st
 
       {/* Desktop: grid */}
       <div className="hidden md:grid grid-cols-8 gap-4 px-4">
-        {items.map(({ slug, Icon, meta, label }) => {
+        {items.map(({ slug, Icon, color, label }) => {
           const isActive = activeSlug === slug;
           return (
             <Link
@@ -72,14 +72,14 @@ export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug | st
               className={cn("flex flex-col items-center gap-2.5 transition-opacity", isActive && "opacity-80")}
             >
               <span
+                style={{ backgroundColor: color, boxShadow: isActive ? `0 0 0 3px ${color}66` : undefined }}
                 className={cn(
                   "flex items-center justify-center rounded-full shadow-md shadow-black/10 transition-all duration-200",
-                  meta.bg,
-                  isActive ? `ring-[3px] ${meta.ring} scale-95` : "hover:scale-105 hover:shadow-lg hover:shadow-black/15 active:scale-95",
+                  isActive ? "scale-95" : "hover:scale-105 hover:shadow-lg hover:shadow-black/15 active:scale-95",
                   "w-[72px] h-[72px]"
                 )}
               >
-                <Icon className={cn("h-7 w-7", meta.iconColor)} />
+                <Icon className="h-7 w-7 text-white" />
               </span>
               <span className="text-xs font-medium text-foreground text-center leading-tight max-w-[72px]">{label}</span>
             </Link>
