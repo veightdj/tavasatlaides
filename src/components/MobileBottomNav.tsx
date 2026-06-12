@@ -84,16 +84,16 @@ export function MobileBottomNav() {
                 to={tab.to}
                 aria-label={tab.label}
                 aria-current={active ? "page" : undefined}
-                className={`group relative flex flex-col items-center justify-center gap-0.5 min-h-[58px] px-1 py-1.5 transition-colors ${
+                className={`group relative flex flex-col items-center justify-center gap-0.5 min-h-[60px] px-1 py-2 transition-colors ${
                   active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <span
-                  className={`flex h-7 w-12 items-center justify-center rounded-full transition-all ${
+                  className={`flex h-8 w-14 items-center justify-center rounded-full transition-all ${
                     active ? "bg-primary/10" : "bg-transparent"
                   }`}
                 >
-                  <Icon className={`h-5 w-5 transition-transform ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.4 : 2} />
+                  <Icon className={`h-6 w-6 transition-transform ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.4 : 2} />
                 </span>
                 <span className={`text-[10.5px] leading-none font-medium tracking-tight min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
                   {tab.label}

@@ -60,7 +60,7 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
   return (
     <article className="group relative flex flex-col rounded-2xl bg-card border border-border/60 shadow-[0_2px_10px_-2px_rgba(15,23,42,0.08)] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.18)] hover:-translate-y-0.5 transition-all overflow-hidden">
       {/* Header */}
-      <header className="flex items-start gap-3 p-3 pb-2">
+      <header className="flex items-start gap-3 px-3 pt-4 pb-2">
         <Link
           to="/stores/$id"
           params={{ id: store?.id ?? "" }}
@@ -92,18 +92,18 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
               <BadgeCheck className="h-4 w-4 shrink-0 text-sky-500 fill-sky-500/15" aria-label="Verificēts partneris" />
             )}
           </Link>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            {categoryLabel}
+          <div className="mt-0.5 flex items-center text-xs text-muted-foreground">
+            <span className="truncate">{categoryLabel}</span>
             {distLabel && (
               <>
                 <span className="mx-1.5 opacity-50">•</span>
-                <span className="inline-flex items-center gap-1">
+                <span className="inline-flex items-center gap-1 truncate">
                   <LocateFixed className="h-3 w-3 text-primary" />
                   {distLabel}
                 </span>
               </>
             )}
-          </p>
+          </div>
         </div>
         <button
           type="button"
@@ -126,10 +126,10 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
             src={deal.cover_image_url}
             alt={deal.title}
             loading="lazy"
-            className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+            className="h-full w-full object-cover rounded-t-xl group-hover:scale-[1.03] transition-transform duration-500"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-warm" />
+          <div className="h-full w-full bg-gradient-warm rounded-t-xl" />
         )}
         {deal.discount_pct ? (
           <div className="absolute top-3 right-3 rounded-xl bg-primary text-primary-foreground text-sm font-extrabold px-2.5 py-1 shadow-lg shadow-primary/30">
