@@ -859,6 +859,7 @@ export type Database = {
           owner_id: string
           phone: string | null
           postal_code: string | null
+          registration_number: string | null
           slug: string
           updated_at: string
           website: string | null
@@ -884,6 +885,7 @@ export type Database = {
           owner_id: string
           phone?: string | null
           postal_code?: string | null
+          registration_number?: string | null
           slug: string
           updated_at?: string
           website?: string | null
@@ -909,6 +911,7 @@ export type Database = {
           owner_id?: string
           phone?: string | null
           postal_code?: string | null
+          registration_number?: string | null
           slug?: string
           updated_at?: string
           website?: string | null
@@ -1058,7 +1061,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin"
+      app_role: "admin" | "client" | "partner"
       report_reason:
         | "spam"
         | "scam"
@@ -1196,7 +1199,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin"],
+      app_role: ["admin", "client", "partner"],
       report_reason: [
         "spam",
         "scam",
