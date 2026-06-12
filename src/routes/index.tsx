@@ -5,7 +5,7 @@ import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store, Check, Sea
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
-import { CategoryCircles } from "@/components/CategoryCircles";
+import { CategoryPills } from "@/components/CategoryPills";
 import { PopularStores } from "@/components/PopularStores";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
@@ -91,13 +91,17 @@ function Feed() {
   };
 
 
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
   const { data: featured = [] } = useQuery({
-    queryKey: ["featured-deals"],
+    queryKey: ["featured-deals", selectedCategory],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let q = supabase
         .from("ads")
         .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json)")
-        .eq("status", "active")
+        .eq("status", "active");
+      if (selectedCategory !== "all") q = q.eq("category", selectedCategory);
+      const { data, error } = await q
         .order("discount_pct", { ascending: false, nullsFirst: false })
         .limit(8);
       if (error) throw error;
@@ -179,9 +183,11 @@ function Feed() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-4 md:py-6">
-        <CategoryCircles />
+      {/* Categories — sticky pill bar */}
+      <section className="sticky top-0 z-30 bg-background/85 backdrop-blur-md border-b border-border/50">
+        <div className="mx-auto max-w-6xl">
+          <CategoryPills activeSlug={selectedCategory} onSelect={setSelectedCategory} />
+        </div>
       </section>
 
       {/* Popular stores */}
