@@ -35,7 +35,7 @@ export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug | st
     <div className="mx-auto max-w-6xl">
       {/* Mobile: horizontal scroll */}
       <div className="flex gap-4 overflow-x-auto px-4 pb-2 pt-1 md:hidden snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {items.map(({ slug, Icon, meta, label }) => {
+        {items.map(({ slug, Icon, color, label }) => {
           const isActive = activeSlug === slug;
           return (
             <Link
@@ -45,14 +45,14 @@ export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug | st
               className={cn("snap-start flex flex-col items-center gap-2 shrink-0", isActive && "opacity-80")}
             >
               <span
+                style={{ backgroundColor: color, boxShadow: isActive ? `0 0 0 3px ${color}66` : undefined }}
                 className={cn(
                   "flex items-center justify-center rounded-full shadow-md shadow-black/10 transition-all duration-200",
-                  meta.bg,
-                  isActive ? `ring-[3px] ${meta.ring} scale-95` : "hover:scale-105 hover:shadow-lg hover:shadow-black/15 active:scale-95",
+                  isActive ? "scale-95" : "hover:scale-105 hover:shadow-lg hover:shadow-black/15 active:scale-95",
                   "w-[64px] h-[64px]"
                 )}
               >
-                <Icon className={cn("h-6 w-6", meta.iconColor)} />
+                <Icon className="h-6 w-6 text-white" />
               </span>
               <span className="text-[11px] font-medium text-foreground text-center leading-tight max-w-[64px]">{label}</span>
             </Link>
