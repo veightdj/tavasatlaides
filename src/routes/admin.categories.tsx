@@ -66,6 +66,7 @@ function AdminCategoriesPage() {
         setForm({
           name: editing.name, slug: editing.slug, icon: editing.icon,
           sort_order: editing.sort_order, active: editing.active,
+          color: editing.color || COLOR_PRESETS[1],
         });
         setSlugEdited(true);
       } else {
@@ -83,6 +84,7 @@ function AdminCategoriesPage() {
         icon: f.icon,
         sort_order: Number(f.sort_order) || 0,
         active: f.active,
+        color: f.color,
       };
       if (!payload.name || !payload.slug) throw new Error("Name and slug are required");
       if (editing) {
