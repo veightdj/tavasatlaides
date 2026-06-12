@@ -4,7 +4,7 @@ import { useState } from "react";
 import {
   User, Heart, Bell, MapPin, SlidersHorizontal, ShieldQuestion, LogOut,
   ChevronRight, LayoutDashboard, Megaphone, Plus, Store as StoreIcon,
-  TrendingUp, MousePointerClick, CreditCard, Inbox, Building2, ChevronDown,
+  TrendingUp, MousePointerClick, CreditCard, Inbox, Building2, ChevronDown, KeyRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
