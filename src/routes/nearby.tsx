@@ -201,19 +201,22 @@ function NearbyPage() {
   }, [ranked, pos, prefs]);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 md:py-10 pb-24 md:pb-10 space-y-6">
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Deals Near Me</h1>
-          <p className="text-muted-foreground mt-1">Live alerts within {prefs.radiusKm} km · {prefs.categories.length} categories</p>
+    <div className="mx-auto w-full max-w-3xl px-3 sm:px-4 py-4 sm:py-6 md:py-10 pb-24 md:pb-10 space-y-4 sm:space-y-6 overflow-x-hidden">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2 sm:gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight truncate">Deals Near Me</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 truncate">
+            Within {prefs.radiusKm} km · {prefs.categories.length} categories
+          </p>
         </div>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm">
-              <SettingsIcon className="h-4 w-4 mr-1.5" />Distance
+            <Button variant="outline" size="sm" className="shrink-0 rounded-full">
+              <SettingsIcon className="h-4 w-4 sm:mr-1.5" />
+              <span className="hidden sm:inline">Distance</span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-64">
+          <PopoverContent align="end" className="w-[min(16rem,calc(100vw-1.5rem))]">
             <div className="space-y-3">
               <div className="text-sm font-medium">Search radius</div>
               <div className="grid grid-cols-3 gap-2">
@@ -241,21 +244,22 @@ function NearbyPage() {
       </div>
 
       {/* Status pill */}
-      <div className="rounded-2xl border bg-card p-4 flex items-center gap-3">
+      <div className="rounded-2xl border bg-card p-3 sm:p-4 flex items-center gap-3">
         <span className={`relative flex h-3 w-3 shrink-0 ${watching ? "" : "opacity-50"}`}>
           <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${watching ? "bg-green-500" : "bg-muted-foreground"}`} />
           <span className={`relative inline-flex rounded-full h-3 w-3 ${watching ? "bg-green-500" : "bg-muted-foreground"}`} />
         </span>
-        <div className="flex-1 text-sm">
+        <div className="flex-1 min-w-0 text-sm">
           {watching ? <span className="text-green-600 font-medium">Active</span> : <span className="text-muted-foreground">Inactive</span>}
-          {error && <span className="text-destructive block mt-1">{error}</span>}
+          {error && <span className="text-destructive block mt-1 text-xs break-words">{error}</span>}
         </div>
         {!watching ? (
-          <Button onClick={startWatch} size="sm" className="rounded-full">
-            <LocateFixed className="h-4 w-4 mr-1.5" />Start
+          <Button onClick={startWatch} size="sm" className="shrink-0 rounded-full">
+            <LocateFixed className="h-4 w-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">Start</span>
           </Button>
         ) : (
-          <Button onClick={stopWatch} variant="outline" size="sm" className="rounded-full">Stop</Button>
+          <Button onClick={stopWatch} variant="outline" size="sm" className="shrink-0 rounded-full">Stop</Button>
         )}
       </div>
 
