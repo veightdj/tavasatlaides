@@ -42,8 +42,10 @@ export const Route = createFileRoute("/categories/$slug")({
 function CategoryPage() {
   const { slug } = Route.useParams();
   const { t } = useI18n();
+  const { data: cats, isLoading: catsLoading } = useCategories();
 
-  const valid = (CATEGORY_SLUGS as readonly string[]).includes(slug);
+  const valid = !catsLoading && (cats ?? []).some((c) => c.slug === slug);
+  const label = (cats ?? []).find((c) => c.slug === slug)?.name;
 
   const { data: ads = [] } = useQuery({
     queryKey: ["category", slug],
@@ -60,6 +62,7 @@ function CategoryPage() {
     },
   });
 
+  if (catsLoading) return <div className="p-10 text-center text-muted-foreground">Loading…</div>;
   if (!valid) return <div className="p-10 text-center">404</div>;
 
   return (
