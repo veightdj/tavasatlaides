@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
-import { CATEGORY_SLUGS, CITIES, slugify } from "@/lib/categories";
+import { CITIES, slugify, useCategories } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
 import { StoreGalleryManager } from "@/components/merchant/StoreGalleryManager";
 import { geocodeAddress } from "@/lib/geocode.functions";
