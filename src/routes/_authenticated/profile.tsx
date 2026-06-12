@@ -142,6 +142,7 @@ function ProfileHub() {
       </Section>
 
       <Section title="Account">
+        <NavRow to="/profile/security" icon={KeyRound} label="Security &amp; password" />
         <AccountActionsSection />
       </Section>
     </div>
