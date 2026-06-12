@@ -91,13 +91,17 @@ function Feed() {
   };
 
 
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
   const { data: featured = [] } = useQuery({
-    queryKey: ["featured-deals"],
+    queryKey: ["featured-deals", selectedCategory],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let q = supabase
         .from("ads")
         .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json)")
-        .eq("status", "active")
+        .eq("status", "active");
+      if (selectedCategory !== "all") q = q.eq("category", selectedCategory);
+      const { data, error } = await q
         .order("discount_pct", { ascending: false, nullsFirst: false })
         .limit(8);
       if (error) throw error;
