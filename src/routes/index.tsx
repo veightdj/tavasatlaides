@@ -5,7 +5,7 @@ import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store, Check, Sea
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
-import { CategoryCircles } from "@/components/CategoryCircles";
+import { CategoryPills } from "@/components/CategoryPills";
 import { PopularStores } from "@/components/PopularStores";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
