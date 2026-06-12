@@ -7,11 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DealCard } from "@/components/DealCard";
 import { distanceKm as haversineKm, formatDistance } from "@/lib/distance";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   loadPrefs, requestNotificationPermission, showDealNotification,
-  canNotify, markNotified, type NotificationPrefs,
+  canNotify, markNotified, savePrefs, RADIUS_OPTIONS, type NotificationPrefs, type Radius,
 } from "@/lib/notifications";
 import type { CategorySlug } from "@/lib/categories";
+
 
 export const Route = createFileRoute("/nearby")({
   head: () => ({
