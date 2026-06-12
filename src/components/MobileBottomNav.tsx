@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, MapPin, Map as MapIcon, Heart, User } from "lucide-react";
+import { Home, MapPin, Map as MapIcon, Heart, User, Store as StoreIcon } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
 import { getHostAudience } from "@/lib/audience";
+import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type Tab = {
   to: string;
@@ -15,7 +18,22 @@ export function MobileBottomNav() {
   const { t } = useI18n();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [host, setHost] = useState<ReturnType<typeof getHostAudience>>(null);
+  const { user } = useAuth();
   useEffect(() => setHost(getHostAudience()), []);
+
+  const { data: partnerStore } = useQuery({
+    queryKey: ["bottom-nav-partner-store", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const [{ data: roles }, { data: store }] = await Promise.all([
+        supabase.from("user_roles").select("role").eq("user_id", user!.id),
+        supabase.from("stores").select("id").eq("owner_id", user!.id).maybeSingle(),
+      ]);
+      const isPartnerLike =
+        (roles ?? []).some((r) => r.role === "partner" || r.role === "admin") || !!store;
+      return isPartnerLike && store ? store : null;
+    },
+  });
 
   // Hide on the marketing site
   if (host === "client") return null;
@@ -24,13 +42,29 @@ export function MobileBottomNav() {
   if (pathname.startsWith("/admin")) return null;
   if (pathname.startsWith("/login") || pathname.startsWith("/signup")) return null;
 
-  const tabs: Tab[] = [
+  const baseTabs: Tab[] = [
     { to: "/", label: t.bottomNav.home, icon: Home, match: (p) => p === "/" },
     { to: "/nearby", label: t.bottomNav.nearMe, icon: MapPin, match: (p) => p.startsWith("/nearby") || p.startsWith("/near-me") },
     { to: "/map", label: t.bottomNav.map, icon: MapIcon, match: (p) => p.startsWith("/map") },
     { to: "/favorites", label: t.bottomNav.saved, icon: Heart, match: (p) => p.startsWith("/favorites") || p.startsWith("/saved") },
     { to: "/profile", label: t.bottomNav.profile, icon: User, match: (p) => p.startsWith("/profile") },
   ];
+
+  // Partner with store: replace Map with Store for one-tap access from any screen
+  const tabs: Tab[] = partnerStore
+    ? [
+        baseTabs[0],
+        baseTabs[1],
+        {
+          to: "/profile/store",
+          label: (t.merchant as any)?.store ?? "Store",
+          icon: StoreIcon,
+          match: (p) => p.startsWith("/profile/store") || p.startsWith("/profile/ads") || p.startsWith("/profile/dashboard"),
+        },
+        baseTabs[3],
+        baseTabs[4],
+      ]
+    : baseTabs;
 
   return (
     <nav
