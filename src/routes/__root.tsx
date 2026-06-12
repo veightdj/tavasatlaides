@@ -114,28 +114,42 @@ function AuthSync() {
   const router = useRouter();
   const qc = useQueryClient();
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log("APP INIT START");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
         router.invalidate();
         if (event !== "SIGNED_OUT") qc.invalidateQueries();
       }
-      // Bind / unbind OneSignal external id so server-side targeting works.
-      try {
-        const { setOneSignalExternalId, logoutOneSignal, setOneSignalTags } = await import("@/lib/onesignal");
-        if (event === "SIGNED_IN" && session?.user?.id) {
-          await setOneSignalExternalId(session.user.id);
-          try {
-            const { getOneSignalTagsForCurrentUser } = await import("@/lib/onesignal-tags.functions");
-            const tags = await getOneSignalTagsForCurrentUser();
-            await setOneSignalTags(tags);
-          } catch (e) {
-            console.warn("[onesignal] tag sync failed", e);
+      // Defer OneSignal work off the critical path. NEVER block UI/data on it.
+      const runOneSignalBinding = async () => {
+        try {
+          const { setOneSignalExternalId, logoutOneSignal, setOneSignalTags } =
+            await import("@/lib/onesignal");
+          if (event === "SIGNED_IN" && session?.user?.id) {
+            await setOneSignalExternalId(session.user.id).catch(() => {});
+            try {
+              const { getOneSignalTagsForCurrentUser } = await import(
+                "@/lib/onesignal-tags.functions"
+              );
+              const tags = await getOneSignalTagsForCurrentUser();
+              await setOneSignalTags(tags).catch(() => {});
+            } catch (e) {
+              console.warn("ONESIGNAL INIT SKIPPED (tags)", e);
+            }
+          } else if (event === "SIGNED_OUT") {
+            await logoutOneSignal().catch(() => {});
           }
-        } else if (event === "SIGNED_OUT") {
-          await logoutOneSignal();
+        } catch (e) {
+          console.warn("ONESIGNAL INIT SKIPPED", e);
         }
-      } catch (e) {
-        console.warn("[onesignal] auth bind failed", e);
+      };
+      const w = window as Window & {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void;
+      };
+      if (typeof w.requestIdleCallback === "function") {
+        w.requestIdleCallback(() => { void runOneSignalBinding(); }, { timeout: 4000 });
+      } else {
+        setTimeout(() => { void runOneSignalBinding(); }, 1500);
       }
     });
     return () => subscription.unsubscribe();

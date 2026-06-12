@@ -44,19 +44,25 @@ async function initWeb() {
   if (typeof window === "undefined") throw new OneSignalError("unsupported", "No window");
   if (!webInitPromise) {
     webInitPromise = (async () => {
-      const OneSignal = (await import("react-onesignal")).default;
-      await OneSignal.init({
-        appId: ONESIGNAL_APP_ID,
-        safari_web_id: "web.onesignal.auto.12f40fc9-13d7-4ca9-8e4a-0a7d50f473bf",
-        allowLocalhostAsSecureOrigin: true,
-        serviceWorkerParam: { scope: "/" },
-        serviceWorkerPath: "/OneSignalSDKWorker.js",
-        notifyButton: { enable: true, prenotify: true, showCredit: false, text: {} as never },
-      });
-    })().catch((e) => {
-      webInitPromise = null;
-      throw new OneSignalError("init_failed", String((e as Error)?.message ?? e));
-    });
+      try {
+        const OneSignal = (await import("react-onesignal")).default;
+        await OneSignal.init({
+          appId: ONESIGNAL_APP_ID,
+          safari_web_id: "web.onesignal.auto.12f40fc9-13d7-4ca9-8e4a-0a7d50f473bf",
+          allowLocalhostAsSecureOrigin: true,
+          serviceWorkerParam: { scope: "/" },
+          serviceWorkerPath: "/OneSignalSDKWorker.js",
+          // Do NOT auto-show the bell on init — prevents intrusive prompts
+          // and avoids any rendering side-effects during app boot.
+          notifyButton: { enable: false, prenotify: false, showCredit: false, text: {} as never },
+        });
+        console.log("ONESIGNAL INIT OK");
+      } catch (e) {
+        webInitPromise = null;
+        console.warn("ONESIGNAL INIT SKIPPED", e);
+        throw new OneSignalError("init_failed", String((e as Error)?.message ?? e));
+      }
+    })();
   }
   return webInitPromise;
 }
