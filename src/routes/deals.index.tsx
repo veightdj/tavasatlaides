@@ -181,7 +181,7 @@ function DealsPage() {
           <SelectTrigger className="min-w-[150px]"><SelectValue placeholder={t.deals.category} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.cat.all}</SelectItem>
-            {CATEGORY_SLUGS.map((c) => <SelectItem key={c} value={c}>{(t.cat as any)[c]}</SelectItem>)}
+            {(categories ?? []).map((c) => <SelectItem key={c.slug} value={c.slug}>{(t.cat as any)[c.slug] ?? c.name}</SelectItem>)}
           </SelectContent>
         </Select>
         {origin && (
