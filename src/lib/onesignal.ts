@@ -146,6 +146,7 @@ export async function setOneSignalExternalId(externalId: string) {
     await OneSignal.login?.(externalId);
   } catch {
     /* non-blocking */
+  }
 }
 
 /** Detect the current platform string used for OneSignal tag targeting. */
