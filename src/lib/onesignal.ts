@@ -47,9 +47,11 @@ async function initWeb() {
       const OneSignal = (await import("react-onesignal")).default;
       await OneSignal.init({
         appId: ONESIGNAL_APP_ID,
+        safari_web_id: "web.onesignal.auto.12f40fc9-13d7-4ca9-8e4a-0a7d50f473bf",
         allowLocalhostAsSecureOrigin: true,
         serviceWorkerParam: { scope: "/" },
         serviceWorkerPath: "/OneSignalSDKWorker.js",
+        notifyButton: { enable: true },
       });
     })().catch((e) => {
       webInitPromise = null;
