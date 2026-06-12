@@ -1,14 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import {
-  Baby,
-  CalendarDays,
-  Car,
-  Coffee,
-  Gem,
-  Home,
-  Smartphone,
-  Tag,
-  UtensilsCrossed,
+  Baby, CalendarDays, Car, Coffee, Gem, Home, Smartphone, Tag, UtensilsCrossed,
+  ShoppingBag, Heart, Sparkles, Bike, Plane, Music, Dumbbell, Briefcase,
+  Pizza, Wine, BookOpen, Camera, Gamepad2, PawPrint,
   type LucideIcon,
 } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
@@ -16,7 +10,9 @@ import { useCategories, type CategorySlug } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = {
-  UtensilsCrossed, Car, Gem, Smartphone, Home, Baby, Coffee, CalendarDays, Tag,
+  Tag, UtensilsCrossed, Car, Gem, Smartphone, Home, Baby, Coffee, CalendarDays,
+  ShoppingBag, Heart, Sparkles, Bike, Plane, Music, Dumbbell, Briefcase,
+  Pizza, Wine, BookOpen, Camera, Gamepad2, PawPrint,
 };
 
 type Meta = { bg: string; iconColor: string; ring: string };
