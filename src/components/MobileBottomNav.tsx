@@ -53,8 +53,8 @@ export function MobileBottomNav() {
     { to: "/profile", label: t.bottomNav.profile, icon: User, match: (p) => p.startsWith("/profile") },
   ];
 
-  // Partner with store: replace Map with Store for one-tap access from any screen
-  const tabs: Tab[] = partnerStore
+  // Partner: replace Map with Store for one-tap access from any screen
+  const tabs: Tab[] = isPartner
     ? [
         baseTabs[0],
         baseTabs[1],
