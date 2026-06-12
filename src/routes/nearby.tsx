@@ -100,7 +100,7 @@ function NearbyPage() {
   useEffect(() => () => stopWatch(), []);
 
   // Load active deals (cached). Realtime subscription appends new ones.
-  const { data: deals = [], refetch } = useQuery({
+  const { data: deals = [], refetch, isLoading, isError, error: queryError } = useQuery({
     queryKey: ["nearby-deals"],
     queryFn: async (): Promise<Deal[]> => {
       const { data, error } = await supabase
@@ -109,8 +109,10 @@ function NearbyPage() {
         .eq("status", "active")
         .limit(300);
       if (error) throw error;
-      return (data ?? []) as unknown as Deal[];
+      return (Array.isArray(data) ? data : []) as unknown as Deal[];
     },
+    retry: 1,
+    staleTime: 30_000,
   });
 
   // Subscribe to new active ads in realtime — only triggers a refetch.
