@@ -57,8 +57,16 @@ export function AccountActionsSection() {
   };
 
   const onLogout = async () => {
-    await supabase.auth.signOut();
-    router.navigate({ to: "/" });
+    try {
+      await qc.cancelQueries();
+      qc.clear();
+      await supabase.auth.signOut().catch(() => {});
+      try { localStorage.removeItem("sb-auth-token"); } catch { /* ignore */ }
+      toast.success("Tu esi izrakstījies");
+    } finally {
+      await router.navigate({ to: "/", replace: true });
+      router.invalidate();
+    }
   };
 
   return (
