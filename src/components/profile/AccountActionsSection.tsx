@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter, Link } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AlertTriangle, ShieldOff, Trash2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
@@ -22,6 +23,7 @@ import { deactivateAccount, deleteAccount } from "@/lib/account.functions";
 
 export function AccountActionsSection() {
   const router = useRouter();
+  const qc = useQueryClient();
   const deactivate = useServerFn(deactivateAccount);
   const del = useServerFn(deleteAccount);
 
