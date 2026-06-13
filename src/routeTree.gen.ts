@@ -13,6 +13,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SelectRoleRouteImport } from './routes/select-role'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as NearbyRouteImport } from './routes/nearby'
@@ -39,7 +40,6 @@ import { Route as AdminDealsRouteImport } from './routes/admin.deals'
 import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
 import { Route as AuthenticatedProfileStoreRouteImport } from './routes/_authenticated/profile.store'
 import { Route as AuthenticatedProfileSecurityRouteImport } from './routes/_authenticated/profile.security'
@@ -74,6 +74,11 @@ const SelectRoleRoute = SelectRoleRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -205,11 +210,6 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
   path: '/admin/banners',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AdminNotificationsDebugRoute = AdminNotificationsDebugRouteImport.update({
   id: '/admin/notifications/debug',
   path: '/admin/notifications/debug',
@@ -217,45 +217,45 @@ const AdminNotificationsDebugRoute = AdminNotificationsDebugRouteImport.update({
 } as any)
 const AuthenticatedProfileStoreRoute =
   AuthenticatedProfileStoreRouteImport.update({
-    id: '/store',
-    path: '/store',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/store',
+    path: '/profile/store',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProfileSecurityRoute =
   AuthenticatedProfileSecurityRouteImport.update({
-    id: '/security',
-    path: '/security',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/security',
+    path: '/profile/security',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProfileNotificationsRoute =
   AuthenticatedProfileNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/notifications',
+    path: '/profile/notifications',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProfileDashboardRoute =
   AuthenticatedProfileDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/dashboard',
+    path: '/profile/dashboard',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProfileBillingRoute =
   AuthenticatedProfileBillingRouteImport.update({
-    id: '/billing',
-    path: '/billing',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/billing',
+    path: '/profile/billing',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProfileAnalyticsRoute =
   AuthenticatedProfileAnalyticsRouteImport.update({
-    id: '/analytics',
-    path: '/analytics',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/analytics',
+    path: '/profile/analytics',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProfileAdsIndexRoute =
   AuthenticatedProfileAdsIndexRouteImport.update({
-    id: '/ads/',
-    path: '/ads/',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/ads/',
+    path: '/profile/ads/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
@@ -286,15 +286,15 @@ const ApiPublicConfigMapsRoute = ApiPublicConfigMapsRouteImport.update({
 } as any)
 const AuthenticatedProfileAdsNewRoute =
   AuthenticatedProfileAdsNewRouteImport.update({
-    id: '/ads/new',
-    path: '/ads/new',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/ads/new',
+    path: '/profile/ads/new',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProfileAdsIdRoute =
   AuthenticatedProfileAdsIdRouteImport.update({
-    id: '/ads/$id',
-    path: '/ads/$id',
-    getParentRoute: () => AuthenticatedProfileRoute,
+    id: '/profile/ads/$id',
+    path: '/profile/ads/$id',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -312,11 +312,11 @@ export interface FileRoutesByFullPath {
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/companies': typeof AdminCompaniesRoute
@@ -359,11 +359,11 @@ export interface FileRoutesByTo {
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/profile': typeof AuthenticatedProfileRouteWithChildren
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/companies': typeof AdminCompaniesRoute
@@ -408,11 +408,11 @@ export interface FileRoutesById {
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRouteWithChildren
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/companies': typeof AdminCompaniesRoute
@@ -457,11 +457,11 @@ export interface FileRouteTypes {
     | '/nearby'
     | '/partner'
     | '/privacy'
+    | '/profile'
     | '/reset-password'
     | '/select-role'
     | '/signup'
     | '/terms'
-    | '/profile'
     | '/admin/banners'
     | '/admin/categories'
     | '/admin/companies'
@@ -504,11 +504,11 @@ export interface FileRouteTypes {
     | '/nearby'
     | '/partner'
     | '/privacy'
+    | '/profile'
     | '/reset-password'
     | '/select-role'
     | '/signup'
     | '/terms'
-    | '/profile'
     | '/admin/banners'
     | '/admin/categories'
     | '/admin/companies'
@@ -552,11 +552,11 @@ export interface FileRouteTypes {
     | '/nearby'
     | '/partner'
     | '/privacy'
+    | '/profile'
     | '/reset-password'
     | '/select-role'
     | '/signup'
     | '/terms'
-    | '/_authenticated/profile'
     | '/admin/banners'
     | '/admin/categories'
     | '/admin/companies'
@@ -601,6 +601,7 @@ export interface RootRouteChildren {
   NearbyRoute: typeof NearbyRoute
   PartnerRoute: typeof PartnerRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SelectRoleRoute: typeof SelectRoleRoute
   SignupRoute: typeof SignupRoute
@@ -652,6 +653,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -836,13 +844,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/admin/notifications/debug': {
       id: '/admin/notifications/debug'
       path: '/admin/notifications/debug'
@@ -852,52 +853,52 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/profile/store': {
       id: '/_authenticated/profile/store'
-      path: '/store'
+      path: '/profile/store'
       fullPath: '/profile/store'
       preLoaderRoute: typeof AuthenticatedProfileStoreRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/security': {
       id: '/_authenticated/profile/security'
-      path: '/security'
+      path: '/profile/security'
       fullPath: '/profile/security'
       preLoaderRoute: typeof AuthenticatedProfileSecurityRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/notifications': {
       id: '/_authenticated/profile/notifications'
-      path: '/notifications'
+      path: '/profile/notifications'
       fullPath: '/profile/notifications'
       preLoaderRoute: typeof AuthenticatedProfileNotificationsRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/dashboard': {
       id: '/_authenticated/profile/dashboard'
-      path: '/dashboard'
+      path: '/profile/dashboard'
       fullPath: '/profile/dashboard'
       preLoaderRoute: typeof AuthenticatedProfileDashboardRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/billing': {
       id: '/_authenticated/profile/billing'
-      path: '/billing'
+      path: '/profile/billing'
       fullPath: '/profile/billing'
       preLoaderRoute: typeof AuthenticatedProfileBillingRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/analytics': {
       id: '/_authenticated/profile/analytics'
-      path: '/analytics'
+      path: '/profile/analytics'
       fullPath: '/profile/analytics'
       preLoaderRoute: typeof AuthenticatedProfileAnalyticsRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/ads/': {
       id: '/_authenticated/profile/ads/'
-      path: '/ads'
+      path: '/profile/ads'
       fullPath: '/profile/ads/'
       preLoaderRoute: typeof AuthenticatedProfileAdsIndexRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -936,22 +937,22 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/profile/ads/new': {
       id: '/_authenticated/profile/ads/new'
-      path: '/ads/new'
+      path: '/profile/ads/new'
       fullPath: '/profile/ads/new'
       preLoaderRoute: typeof AuthenticatedProfileAdsNewRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile/ads/$id': {
       id: '/_authenticated/profile/ads/$id'
-      path: '/ads/$id'
+      path: '/profile/ads/$id'
       fullPath: '/profile/ads/$id'
       preLoaderRoute: typeof AuthenticatedProfileAdsIdRouteImport
-      parentRoute: typeof AuthenticatedProfileRoute
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
-interface AuthenticatedProfileRouteChildren {
+interface AuthenticatedRouteChildren {
   AuthenticatedProfileAnalyticsRoute: typeof AuthenticatedProfileAnalyticsRoute
   AuthenticatedProfileBillingRoute: typeof AuthenticatedProfileBillingRoute
   AuthenticatedProfileDashboardRoute: typeof AuthenticatedProfileDashboardRoute
@@ -963,7 +964,7 @@ interface AuthenticatedProfileRouteChildren {
   AuthenticatedProfileAdsIndexRoute: typeof AuthenticatedProfileAdsIndexRoute
 }
 
-const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProfileAnalyticsRoute: AuthenticatedProfileAnalyticsRoute,
   AuthenticatedProfileBillingRoute: AuthenticatedProfileBillingRoute,
   AuthenticatedProfileDashboardRoute: AuthenticatedProfileDashboardRoute,
@@ -974,17 +975,6 @@ const AuthenticatedProfileRouteChildren: AuthenticatedProfileRouteChildren = {
   AuthenticatedProfileAdsIdRoute: AuthenticatedProfileAdsIdRoute,
   AuthenticatedProfileAdsNewRoute: AuthenticatedProfileAdsNewRoute,
   AuthenticatedProfileAdsIndexRoute: AuthenticatedProfileAdsIndexRoute,
-}
-
-const AuthenticatedProfileRouteWithChildren =
-  AuthenticatedProfileRoute._addFileChildren(AuthenticatedProfileRouteChildren)
-
-interface AuthenticatedRouteChildren {
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRouteWithChildren
-}
-
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedProfileRoute: AuthenticatedProfileRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -1007,6 +997,7 @@ const rootRouteChildren: RootRouteChildren = {
   NearbyRoute: NearbyRoute,
   PartnerRoute: PartnerRoute,
   PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SelectRoleRoute: SelectRoleRoute,
   SignupRoute: SignupRoute,

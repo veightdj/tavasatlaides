@@ -1,10 +1,9 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
-  User, Heart, Bell, MapPin, SlidersHorizontal, ShieldQuestion, LogOut,
+  User, Heart, Bell, MapPin, SlidersHorizontal, ShieldQuestion,
   ChevronRight, LayoutDashboard, Megaphone, Plus, Store as StoreIcon,
-  TrendingUp, MousePointerClick, CreditCard, Inbox, Building2, ChevronDown, KeyRound,
+  TrendingUp, CreditCard, Inbox, Building2, KeyRound, LogIn, UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +15,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { NotificationPrefsSection } from "@/components/profile/NotificationPrefsSection";
 import { AccountActionsSection } from "@/components/profile/AccountActionsSection";
 import { PreferencesMisc } from "@/components/profile/PreferencesMisc";
-import { getProfileVisibility, PARTNER_TILES } from "@/lib/profile-visibility";
+import { getProfileVisibility } from "@/lib/profile-visibility";
 
 const TILE_ICONS: Record<string, any> = {
   dashboard: LayoutDashboard, ads: Megaphone, "ads-new": Plus,
@@ -27,21 +26,91 @@ const TILE_LABEL_KEY: Record<string, "dashboard" | "ads" | "newAd" | "store" | n
   analytics: null, billing: null,
 };
 
-export const Route = createFileRoute("/_authenticated/profile")({
+export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
       { title: "Profils — TavasAtlaides" },
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: ProfileLayout,
+  component: ProfilePage,
 });
 
-function ProfileLayout() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  // Render sub-route when not on /profile itself
-  if (pathname !== "/profile" && pathname !== "/profile/") return <Outlet />;
-  return <ProfileHub />;
+function ProfilePage() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-6 md:py-8 pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-8">
+        <div className="h-32 rounded-2xl bg-muted/40 animate-pulse" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-6 md:py-8 pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-8">
+      {user ? <ProfileHub /> : <GuestProfile />}
+    </div>
+  );
+}
+
+function GuestProfile() {
+  const { t } = useI18n();
+  return (
+    <div className="space-y-8">
+      <header className="flex items-center gap-4">
+        <div className="h-16 w-16 rounded-2xl bg-brand-soft text-primary grid place-items-center overflow-hidden shrink-0">
+          <User className="h-8 w-8" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t.nav.profile}</h1>
+          <p className="text-sm text-muted-foreground">Pieslēdzies, lai redzētu savu profilu</p>
+        </div>
+      </header>
+
+      <section className="rounded-2xl border bg-card p-5 space-y-3">
+        <p className="text-sm text-muted-foreground">
+          Pieslēdzies, lai saglabātu mīļākos piedāvājumus, saņemtu paziņojumus un pārvaldītu savu kontu.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Button asChild className="w-full min-h-11">
+            <Link to="/login" search={{ redirect: "/profile" }}>
+              <LogIn className="h-4 w-4 mr-2" />Pieslēgties
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="w-full min-h-11">
+            <Link to="/signup">
+              <UserPlus className="h-4 w-4 mr-2" />Reģistrēties
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      <Section title="Activity">
+        <NavRow to="/favorites" icon={Heart} label={t.favorites.title} />
+        <NavRow to="/nearby" icon={MapPin} label={t.bottomNav.nearMe} />
+      </Section>
+
+      <Section title="Preferences">
+        <Accordion type="single" collapsible className="rounded-2xl border bg-card divide-y">
+          <AccordionItem value="misc" className="border-0">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline">
+              <span className="flex items-center gap-2 text-sm font-medium"><SlidersHorizontal className="h-4 w-4" />Language &amp; theme</span>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-5"><PreferencesMisc /></AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </Section>
+
+      <Section title="Support">
+        <NavRow to="/faq" icon={ShieldQuestion} label="Help &amp; FAQ" />
+        <NavRow to="/contact" icon={ShieldQuestion} label="Contact" />
+        <NavRow to="/terms" icon={ShieldQuestion} label={t.nav.terms} />
+        <NavRow to="/privacy" icon={ShieldQuestion} label={t.nav.privacy} />
+        <NavRow to="/cookie-policy" icon={ShieldQuestion} label={t.nav.cookies} />
+      </Section>
+    </div>
+  );
 }
 
 function ProfileHub() {
@@ -82,7 +151,7 @@ function ProfileHub() {
   });
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
+    <div className="space-y-8">
       <header className="flex items-center gap-4">
         <div className="h-16 w-16 rounded-2xl bg-brand-soft text-primary grid place-items-center overflow-hidden shrink-0">
           <User className="h-8 w-8" />
