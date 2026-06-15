@@ -66,11 +66,11 @@ export function Header() {
 
         <nav className="hidden md:flex items-center gap-6">{navLinks}</nav>
 
-        {/* Desktop-only controls — mobile uses the bottom nav + Profile only */}
-        <div className="hidden md:flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* Language switcher — visible on all screen sizes */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="font-semibold uppercase">{lang}</Button>
+              <Button variant="ghost" size="sm" className="font-semibold uppercase px-2 md:px-3">{lang}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {LANGS.map((l) => (
@@ -79,38 +79,41 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm"><User className="h-4 w-4 mr-2" /> {t.nav.profile}</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link to="/profile"><LayoutDashboard className="h-4 w-4 mr-2" />{t.nav.profile}</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/profile/dashboard"><StoreIcon className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/favorites"><Heart className="h-4 w-4 mr-2" />{t.nav.favorites}</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : isMarketing ? (
-            <>
-              <Button asChild size="sm" className="rounded-full">
-                <a href={appUrl}>Atvērt lietotni <ArrowUpRight className="h-4 w-4 ml-1" /></a>
-              </Button>
-              <Button asChild variant="outline" size="sm"><Link to="/for-merchants">{t.nav.forMerchants}</Link></Button>
-            </>
-          ) : (
-            <>
-              <Button asChild variant="ghost" size="sm"><Link to="/login">{t.cta.signIn}</Link></Button>
-              <Button asChild size="sm"><Link to="/signup">{t.cta.postAd}</Link></Button>
-            </>
-          )}
+          {/* Desktop-only auth controls */}
+          <div className="hidden md:flex items-center gap-2">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm"><User className="h-4 w-4 mr-2" /> {t.nav.profile}</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile"><LayoutDashboard className="h-4 w-4 mr-2" />{t.nav.profile}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile/dashboard"><StoreIcon className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/favorites"><Heart className="h-4 w-4 mr-2" />{t.nav.favorites}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : isMarketing ? (
+              <>
+                <Button asChild size="sm" className="rounded-full">
+                  <a href={appUrl}>Atvērt lietotni <ArrowUpRight className="h-4 w-4 ml-1" /></a>
+                </Button>
+                <Button asChild variant="outline" size="sm"><Link to="/for-merchants">{t.nav.forMerchants}</Link></Button>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm"><Link to="/login">{t.cta.signIn}</Link></Button>
+                <Button asChild size="sm"><Link to="/signup">{t.cta.postAd}</Link></Button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>
