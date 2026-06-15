@@ -56,6 +56,7 @@ export function CookieConsent() {
       aria-live="polite"
       aria-label={c.title}
       className="fixed inset-x-0 bottom-0 z-[100] p-3 sm:p-4"
+      style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}
     >
       <div className="mx-auto max-w-3xl rounded-xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:p-5">
         <h2 className="text-sm font-semibold text-foreground sm:text-base">{c.title}</h2>

@@ -239,7 +239,10 @@ function DealsPage() {
 
       {/* Sticky mobile near-me button */}
       {!origin && (
-        <div className="md:hidden fixed bottom-20 right-4 z-30">
+        <div
+          className="md:hidden fixed right-4 z-30"
+          style={{ bottom: "calc(env(safe-area-inset-bottom) + 5rem)" }}
+        >
           <StickyNearMe />
         </div>
       )}
