@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock, Link as LinkIcon, Send, Facebook, Smartphone, Check, Gift } from "lucide-react";
+import { Heart, MapPin, Share2, Calendar, ExternalLink, Clock, Link as LinkIcon, Send, Facebook, Smartphone, Check, Gift, Navigation } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,52 @@ import { formatPrice } from "@/lib/utils";
 import { useCountdown } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
 import { ReportDealButton } from "@/components/ReportDealButton";
+
+function buildDestination(store: any): { query: string; hasCoords: boolean } | null {
+  if (!store) return null;
+  const lat = typeof store.lat === "number" ? store.lat : null;
+  const lng = typeof store.lng === "number" ? store.lng : null;
+  if (lat !== null && lng !== null && Number.isFinite(lat) && Number.isFinite(lng)) {
+    return { query: `${lat},${lng}`, hasCoords: true };
+  }
+  const parts = [store.address, store.city].filter(Boolean).join(", ").trim();
+  if (parts) return { query: parts, hasCoords: false };
+  return null;
+}
+
+function trackEvent(name: string, payload: Record<string, unknown>) {
+  try {
+    const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
+    w.dataLayer?.push({ event: name, ...payload });
+    w.gtag?.("event", name, payload);
+  } catch {
+    /* noop */
+  }
+}
+
+function openGoogleMaps(store: any, dealId: string) {
+  const dest = buildDestination(store);
+  if (!dest) {
+    toast.error("Atrašanās vieta nav pieejama");
+    return;
+  }
+  trackEvent("google_maps_clicked", { deal_id: dealId, store_id: store?.id, has_coords: dest.hasCoords });
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest.query)}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function openWaze(store: any, dealId: string) {
+  const dest = buildDestination(store);
+  if (!dest) {
+    toast.error("Atrašanās vieta nav pieejama");
+    return;
+  }
+  trackEvent("waze_clicked", { deal_id: dealId, store_id: store?.id, has_coords: dest.hasCoords });
+  const url = dest.hasCoords
+    ? `https://waze.com/ul?ll=${encodeURIComponent(dest.query)}&navigate=yes`
+    : `https://waze.com/ul?q=${encodeURIComponent(dest.query)}&navigate=yes`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
 
 function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: string | null }) {
   const { t } = useI18n();
@@ -263,23 +309,56 @@ function DealDetail() {
 
           {/* Store */}
           {store && (
-            <Link to="/stores/$id" params={{ id: store.id }} className="mt-8 block rounded-2xl border border-border p-5 hover:border-primary transition">
-              <div className="flex items-start gap-4">
-                {store.logo_url ? (
-                  <img src={store.logo_url} alt={store.name} className="h-14 w-14 rounded-xl object-cover" />
-                ) : (
-                  <div className="h-14 w-14 rounded-xl bg-brand-soft grid place-items-center text-primary font-bold text-xl">{store.name[0]}</div>
-                )}
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">{t.deals.viewStore}</p>
-                  <h3 className="font-semibold">{store.name}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground inline-flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> {store.address}, {store.city}
-                  </p>
+            <>
+              <Link to="/stores/$id" params={{ id: store.id }} className="mt-8 block rounded-2xl border border-border p-5 hover:border-primary transition">
+                <div className="flex items-start gap-4">
+                  {store.logo_url ? (
+                    <img src={store.logo_url} alt={store.name} className="h-14 w-14 rounded-xl object-cover" />
+                  ) : (
+                    <div className="h-14 w-14 rounded-xl bg-brand-soft grid place-items-center text-primary font-bold text-xl">{store.name[0]}</div>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-xs text-muted-foreground">{t.deals.viewStore}</p>
+                    <h3 className="font-semibold">{store.name}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground inline-flex items-center gap-1">
+                      <MapPin className="h-3 w-3" /> {store.address}, {store.city}
+                    </p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <ExternalLink className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </Link>
+              </Link>
+
+              {/* Navigation buttons */}
+              {(() => {
+                const hasLocation = !!buildDestination(store);
+                return (
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      disabled={!hasLocation}
+                      onClick={() => openGoogleMaps(store, deal.id)}
+                      aria-label="Atvērt Google Maps navigāciju"
+                      title={hasLocation ? "Atvērt Google Maps" : "Atrašanās vieta nav pieejama"}
+                      className="inline-flex h-11 min-h-[44px] items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    >
+                      <MapPin className="h-5 w-5 text-[#1A73E8]" aria-hidden="true" />
+                      <span>Google Maps</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!hasLocation}
+                      onClick={() => openWaze(store, deal.id)}
+                      aria-label="Atvērt Waze navigāciju"
+                      title={hasLocation ? "Atvērt Waze" : "Atrašanās vieta nav pieejama"}
+                      className="inline-flex h-11 min-h-[44px] items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    >
+                      <Navigation className="h-5 w-5 text-[#33CCFF]" aria-hidden="true" />
+                      <span>Waze</span>
+                    </button>
+                  </div>
+                );
+              })()}
+            </>
           )}
 
           <div className="mt-6 flex justify-end">
