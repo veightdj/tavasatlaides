@@ -206,7 +206,7 @@ function Feed() {
           </div>
         ) : (
           <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((d) => <DealCard key={d.id} deal={d as any} />)}
+            {featured.map((d) => <DealCard key={d.id} deal={d as any} showNavigation={false} />)}
           </div>
         )}
       </section>
@@ -303,7 +303,7 @@ function Marketing() {
           </div>
         ) : (
           <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((d) => <DealCard key={d.id} deal={d as any} />)}
+            {featured.map((d) => <DealCard key={d.id} deal={d as any} showNavigation={false} />)}
           </div>
         )}
       </section>
