@@ -218,6 +218,36 @@ export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number
           Skatīt akciju
           <ArrowRight className="h-4 w-4" />
         </Link>
+
+        {(() => {
+          const hasLocation = !!buildDestination(store);
+          return (
+            <div className="mt-1 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                disabled={!hasLocation}
+                onClick={(e) => { e.preventDefault(); openGoogleMaps(store, deal.id); }}
+                aria-label="Atvērt Google Maps navigāciju"
+                title={hasLocation ? "Atvērt Google Maps" : "Atrašanās vieta nav pieejama"}
+                className="inline-flex h-10 min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-medium hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <MapPin className="h-4 w-4 text-[#1A73E8]" aria-hidden="true" />
+                <span>Google Maps</span>
+              </button>
+              <button
+                type="button"
+                disabled={!hasLocation}
+                onClick={(e) => { e.preventDefault(); openWaze(store, deal.id); }}
+                aria-label="Atvērt Waze navigāciju"
+                title={hasLocation ? "Atvērt Waze" : "Atrašanās vieta nav pieejama"}
+                className="inline-flex h-10 min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-medium hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <Navigation className="h-4 w-4 text-[#33CCFF]" aria-hidden="true" />
+                <span>Waze</span>
+              </button>
+            </div>
+          );
+        })()}
       </div>
     </article>
   );
