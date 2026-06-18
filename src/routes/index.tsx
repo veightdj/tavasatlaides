@@ -98,7 +98,7 @@ function Feed() {
     queryFn: async () => {
       let q = supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json)")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json,lat,lng,address)")
         .eq("status", "active");
       if (selectedCategory) q = q.eq("category", selectedCategory);
       const { data, error } = await q
@@ -237,7 +237,7 @@ function Marketing() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json)")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json,lat,lng,address)")
         .eq("status", "active")
         .order("discount_pct", { ascending: false, nullsFirst: false })
         .limit(8);

@@ -53,7 +53,7 @@ function CategoryPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json)")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json,lat,lng,address)")
         .eq("status", "active")
         .eq("category", slug)
         .order("created_at", { ascending: false });
