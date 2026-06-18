@@ -219,7 +219,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
           <ArrowRight className="h-4 w-4" />
         </Link>
 
-        {(() => {
+        {showNavigation && (() => {
           const hasLocation = !!buildDestination(store);
           return (
             <div className="mt-1 grid grid-cols-2 gap-2">
