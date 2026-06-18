@@ -14,6 +14,52 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
 import { ReportDealButton } from "@/components/ReportDealButton";
 
+function buildDestination(store: any): { query: string; hasCoords: boolean } | null {
+  if (!store) return null;
+  const lat = typeof store.lat === "number" ? store.lat : null;
+  const lng = typeof store.lng === "number" ? store.lng : null;
+  if (lat !== null && lng !== null && Number.isFinite(lat) && Number.isFinite(lng)) {
+    return { query: `${lat},${lng}`, hasCoords: true };
+  }
+  const parts = [store.address, store.city].filter(Boolean).join(", ").trim();
+  if (parts) return { query: parts, hasCoords: false };
+  return null;
+}
+
+function trackEvent(name: string, payload: Record<string, unknown>) {
+  try {
+    const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
+    w.dataLayer?.push({ event: name, ...payload });
+    w.gtag?.("event", name, payload);
+  } catch {
+    /* noop */
+  }
+}
+
+function openGoogleMaps(store: any, dealId: string) {
+  const dest = buildDestination(store);
+  if (!dest) {
+    toast.error("Atrašanās vieta nav pieejama");
+    return;
+  }
+  trackEvent("google_maps_clicked", { deal_id: dealId, store_id: store?.id, has_coords: dest.hasCoords });
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest.query)}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function openWaze(store: any, dealId: string) {
+  const dest = buildDestination(store);
+  if (!dest) {
+    toast.error("Atrašanās vieta nav pieejama");
+    return;
+  }
+  trackEvent("waze_clicked", { deal_id: dealId, store_id: store?.id, has_coords: dest.hasCoords });
+  const url = dest.hasCoords
+    ? `https://waze.com/ul?ll=${encodeURIComponent(dest.query)}&navigate=yes`
+    : `https://waze.com/ul?q=${encodeURIComponent(dest.query)}&navigate=yes`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: string | null }) {
   const { t } = useI18n();
   const countdown = useCountdown(endsAt);
