@@ -309,23 +309,56 @@ function DealDetail() {
 
           {/* Store */}
           {store && (
-            <Link to="/stores/$id" params={{ id: store.id }} className="mt-8 block rounded-2xl border border-border p-5 hover:border-primary transition">
-              <div className="flex items-start gap-4">
-                {store.logo_url ? (
-                  <img src={store.logo_url} alt={store.name} className="h-14 w-14 rounded-xl object-cover" />
-                ) : (
-                  <div className="h-14 w-14 rounded-xl bg-brand-soft grid place-items-center text-primary font-bold text-xl">{store.name[0]}</div>
-                )}
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">{t.deals.viewStore}</p>
-                  <h3 className="font-semibold">{store.name}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground inline-flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> {store.address}, {store.city}
-                  </p>
+            <>
+              <Link to="/stores/$id" params={{ id: store.id }} className="mt-8 block rounded-2xl border border-border p-5 hover:border-primary transition">
+                <div className="flex items-start gap-4">
+                  {store.logo_url ? (
+                    <img src={store.logo_url} alt={store.name} className="h-14 w-14 rounded-xl object-cover" />
+                  ) : (
+                    <div className="h-14 w-14 rounded-xl bg-brand-soft grid place-items-center text-primary font-bold text-xl">{store.name[0]}</div>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-xs text-muted-foreground">{t.deals.viewStore}</p>
+                    <h3 className="font-semibold">{store.name}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground inline-flex items-center gap-1">
+                      <MapPin className="h-3 w-3" /> {store.address}, {store.city}
+                    </p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <ExternalLink className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </Link>
+              </Link>
+
+              {/* Navigation buttons */}
+              {(() => {
+                const hasLocation = !!buildDestination(store);
+                return (
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      disabled={!hasLocation}
+                      onClick={() => openGoogleMaps(store, deal.id)}
+                      aria-label="Atvērt Google Maps navigāciju"
+                      title={hasLocation ? "Atvērt Google Maps" : "Atrašanās vieta nav pieejama"}
+                      className="inline-flex h-11 min-h-[44px] items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    >
+                      <MapPin className="h-5 w-5 text-[#1A73E8]" aria-hidden="true" />
+                      <span>Google Maps</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!hasLocation}
+                      onClick={() => openWaze(store, deal.id)}
+                      aria-label="Atvērt Waze navigāciju"
+                      title={hasLocation ? "Atvērt Waze" : "Atrašanās vieta nav pieejama"}
+                      className="inline-flex h-11 min-h-[44px] items-center justify-center gap-2 rounded-xl border border-border bg-background text-sm font-semibold hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    >
+                      <Navigation className="h-5 w-5 text-[#33CCFF]" aria-hidden="true" />
+                      <span>Waze</span>
+                    </button>
+                  </div>
+                );
+              })()}
+            </>
           )}
 
           <div className="mt-6 flex justify-end">
