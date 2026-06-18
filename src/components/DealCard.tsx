@@ -210,31 +210,50 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
         </Link>
 
         {showNavigation && (() => {
-          const hasLocation = !!buildDestination(store);
+          const gUrl = googleMapsUrl(store);
+          const wUrl = wazeUrl(store);
+          const hasLocation = !!gUrl;
+          const btnClass = "inline-flex h-10 min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-medium hover:bg-muted active:scale-[0.98] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+          if (!hasLocation) {
+            return (
+              <div className="mt-1 grid grid-cols-2 gap-2">
+                <span className={`${btnClass} opacity-50 cursor-not-allowed`} aria-disabled="true">
+                  <MapPin className="h-4 w-4 text-[#1A73E8]" aria-hidden="true" />
+                  <span>Google Maps</span>
+                </span>
+                <span className={`${btnClass} opacity-50 cursor-not-allowed`} aria-disabled="true">
+                  <Navigation className="h-4 w-4 text-[#33CCFF]" aria-hidden="true" />
+                  <span>Waze</span>
+                </span>
+              </div>
+            );
+          }
           return (
             <div className="mt-1 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                disabled={!hasLocation}
-                onClick={(e) => { e.preventDefault(); openGoogleMaps(store, deal.id); }}
+              <a
+                href={gUrl!}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => { e.stopPropagation(); trackEvent("google_maps_clicked", { deal_id: deal.id, store_id: store?.id }); }}
                 aria-label="Atvērt Google Maps navigāciju"
-                title={hasLocation ? "Atvērt Google Maps" : "Atrašanās vieta nav pieejama"}
-                className="inline-flex h-10 min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-medium hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                title="Atvērt Google Maps"
+                className={btnClass}
               >
                 <MapPin className="h-4 w-4 text-[#1A73E8]" aria-hidden="true" />
                 <span>Google Maps</span>
-              </button>
-              <button
-                type="button"
-                disabled={!hasLocation}
-                onClick={(e) => { e.preventDefault(); openWaze(store, deal.id); }}
+              </a>
+              <a
+                href={wUrl!}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => { e.stopPropagation(); trackEvent("waze_clicked", { deal_id: deal.id, store_id: store?.id }); }}
                 aria-label="Atvērt Waze navigāciju"
-                title={hasLocation ? "Atvērt Waze" : "Atrašanās vieta nav pieejama"}
-                className="inline-flex h-10 min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-medium hover:bg-muted active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                title="Atvērt Waze"
+                className={btnClass}
               >
                 <Navigation className="h-4 w-4 text-[#33CCFF]" aria-hidden="true" />
                 <span>Waze</span>
-              </button>
+              </a>
             </div>
           );
         })()}
