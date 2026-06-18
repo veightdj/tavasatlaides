@@ -36,28 +36,18 @@ function trackEvent(name: string, payload: Record<string, unknown>) {
   }
 }
 
-function openGoogleMaps(store: any, dealId: string) {
+function googleMapsUrl(store: any): string | null {
   const dest = buildDestination(store);
-  if (!dest) {
-    toast.error("Atrašanās vieta nav pieejama");
-    return;
-  }
-  trackEvent("google_maps_clicked", { deal_id: dealId, store_id: store?.id, has_coords: dest.hasCoords });
-  const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest.query)}`;
-  window.open(url, "_blank", "noopener,noreferrer");
+  if (!dest) return null;
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest.query)}`;
 }
 
-function openWaze(store: any, dealId: string) {
+function wazeUrl(store: any): string | null {
   const dest = buildDestination(store);
-  if (!dest) {
-    toast.error("Atrašanās vieta nav pieejama");
-    return;
-  }
-  trackEvent("waze_clicked", { deal_id: dealId, store_id: store?.id, has_coords: dest.hasCoords });
-  const url = dest.hasCoords
-    ? `https://waze.com/ul?ll=${encodeURIComponent(dest.query)}&navigate=yes`
-    : `https://waze.com/ul?q=${encodeURIComponent(dest.query)}&navigate=yes`;
-  window.open(url, "_blank", "noopener,noreferrer");
+  if (!dest) return null;
+  return dest.hasCoords
+    ? `https://www.waze.com/ul?ll=${encodeURIComponent(dest.query)}&navigate=yes`
+    : `https://www.waze.com/ul?q=${encodeURIComponent(dest.query)}&navigate=yes`;
 }
 
 function ValidityCard({ startsAt, endsAt }: { startsAt: string | null; endsAt: string | null }) {
