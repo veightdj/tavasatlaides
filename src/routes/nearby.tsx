@@ -105,7 +105,7 @@ function NearbyPage() {
     queryFn: async (): Promise<Deal[]> => {
       const { data, error } = await supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng,logo_url,is_verified,category)")
+        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng,address,logo_url,is_verified,category)")
         .eq("status", "active")
         .limit(300);
       if (error) throw error;

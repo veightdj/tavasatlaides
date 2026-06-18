@@ -209,7 +209,7 @@ function StoreSection({
             {ads.map((a) => (
               <DealCard
                 key={a.id}
-                deal={{ ...a, stores: { id: s.id, name: s.name, city: s.city, slug: s.slug } }}
+                deal={{ ...a, stores: { id: s.id, name: s.name, city: s.city, slug: s.slug, address: s.address } }}
               />
             ))}
           </div>
