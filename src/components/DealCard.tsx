@@ -95,7 +95,7 @@ function formatEndsAt(iso: string | null): string | null {
   return d.toLocaleDateString("lv-LV", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-export function DealCard({ deal, distanceKm }: { deal: Deal; distanceKm?: number }) {
+export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: Deal; distanceKm?: number; showNavigation?: boolean }) {
   const { has, toggle } = useFavorites();
   const { t } = useI18n();
   const saved = has(deal.id);
