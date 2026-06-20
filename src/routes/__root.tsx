@@ -171,6 +171,7 @@ function RootComponent() {
         <AuthSync />
         <HostGuard />
         <div className="flex min-h-screen flex-col">
+          <ImpersonationBanner />
           {showClientChrome && <Header />}
           <main className={`flex-1 ${showClientChrome ? "pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0" : ""}`}>
             <Outlet />
