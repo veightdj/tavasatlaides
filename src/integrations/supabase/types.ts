@@ -227,6 +227,36 @@ export type Database = {
           },
         ]
       }
+      admin_audit_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          id: string
+          payload: Json
+          target_store_id: string | null
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          target_store_id?: string | null
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          target_store_id?: string | null
+          target_user_id?: string | null
+        }
+        Relationships: []
+      }
       ads: {
         Row: {
           category: string
@@ -910,6 +940,7 @@ export type Database = {
           address: string
           category: string
           city: string
+          contact_email: string | null
           country: string
           cover_image_url: string | null
           created_at: string
@@ -925,10 +956,12 @@ export type Database = {
           logo_url: string | null
           name: string
           owner_id: string
+          partner_status: Database["public"]["Enums"]["partner_status"]
           phone: string | null
           postal_code: string | null
           registration_number: string | null
           slug: string
+          subscription_plan: Database["public"]["Enums"]["subscription_plan"]
           updated_at: string
           website: string | null
         }
@@ -936,6 +969,7 @@ export type Database = {
           address: string
           category: string
           city: string
+          contact_email?: string | null
           country?: string
           cover_image_url?: string | null
           created_at?: string
@@ -951,10 +985,12 @@ export type Database = {
           logo_url?: string | null
           name: string
           owner_id: string
+          partner_status?: Database["public"]["Enums"]["partner_status"]
           phone?: string | null
           postal_code?: string | null
           registration_number?: string | null
           slug: string
+          subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
           website?: string | null
         }
@@ -962,6 +998,7 @@ export type Database = {
           address?: string
           category?: string
           city?: string
+          contact_email?: string | null
           country?: string
           cover_image_url?: string | null
           created_at?: string
@@ -977,10 +1014,12 @@ export type Database = {
           logo_url?: string | null
           name?: string
           owner_id?: string
+          partner_status?: Database["public"]["Enums"]["partner_status"]
           phone?: string | null
           postal_code?: string | null
           registration_number?: string | null
           slug?: string
+          subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
           website?: string | null
         }
@@ -1130,6 +1169,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "client" | "partner"
+      partner_status:
+        | "pending_activation"
+        | "active"
+        | "managed_by_admin"
+        | "suspended"
+        | "expired"
       report_reason:
         | "spam"
         | "scam"
@@ -1139,6 +1184,7 @@ export type Database = {
         | "duplicate"
         | "other"
       report_status: "open" | "resolved" | "dismissed"
+      subscription_plan: "bronze" | "silver" | "gold"
       trust_level: "bronze" | "silver" | "gold"
     }
     CompositeTypes: {
@@ -1268,6 +1314,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "client", "partner"],
+      partner_status: [
+        "pending_activation",
+        "active",
+        "managed_by_admin",
+        "suspended",
+        "expired",
+      ],
       report_reason: [
         "spam",
         "scam",
@@ -1278,6 +1331,7 @@ export const Constants = {
         "other",
       ],
       report_status: ["open", "resolved", "dismissed"],
+      subscription_plan: ["bronze", "silver", "gold"],
       trust_level: ["bronze", "silver", "gold"],
     },
   },
