@@ -20,6 +20,7 @@ import { HostGuard } from "@/components/HostGuard";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { AppNativePrompts } from "@/components/AppNativePrompts";
 import { getHostAudience } from "@/lib/audience";
+import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 
 function NotFoundComponent() {
   return (
