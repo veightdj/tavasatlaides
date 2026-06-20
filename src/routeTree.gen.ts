@@ -39,6 +39,7 @@ import { Route as AdminTrustRouteImport } from './routes/admin.trust'
 import { Route as AdminDealsRouteImport } from './routes/admin.deals'
 import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
 import { Route as AuthenticatedProfileStoreRouteImport } from './routes/_authenticated/profile.store'
@@ -205,6 +206,11 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/admin/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
+  id: '/admin/businesses',
+  path: '/admin/businesses',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminBannersRoute = AdminBannersRouteImport.update({
   id: '/admin/banners',
   path: '/admin/banners',
@@ -318,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/admin/banners': typeof AdminBannersRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
@@ -365,6 +372,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/admin/banners': typeof AdminBannersRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
@@ -414,6 +422,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/admin/banners': typeof AdminBannersRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/companies': typeof AdminCompaniesRoute
   '/admin/deals': typeof AdminDealsRoute
@@ -463,6 +472,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/admin/banners'
+    | '/admin/businesses'
     | '/admin/categories'
     | '/admin/companies'
     | '/admin/deals'
@@ -510,6 +520,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/admin/banners'
+    | '/admin/businesses'
     | '/admin/categories'
     | '/admin/companies'
     | '/admin/deals'
@@ -558,6 +569,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/admin/banners'
+    | '/admin/businesses'
     | '/admin/categories'
     | '/admin/companies'
     | '/admin/deals'
@@ -607,6 +619,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
   AdminBannersRoute: typeof AdminBannersRoute
+  AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminCompaniesRoute: typeof AdminCompaniesRoute
   AdminDealsRoute: typeof AdminDealsRoute
@@ -837,6 +850,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/businesses': {
+      id: '/admin/businesses'
+      path: '/admin/businesses'
+      fullPath: '/admin/businesses'
+      preLoaderRoute: typeof AdminBusinessesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/banners': {
       id: '/admin/banners'
       path: '/admin/banners'
@@ -1003,6 +1023,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
   AdminBannersRoute: AdminBannersRoute,
+  AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminCompaniesRoute: AdminCompaniesRoute,
   AdminDealsRoute: AdminDealsRoute,

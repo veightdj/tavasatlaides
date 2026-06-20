@@ -20,6 +20,7 @@ import { HostGuard } from "@/components/HostGuard";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { AppNativePrompts } from "@/components/AppNativePrompts";
 import { getHostAudience } from "@/lib/audience";
+import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 
 function NotFoundComponent() {
   return (
@@ -170,6 +171,7 @@ function RootComponent() {
         <AuthSync />
         <HostGuard />
         <div className="flex min-h-screen flex-col">
+          <ImpersonationBanner />
           {showClientChrome && <Header />}
           <main className={`flex-1 ${showClientChrome ? "pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0" : ""}`}>
             <Outlet />

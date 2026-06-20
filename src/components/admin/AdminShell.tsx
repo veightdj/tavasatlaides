@@ -2,13 +2,14 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Building2, Tag, Image as ImageIcon, ShieldCheck, FolderTree } from "lucide-react";
+import { LayoutDashboard, Building2, Briefcase, Tag, Image as ImageIcon, ShieldCheck, FolderTree } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type AuthState = "checking" | "anon" | "not-admin" | "admin";
 
 const nav: Array<{ to: string; label: string; icon: any; exact?: boolean }> = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/businesses", label: "Businesses", icon: Briefcase },
   { to: "/admin/companies", label: "Companies", icon: Building2 },
   { to: "/admin/deals", label: "Deals", icon: Tag },
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
