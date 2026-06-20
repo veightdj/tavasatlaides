@@ -252,7 +252,32 @@ export const sendPartnerActivationLink = createServerFn({ method: "POST" })
     };
   });
 
-export const resetPartnerPassword = sendPartnerActivationLink;
+export const resetPartnerPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: store } = await context.supabase
+      .from("stores")
+      .select("id, contact_email, owner_id")
+      .eq("id", data.id)
+      .single();
+    if (!store?.contact_email) throw new Error("Store has no contact email");
+    const { data: link, error } = await supabaseAdmin.auth.admin.generateLink({
+      type: "recovery",
+      email: store.contact_email,
+    });
+    if (error) throw new Error(error.message);
+    await context.supabase.from("admin_audit_logs").insert({
+      admin_id: context.userId,
+      action: "reset_password",
+      target_store_id: store.id,
+      target_user_id: store.owner_id,
+      payload: {},
+    });
+    return { ok: true, action_link: link?.properties?.action_link ?? null };
+  });
 
 export const deleteBusinessAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
