@@ -27,18 +27,29 @@ async function assertAdmin(ctx: { supabase: any; userId: string }) {
   if (error || !data) throw new Error("Forbidden: admin only");
 }
 
+const emptyToNull = z.preprocess(
+  (v) => (typeof v === "string" && v.trim() === "" ? null : v),
+  z.any(),
+);
+const optStr = (max = 255) =>
+  z.preprocess(
+    (v) => (typeof v === "string" && v.trim() === "" ? null : v),
+    z.string().trim().max(max).nullable().optional(),
+  );
+
 const CreateInput = z.object({
   name: z.string().trim().min(2).max(120),
   contact_email: z.string().trim().email().max(255),
-  phone: z.string().trim().max(50).optional().nullable(),
+  phone: optStr(50),
   category: z.string().trim().min(1).max(80),
   city: z.string().trim().min(1).max(80),
   address: z.string().trim().min(1).max(255),
-  website: z.string().trim().url().max(255).optional().nullable().or(z.literal("")),
-  description: z.string().trim().max(2000).optional().nullable(),
-  logo_url: z.string().trim().url().max(500).optional().nullable().or(z.literal("")),
+  website: optStr(255),
+  description: optStr(2000),
+  logo_url: optStr(500),
   subscription_plan: z.enum(["bronze", "silver", "gold"]).default("bronze"),
 });
+void emptyToNull;
 
 export const createBusinessWithPartner = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
