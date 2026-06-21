@@ -283,7 +283,6 @@ export const sendPartnerActivationLink = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: store } = await context.supabase
       .from("stores")
@@ -292,27 +291,23 @@ export const sendPartnerActivationLink = createServerFn({ method: "POST" })
       .single();
     if (!store?.contact_email) throw new Error("Store has no contact email");
 
-    const { data: link, error } = await supabaseAdmin.auth.admin.generateLink({
-      type: "recovery",
+    const result = await sendActivationEmail({
       email: store.contact_email,
+      businessName: store.name,
     });
-    if (error) throw new Error(error.message);
 
     await context.supabase.from("admin_audit_logs").insert({
       admin_id: context.userId,
-      action: "send_activation",
+      action: result.sent ? "send_activation" : "send_activation_failed",
       target_store_id: store.id,
       target_user_id: store.owner_id,
-      payload: { email: store.contact_email },
+      payload: { email: store.contact_email, error: result.error ?? null },
     });
 
-    // Branded email is wired in Phase 2. For now the recovery link is returned
-    // so admin can copy/share it manually if Supabase default email isn't set up.
-    return {
-      ok: true,
-      action_link: link?.properties?.action_link ?? null,
-    };
+    if (!result.sent) throw new Error(result.error || "Failed to send activation email");
+    return { ok: true, action_link: result.action_link ?? null };
   });
+
 
 export const resetPartnerPassword = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
