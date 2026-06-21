@@ -33,6 +33,7 @@ import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as DealsIndexRouteImport } from './routes/deals.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as StoresIdRouteImport } from './routes/stores.$id'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AdminTrustRouteImport } from './routes/admin.trust'
@@ -41,6 +42,7 @@ import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
 import { Route as AuthenticatedProfileStoreRouteImport } from './routes/_authenticated/profile.store'
 import { Route as AuthenticatedProfileSecurityRouteImport } from './routes/_authenticated/profile.security'
@@ -49,6 +51,8 @@ import { Route as AuthenticatedProfileDashboardRouteImport } from './routes/_aut
 import { Route as AuthenticatedProfileBillingRouteImport } from './routes/_authenticated/profile.billing'
 import { Route as AuthenticatedProfileAnalyticsRouteImport } from './routes/_authenticated/profile.analytics'
 import { Route as AuthenticatedProfileAdsIndexRouteImport } from './routes/_authenticated/profile.ads.index'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -176,6 +180,11 @@ const StoresIdRoute = StoresIdRouteImport.update({
   path: '/stores/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/deals/$id',
   path: '/deals/$id',
@@ -214,6 +223,11 @@ const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
 const AdminBannersRoute = AdminBannersRouteImport.update({
   id: '/admin/banners',
   path: '/admin/banners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminNotificationsDebugRoute = AdminNotificationsDebugRouteImport.update({
@@ -262,6 +276,18 @@ const AuthenticatedProfileAdsIndexRoute =
     id: '/profile/ads/',
     path: '/profile/ads/',
     getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
@@ -331,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/admin/trust': typeof AdminTrustRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/stores/$id': typeof StoresIdRoute
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
@@ -342,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/profile/security': typeof AuthenticatedProfileSecurityRoute
   '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
   '/profile/ads/new': typeof AuthenticatedProfileAdsNewRoute
   '/api/public/config/maps': typeof ApiPublicConfigMapsRoute
@@ -349,6 +377,8 @@ export interface FileRoutesByFullPath {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/profile/ads/': typeof AuthenticatedProfileAdsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -379,6 +409,7 @@ export interface FileRoutesByTo {
   '/admin/trust': typeof AdminTrustRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/stores/$id': typeof StoresIdRoute
   '/admin': typeof AdminIndexRoute
   '/deals': typeof DealsIndexRoute
@@ -390,6 +421,7 @@ export interface FileRoutesByTo {
   '/profile/security': typeof AuthenticatedProfileSecurityRoute
   '/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
   '/profile/ads/new': typeof AuthenticatedProfileAdsNewRoute
   '/api/public/config/maps': typeof ApiPublicConfigMapsRoute
@@ -397,6 +429,8 @@ export interface FileRoutesByTo {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/profile/ads': typeof AuthenticatedProfileAdsIndexRoute
 }
 export interface FileRoutesById {
@@ -429,6 +463,7 @@ export interface FileRoutesById {
   '/admin/trust': typeof AdminTrustRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/deals/$id': typeof DealsIdRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/stores/$id': typeof StoresIdRoute
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
@@ -440,6 +475,7 @@ export interface FileRoutesById {
   '/_authenticated/profile/security': typeof AuthenticatedProfileSecurityRoute
   '/_authenticated/profile/store': typeof AuthenticatedProfileStoreRoute
   '/admin/notifications/debug': typeof AdminNotificationsDebugRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/_authenticated/profile/ads/$id': typeof AuthenticatedProfileAdsIdRoute
   '/_authenticated/profile/ads/new': typeof AuthenticatedProfileAdsNewRoute
   '/api/public/config/maps': typeof ApiPublicConfigMapsRoute
@@ -447,6 +483,8 @@ export interface FileRoutesById {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/_authenticated/profile/ads/': typeof AuthenticatedProfileAdsIndexRoute
 }
 export interface FileRouteTypes {
@@ -479,6 +517,7 @@ export interface FileRouteTypes {
     | '/admin/trust'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/email/unsubscribe'
     | '/stores/$id'
     | '/admin/'
     | '/deals/'
@@ -490,6 +529,7 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/profile/store'
     | '/admin/notifications/debug'
+    | '/lovable/email/suppression'
     | '/profile/ads/$id'
     | '/profile/ads/new'
     | '/api/public/config/maps'
@@ -497,6 +537,8 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/profile/ads/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -527,6 +569,7 @@ export interface FileRouteTypes {
     | '/admin/trust'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/email/unsubscribe'
     | '/stores/$id'
     | '/admin'
     | '/deals'
@@ -538,6 +581,7 @@ export interface FileRouteTypes {
     | '/profile/security'
     | '/profile/store'
     | '/admin/notifications/debug'
+    | '/lovable/email/suppression'
     | '/profile/ads/$id'
     | '/profile/ads/new'
     | '/api/public/config/maps'
@@ -545,6 +589,8 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/profile/ads'
   id:
     | '__root__'
@@ -576,6 +622,7 @@ export interface FileRouteTypes {
     | '/admin/trust'
     | '/categories/$slug'
     | '/deals/$id'
+    | '/email/unsubscribe'
     | '/stores/$id'
     | '/admin/'
     | '/deals/'
@@ -587,6 +634,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/security'
     | '/_authenticated/profile/store'
     | '/admin/notifications/debug'
+    | '/lovable/email/suppression'
     | '/_authenticated/profile/ads/$id'
     | '/_authenticated/profile/ads/new'
     | '/api/public/config/maps'
@@ -594,6 +642,8 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/_authenticated/profile/ads/'
   fileRoutesById: FileRoutesById
 }
@@ -626,16 +676,20 @@ export interface RootRouteChildren {
   AdminTrustRoute: typeof AdminTrustRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   DealsIdRoute: typeof DealsIdRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   StoresIdRoute: typeof StoresIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
   AdminNotificationsDebugRoute: typeof AdminNotificationsDebugRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicConfigMapsRoute: typeof ApiPublicConfigMapsRoute
   ApiPublicHooksNotifyDealRoute: typeof ApiPublicHooksNotifyDealRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -808,6 +862,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoresIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/deals/$id': {
       id: '/deals/$id'
       path: '/deals/$id'
@@ -862,6 +923,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/banners'
       fullPath: '/admin/banners'
       preLoaderRoute: typeof AdminBannersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/notifications/debug': {
@@ -919,6 +987,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/profile/ads/'
       preLoaderRoute: typeof AuthenticatedProfileAdsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -1030,16 +1112,20 @@ const rootRouteChildren: RootRouteChildren = {
   AdminTrustRoute: AdminTrustRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   DealsIdRoute: DealsIdRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   StoresIdRoute: StoresIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
   AdminNotificationsDebugRoute: AdminNotificationsDebugRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicConfigMapsRoute: ApiPublicConfigMapsRoute,
   ApiPublicHooksNotifyDealRoute: ApiPublicHooksNotifyDealRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
