@@ -118,7 +118,7 @@ export const updateCompany = createServerFn({ method: "POST" })
     }
     const { error } = await context.supabase
       .from("stores")
-      .update(patch)
+      .update(patch as any)
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
