@@ -2,6 +2,46 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+const SITE_URL =
+  process.env.SITE_URL || "https://tavasatlaides.lv";
+
+async function sendActivationEmail(args: {
+  email: string;
+  businessName: string;
+}): Promise<{ sent: boolean; error?: string; action_link?: string | null }> {
+  try {
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+    const { sendTransactional } = await import("@/lib/email/send.server");
+
+    const { data: link, error } = await supabaseAdmin.auth.admin.generateLink({
+      type: "recovery",
+      email: args.email,
+      options: { redirectTo: `${SITE_URL}/reset-password` },
+    });
+    if (error) return { sent: false, error: error.message };
+    const action_link = link?.properties?.action_link ?? null;
+    if (!action_link) return { sent: false, error: "no_action_link" };
+
+    await sendTransactional({
+      templateName: "partner-activation",
+      recipientEmail: args.email,
+      idempotencyKey: `partner-activation-${args.email}-${Date.now()}`,
+      templateData: {
+        businessName: args.businessName,
+        activationUrl: action_link,
+        siteName: "Tavasatlaides",
+        siteUrl: SITE_URL,
+      },
+    });
+    return { sent: true, action_link };
+  } catch (e: any) {
+    return { sent: false, error: e?.message ?? "send_failed" };
+  }
+}
+
+
 type Plan = "bronze" | "silver" | "gold";
 type Status =
   | "pending_activation"
