@@ -170,8 +170,30 @@ export const createBusinessWithPartner = createServerFn({ method: "POST" })
       payload: { name: data.name, plan: data.subscription_plan },
     });
 
-    return { store_id: store.id, partner_user_id: partnerUserId, slug: store.slug };
+    // 6. Send branded activation email (non-fatal if it fails)
+    const emailResult = await sendActivationEmail({
+      email: data.contact_email,
+      businessName: data.name,
+    });
+    await supabaseAdmin.from("admin_audit_logs").insert({
+      admin_id: context.userId,
+      action: emailResult.sent
+        ? "send_activation"
+        : "send_activation_failed",
+      target_user_id: partnerUserId,
+      target_store_id: store.id,
+      payload: { email: data.contact_email, error: emailResult.error ?? null },
+    });
+
+    return {
+      store_id: store.id,
+      partner_user_id: partnerUserId,
+      slug: store.slug,
+      activation_email_sent: emailResult.sent,
+      activation_email_error: emailResult.error ?? null,
+    };
   });
+
 
 const UpdateInput = z.object({
   id: z.string().uuid(),
