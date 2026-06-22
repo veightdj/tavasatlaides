@@ -131,6 +131,16 @@ function Dashboard() {
       </section>
 
       {/* Key 3 metrics on mobile, full grid on desktop */}
+      {(() => { const ctr = (stats?.views ?? 0) > 0 ? Math.round(((stats!.clicks / stats!.views) * 1000)) / 10 : 0; return (
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+        <Stat label={t.merchant.stats.views} value={stats?.views ?? 0} icon={Eye} />
+        <Stat label={t.merchant.stats.clicks} value={stats?.clicks ?? 0} icon={MousePointerClick} />
+        <Stat label={t.merchant.stats.ctr} value={`${ctr}%`} icon={TrendingUp} />
+        <Stat label={t.merchant.stats.active} value={stats?.active ?? 0} icon={Megaphone} className="hidden md:block" />
+        <Stat label={t.merchant.stats.saves} value={stats?.saves ?? 0} icon={Heart} className="hidden md:block" />
+        <Stat label={t.merchant.stats.total} value={stats?.total ?? 0} icon={Megaphone} className="hidden md:block" />
+      </div>
+      ); })()}
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
         <Stat label={t.merchant.stats.views} value={stats?.views ?? 0} icon={Eye} />
         <Stat label={t.merchant.stats.clicks} value={stats?.clicks ?? 0} icon={MousePointerClick} />
