@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Megaphone, Eye, Store, ArrowRight, MousePointerClick, Heart, Share2, TrendingUp, Plus } from "lucide-react";
+import { Megaphone, Eye, EyeOff, Store, ArrowRight, MousePointerClick, Heart, Share2, TrendingUp, Plus, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { useI18n } from "@/i18n/use-i18n";
+import { computeProfileCompleteness } from "@/lib/profile-completeness";
 
 export const Route = createFileRoute("/_authenticated/profile/dashboard")({
   component: Dashboard,
@@ -92,7 +94,8 @@ function Dashboard() {
     );
   }
 
-  const ctr = (stats?.views ?? 0) > 0 ? Math.round(((stats!.clicks / stats!.views) * 1000)) / 10 : 0;
+  const completeness = computeProfileCompleteness(store as any);
+  const isPublished = !(store as any).is_hidden;
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -102,7 +105,33 @@ function Dashboard() {
         <p className="text-sm text-muted-foreground">{store.city}</p>
       </header>
 
+      {/* Profile status */}
+      <section className="rounded-2xl border bg-card p-4 md:p-5">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold flex items-center gap-2">
+              {completeness.percent === 100
+                ? <><CheckCircle2 className="h-4 w-4 text-primary" /> Profile complete</>
+                : "Profile completeness"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+              {isPublished
+                ? <><Eye className="h-3.5 w-3.5 text-primary" /> Published</>
+                : <><EyeOff className="h-3.5 w-3.5" /> Unpublished</>}
+              <span>·</span>
+              <span>{completeness.filled}/{completeness.total} fields</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-bold tabular-nums">{completeness.percent}%</span>
+            <Button asChild size="sm" variant="outline"><Link to="/profile/store">Edit</Link></Button>
+          </div>
+        </div>
+        <Progress value={completeness.percent} className="h-2" />
+      </section>
+
       {/* Key 3 metrics on mobile, full grid on desktop */}
+      {(() => { const ctr = (stats?.views ?? 0) > 0 ? Math.round(((stats!.clicks / stats!.views) * 1000)) / 10 : 0; return (
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
         <Stat label={t.merchant.stats.views} value={stats?.views ?? 0} icon={Eye} />
         <Stat label={t.merchant.stats.clicks} value={stats?.clicks ?? 0} icon={MousePointerClick} />
@@ -111,6 +140,7 @@ function Dashboard() {
         <Stat label={t.merchant.stats.saves} value={stats?.saves ?? 0} icon={Heart} className="hidden md:block" />
         <Stat label={t.merchant.stats.total} value={stats?.total ?? 0} icon={Megaphone} className="hidden md:block" />
       </div>
+      ); })()}
 
       {/* Quick actions — sticky-feeling card */}
       <section aria-label="Quick actions" className="grid grid-cols-3 gap-2 md:gap-3">

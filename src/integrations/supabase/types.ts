@@ -961,6 +961,7 @@ export type Database = {
           postal_code: string | null
           registration_number: string | null
           slug: string
+          social_links: Json
           subscription_plan: Database["public"]["Enums"]["subscription_plan"]
           updated_at: string
           website: string | null
@@ -990,6 +991,7 @@ export type Database = {
           postal_code?: string | null
           registration_number?: string | null
           slug: string
+          social_links?: Json
           subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
           website?: string | null
@@ -1019,6 +1021,7 @@ export type Database = {
           postal_code?: string | null
           registration_number?: string | null
           slug?: string
+          social_links?: Json
           subscription_plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
           website?: string | null
