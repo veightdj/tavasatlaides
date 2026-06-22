@@ -141,14 +141,6 @@ function Dashboard() {
         <Stat label={t.merchant.stats.total} value={stats?.total ?? 0} icon={Megaphone} className="hidden md:block" />
       </div>
       ); })()}
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-        <Stat label={t.merchant.stats.views} value={stats?.views ?? 0} icon={Eye} />
-        <Stat label={t.merchant.stats.clicks} value={stats?.clicks ?? 0} icon={MousePointerClick} />
-        <Stat label={t.merchant.stats.ctr} value={`${ctr}%`} icon={TrendingUp} />
-        <Stat label={t.merchant.stats.active} value={stats?.active ?? 0} icon={Megaphone} className="hidden md:block" />
-        <Stat label={t.merchant.stats.saves} value={stats?.saves ?? 0} icon={Heart} className="hidden md:block" />
-        <Stat label={t.merchant.stats.total} value={stats?.total ?? 0} icon={Megaphone} className="hidden md:block" />
-      </div>
 
       {/* Quick actions — sticky-feeling card */}
       <section aria-label="Quick actions" className="grid grid-cols-3 gap-2 md:gap-3">
