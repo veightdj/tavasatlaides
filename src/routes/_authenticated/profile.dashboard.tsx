@@ -94,7 +94,8 @@ function Dashboard() {
     );
   }
 
-  const ctr = (stats?.views ?? 0) > 0 ? Math.round(((stats!.clicks / stats!.views) * 1000)) / 10 : 0;
+  const completeness = computeProfileCompleteness(store as any);
+  const isPublished = !(store as any).is_hidden;
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -103,6 +104,31 @@ function Dashboard() {
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">{store.name}</h1>
         <p className="text-sm text-muted-foreground">{store.city}</p>
       </header>
+
+      {/* Profile status */}
+      <section className="rounded-2xl border bg-card p-4 md:p-5">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold flex items-center gap-2">
+              {completeness.percent === 100
+                ? <><CheckCircle2 className="h-4 w-4 text-primary" /> Profile complete</>
+                : "Profile completeness"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+              {isPublished
+                ? <><Eye className="h-3.5 w-3.5 text-primary" /> Published</>
+                : <><EyeOff className="h-3.5 w-3.5" /> Unpublished</>}
+              <span>·</span>
+              <span>{completeness.filled}/{completeness.total} fields</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-bold tabular-nums">{completeness.percent}%</span>
+            <Button asChild size="sm" variant="outline"><Link to="/profile/store">Edit</Link></Button>
+          </div>
+        </div>
+        <Progress value={completeness.percent} className="h-2" />
+      </section>
 
       {/* Key 3 metrics on mobile, full grid on desktop */}
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
