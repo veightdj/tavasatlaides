@@ -126,7 +126,7 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
 
   return (
     <div className="max-w-2xl space-y-5 [&_input]:h-12 [&_input]:text-base [&_button[role=combobox]]:h-12 [&_textarea]:text-base">
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{isNew ? t.merchant.newAd : t.merchant.edit}</h1>
+      {!embedded && <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{isNew ? t.merchant.newAd : t.merchant.edit}</h1>}
 
       <div className="flex items-center gap-4">
         {form.cover_image_url ? <img src={form.cover_image_url} className="h-24 w-32 rounded-lg object-cover" alt="" /> : <div className="h-24 w-32 rounded-lg bg-gradient-warm" />}
