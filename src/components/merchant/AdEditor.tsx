@@ -107,7 +107,8 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
       toast.success(t.common.saved);
       try { localStorage.removeItem(draftKey); } catch {}
       qc.invalidateQueries({ queryKey: ["my-ads"] });
-      navigate({ to: "/profile/ads" });
+      if (onSaved) onSaved();
+      else navigate({ to: "/profile/ads" });
     },
     onError: (e: any) => toast.error(e.message),
   });
