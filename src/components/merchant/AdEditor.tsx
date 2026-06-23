@@ -13,7 +13,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { useCategories } from "@/lib/categories";
 import { uploadImage } from "@/lib/upload";
 
-export function AdEditor({ adId }: { adId?: string }) {
+export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?: () => void; embedded?: boolean }) {
   const isNew = !adId;
   const { t } = useI18n();
   const { user } = useAuth();
@@ -107,7 +107,8 @@ export function AdEditor({ adId }: { adId?: string }) {
       toast.success(t.common.saved);
       try { localStorage.removeItem(draftKey); } catch {}
       qc.invalidateQueries({ queryKey: ["my-ads"] });
-      navigate({ to: "/profile/ads" });
+      if (onSaved) onSaved();
+      else navigate({ to: "/profile/ads" });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -125,7 +126,7 @@ export function AdEditor({ adId }: { adId?: string }) {
 
   return (
     <div className="max-w-2xl space-y-5 [&_input]:h-12 [&_input]:text-base [&_button[role=combobox]]:h-12 [&_textarea]:text-base">
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{isNew ? t.merchant.newAd : t.merchant.edit}</h1>
+      {!embedded && <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{isNew ? t.merchant.newAd : t.merchant.edit}</h1>}
 
       <div className="flex items-center gap-4">
         {form.cover_image_url ? <img src={form.cover_image_url} className="h-24 w-32 rounded-lg object-cover" alt="" /> : <div className="h-24 w-32 rounded-lg bg-gradient-warm" />}
