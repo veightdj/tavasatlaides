@@ -13,7 +13,7 @@ import { useI18n } from "@/i18n/use-i18n";
 import { useCategories } from "@/lib/categories";
 import { uploadImage } from "@/lib/upload";
 
-export function AdEditor({ adId }: { adId?: string }) {
+export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?: () => void; embedded?: boolean }) {
   const isNew = !adId;
   const { t } = useI18n();
   const { user } = useAuth();
