@@ -61,6 +61,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "TavasAtlaides" },
       { name: "application-name", content: "Tavas Atlaides" },
+      { name: "google-adsense-account", content: "ca-pub-4322410322977898" },
       { property: "og:site_name", content: "TavasAtlaides" },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "lv_LV" },
