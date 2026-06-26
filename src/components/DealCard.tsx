@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, LocateFixed, BadgeCheck, Clock, ArrowRight, Navigation, MapPin } from "lucide-react";
+import { Heart, BadgeCheck, MapPin, Navigation, Clock } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
-import { toast } from "sonner";
 
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
+import { useCountdown } from "@/hooks/useCountdown";
 
 type Deal = {
   id: string;
@@ -16,6 +16,9 @@ type Deal = {
   price_sale: number | null;
   cover_image_url: string | null;
   ends_at: string | null;
+  starts_at?: string | null;
+  status?: string | null;
+  description?: string | null;
   stores?: {
     id: string;
     name: string;
@@ -78,185 +81,229 @@ const CATEGORY_LABEL: Record<string, string> = {
   events: "Pasākumi",
 };
 
-function formatEndsAt(iso: string | null): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (!Number.isFinite(d.getTime())) return null;
-  return d.toLocaleDateString("lv-LV", { day: "2-digit", month: "2-digit", year: "numeric" });
-}
-
 export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: Deal; distanceKm?: number; showNavigation?: boolean }) {
   const { has, toggle } = useFavorites();
   const { t } = useI18n();
   const saved = has(deal.id);
   const store = deal.stores;
+
   const distLabel =
     typeof distanceKm === "number" && Number.isFinite(distanceKm)
       ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
       : null;
   const categoryLabel = CATEGORY_LABEL[store?.category ?? deal.category] ?? (store?.category ?? deal.category);
-  const endsLabel = formatEndsAt(deal.ends_at);
+
+  // Discount headline
+  const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;
+
+  // Currently active?
+  const now = Date.now();
+  const startsAtMs = deal.starts_at ? new Date(deal.starts_at).getTime() : null;
+  const endsAtMs = deal.ends_at ? new Date(deal.ends_at).getTime() : null;
+  const isLive = (deal.status ?? "active") === "active"
+    && (startsAtMs == null || startsAtMs <= now)
+    && (endsAtMs == null || endsAtMs > now);
+
+  const countdown = useCountdown(deal.ends_at ?? null);
+  const showCountdown = countdown && !countdown.expired && countdown.endingSoon;
+
+  const gUrl = googleMapsUrl(store);
+  const wUrl = wazeUrl(store);
 
   return (
-    <article className="group relative flex flex-col rounded-2xl bg-card border border-border/60 shadow-[0_2px_10px_-2px_rgba(15,23,42,0.08)] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.18)] hover:-translate-y-0.5 transition-all overflow-hidden">
-      {/* Header */}
-      <header className="flex items-start gap-3 px-3 pt-4 pb-2">
-        <Link
-          to="/stores/$id"
-          params={{ id: store?.id ?? "" }}
-          className="shrink-0"
-          onClick={(e) => { if (!store?.id) e.preventDefault(); }}
-        >
-          {store?.logo_url ? (
-            <img
-              src={store.logo_url}
-              alt={store.name}
-              className="h-14 w-14 rounded-2xl object-cover ring-1 ring-border"
-              loading="lazy"
-            />
-          ) : (
-            <div className="h-14 w-14 rounded-2xl bg-gradient-warm grid place-items-center text-primary-foreground font-bold text-lg ring-1 ring-border">
-              {store?.name?.[0] ?? "•"}
-            </div>
-          )}
-        </Link>
-        <div className="min-w-0 flex-1">
-          <Link
-            to="/stores/$id"
-            params={{ id: store?.id ?? "" }}
-            className="flex items-center gap-1.5"
-            onClick={(e) => { if (!store?.id) e.preventDefault(); }}
-          >
-            <h3 className="truncate text-[15px] font-bold leading-tight">{store?.name ?? "—"}</h3>
-            {store?.is_verified && (
-              <BadgeCheck className="h-4 w-4 shrink-0 text-sky-500 fill-sky-500/15" aria-label="Verificēts partneris" />
-            )}
-          </Link>
-          <div className="mt-0.5 flex items-center text-xs text-muted-foreground">
-            <span className="truncate">{categoryLabel}</span>
-            {distLabel && (
-              <>
-                <span className="mx-1.5 opacity-50">•</span>
-                <span className="inline-flex items-center gap-1 truncate">
-                  <LocateFixed className="h-3 w-3 text-primary" />
-                  {distLabel}
-                </span>
-              </>
-            )}
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={(e) => { e.preventDefault(); toggle(deal.id); }}
-          className="shrink-0 grid h-9 w-9 place-items-center rounded-full hover:bg-muted transition"
-          aria-label={saved ? t.deals.saved : t.deals.save}
-        >
-          <Heart className={`h-5 w-5 ${saved ? "fill-rose-500 text-rose-500" : "text-muted-foreground"}`} />
-        </button>
-      </header>
-
-      {/* Image */}
+    <article className="group relative flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-[0_2px_10px_-2px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.22)]">
+      {/* HERO 16:9 with overlay */}
       <Link
         to="/deals/$id"
         params={{ id: deal.id }}
-        className="relative mx-3 block overflow-hidden rounded-2xl bg-muted aspect-[4/3]"
+        className="relative block aspect-[16/9] overflow-hidden bg-muted"
       >
         {deal.cover_image_url ? (
           <img
             src={deal.cover_image_url}
             alt={deal.title}
             loading="lazy"
-            className="h-full w-full object-cover rounded-t-xl group-hover:scale-[1.03] transition-transform duration-500"
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-warm rounded-t-xl" />
+          <div className="h-full w-full bg-gradient-warm" />
         )}
-        {deal.discount_pct ? (
-          <div className="absolute top-3 right-3 rounded-xl bg-primary text-primary-foreground text-sm font-extrabold px-2.5 py-1 shadow-lg shadow-primary/30">
-            -{deal.discount_pct}%
+
+        {/* Dark gradient for text legibility */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-black/20" />
+
+        {/* TOP ROW: live pill + save */}
+        <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur ${
+            isLive
+              ? "bg-background/90 text-foreground"
+              : "bg-background/80 text-muted-foreground"
+          }`}>
+            {isLive ? (
+              <>
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </span>
+                Aktīva
+              </>
+            ) : (
+              <>
+                <Clock className="h-3 w-3" /> Drīz
+              </>
+            )}
+          </span>
+
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(deal.id); }}
+            className="grid h-9 w-9 place-items-center rounded-full bg-background/90 text-foreground shadow-sm backdrop-blur transition hover:scale-105 hover:bg-background"
+            aria-label={saved ? t.deals.saved : t.deals.save}
+          >
+            <Heart className={`h-[18px] w-[18px] ${saved ? "fill-rose-500 text-rose-500" : ""}`} />
+          </button>
+        </div>
+
+        {/* GIANT DISCOUNT BOTTOM-LEFT */}
+        {discountHeadline && (
+          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
+            <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+              <div className="text-4xl font-black leading-none tracking-tighter sm:text-5xl">
+                {discountHeadline}
+              </div>
+              <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] opacity-90">
+                Atlaide
+              </div>
+            </div>
+            {showCountdown && (
+              <span className="rounded-full bg-rose-500/95 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
+                {countdown.days > 0
+                  ? `${countdown.days}d ${countdown.hours}h`
+                  : `${String(countdown.hours).padStart(2, "0")}:${String(countdown.minutes).padStart(2, "0")}:${String(countdown.seconds).padStart(2, "0")}`}
+              </span>
+            )}
           </div>
-        ) : null}
+        )}
+
         <DealShareButton
           dealId={deal.id}
           title={deal.title}
           description={store?.name}
           discountPct={deal.discount_pct}
-          className="absolute top-3 left-3 h-9 w-9 min-h-0 min-w-0"
+          className="absolute bottom-3 right-3 h-9 w-9 min-h-0 min-w-0 rounded-full bg-background/90 backdrop-blur hover:bg-background"
         />
       </Link>
 
-      {/* Content */}
-      <div className="flex flex-col gap-2 p-3 pt-3">
+      {/* IDENTITY + CONTENT */}
+      <div className="flex flex-col gap-3 p-4">
+        {/* Business identity row */}
+        <div className="flex items-center gap-3">
+          <Link
+            to="/stores/$id"
+            params={{ id: store?.id ?? "" }}
+            className="shrink-0"
+            onClick={(e) => { if (!store?.id) e.preventDefault(); }}
+          >
+            {store?.logo_url ? (
+              <img
+                src={store.logo_url}
+                alt={store.name}
+                className="h-11 w-11 rounded-full object-cover ring-2 ring-background shadow-sm"
+                loading="lazy"
+              />
+            ) : (
+              <div className="grid h-11 w-11 place-items-center rounded-full bg-brand-soft text-base font-bold text-primary ring-2 ring-background shadow-sm">
+                {store?.name?.[0] ?? "•"}
+              </div>
+            )}
+          </Link>
+          <div className="min-w-0 flex-1">
+            <Link
+              to="/stores/$id"
+              params={{ id: store?.id ?? "" }}
+              className="flex items-center gap-1"
+              onClick={(e) => { if (!store?.id) e.preventDefault(); }}
+            >
+              <h3 className="truncate text-[15px] font-bold leading-tight">{store?.name ?? "—"}</h3>
+              {store?.is_verified && (
+                <BadgeCheck className="h-4 w-4 shrink-0 text-sky-500" aria-label="Verificēts partneris" />
+              )}
+            </Link>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
+              <span>{categoryLabel}</span>
+              {store?.city && <> · {store.city}</>}
+              {distLabel && <> · {distLabel}</>}
+            </p>
+          </div>
+        </div>
+
+        {/* Deal title */}
         <Link to="/deals/$id" params={{ id: deal.id }}>
-          <h4 className="text-[15px] font-semibold leading-snug line-clamp-2 group-hover:text-primary transition">
+          <h4 className="line-clamp-2 text-[15px] font-semibold leading-snug text-foreground/90 transition group-hover:text-primary">
             {deal.title}
           </h4>
         </Link>
 
-        {endsLabel && (
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
-            <span>Līdz {endsLabel}</span>
+        {/* Price (when not percent) */}
+        {(deal.price_sale != null || deal.price_original != null) && (
+          <div className="flex items-baseline gap-2">
+            {deal.price_sale != null && (
+              <span className="text-lg font-bold text-primary">€{deal.price_sale.toFixed(2)}</span>
+            )}
+            {deal.price_original != null && (
+              <span className="text-sm text-muted-foreground line-through">€{deal.price_original.toFixed(2)}</span>
+            )}
           </div>
         )}
 
+        {/* Primary CTA */}
         <Link
           to="/deals/$id"
           params={{ id: deal.id }}
-          className="mt-1 inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold shadow-sm hover:bg-primary/90 active:scale-[0.98] transition"
+          className="inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
         >
           Skatīt akciju
-          <ArrowRight className="h-4 w-4" />
         </Link>
 
-        {showNavigation && (() => {
-          const gUrl = googleMapsUrl(store);
-          const wUrl = wazeUrl(store);
-          const hasLocation = !!gUrl;
-          const btnClass = "inline-flex h-10 min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-medium hover:bg-muted active:scale-[0.98] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-          if (!hasLocation) {
-            return (
-              <div className="mt-1 grid grid-cols-2 gap-2">
-                <span className={`${btnClass} opacity-50 cursor-not-allowed`} aria-disabled="true">
-                  <MapPin className="h-4 w-4 text-[#1A73E8]" aria-hidden="true" />
-                  <span>Google Maps</span>
-                </span>
-                <span className={`${btnClass} opacity-50 cursor-not-allowed`} aria-disabled="true">
-                  <Navigation className="h-4 w-4 text-[#33CCFF]" aria-hidden="true" />
-                  <span>Waze</span>
-                </span>
-              </div>
-            );
-          }
-          return (
-            <div className="mt-1 grid grid-cols-2 gap-2">
+        {/* Navigation buttons */}
+        {showNavigation && (gUrl || wUrl) && (
+          <div className="grid grid-cols-2 gap-2">
+            {gUrl ? (
               <a
-                href={gUrl!}
+                href={gUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => { e.stopPropagation(); trackEvent("google_maps_clicked", { deal_id: deal.id, store_id: store?.id }); }}
                 aria-label="Atvērt Google Maps navigāciju"
-                title="Atvērt Google Maps"
-                className={btnClass}
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-xs font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
                 <MapPin className="h-4 w-4 text-[#1A73E8]" aria-hidden="true" />
-                <span>Google Maps</span>
+                <span>Maps</span>
               </a>
+            ) : (
+              <span className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-xs font-semibold opacity-50">
+                <MapPin className="h-4 w-4" /> Maps
+              </span>
+            )}
+            {wUrl ? (
               <a
-                href={wUrl!}
+                href={wUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => { e.stopPropagation(); trackEvent("waze_clicked", { deal_id: deal.id, store_id: store?.id }); }}
                 aria-label="Atvērt Waze navigāciju"
-                title="Atvērt Waze"
-                className={btnClass}
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-xs font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
                 <Navigation className="h-4 w-4 text-[#33CCFF]" aria-hidden="true" />
                 <span>Waze</span>
               </a>
-            </div>
-          );
-        })()}
+            ) : (
+              <span className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-xs font-semibold opacity-50">
+                <Navigation className="h-4 w-4" /> Waze
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </article>
   );
