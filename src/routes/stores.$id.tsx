@@ -477,7 +477,7 @@ function StorePage() {
             <div className="mt-1 text-2xl font-black">{ads.length}</div>
           </div>
           <div className="rounded-2xl border border-border/60 bg-card p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Profilā kopš</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">PARTNERIS KOPŠ</div>
             <div className="mt-1 text-2xl font-black">
               {store.created_at ? new Date(store.created_at).getFullYear() : "—"}
             </div>
