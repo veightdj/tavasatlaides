@@ -5,7 +5,7 @@ import { useI18n } from "@/i18n/use-i18n";
 
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
-import { useCountdown } from "@/hooks/useCountdown";
+import { useCountdown, useIsLive } from "@/hooks/useCountdown";
 
 type Deal = {
   id: string;
