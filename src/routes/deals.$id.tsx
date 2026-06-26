@@ -10,7 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
-import { useCountdown } from "@/hooks/useCountdown";
+import { useCountdown, useIsLive } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
 import { ReportDealButton } from "@/components/ReportDealButton";
 
