@@ -282,12 +282,12 @@ function DealDetail() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                 </span>
-                {t.common.active ?? "Active now"}
+                {(t.common as any).active ?? "Active now"}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-background/85 px-3 py-1.5 text-xs font-semibold text-muted-foreground shadow-sm backdrop-blur">
                 <Clock className="h-3 w-3" />
-                {t.time?.ended ?? "Inactive"}
+                {(t.time as any)?.ended ?? "Inactive"}
               </span>
             )}
           </div>
@@ -298,7 +298,7 @@ function DealDetail() {
               <div className="rounded-2xl bg-primary px-4 py-2 text-primary-foreground shadow-lg ring-1 ring-primary/30">
                 <div className="text-xl font-black tracking-tight leading-none sm:text-2xl">{discountHeadline}</div>
                 {deal.discount_pct && (
-                  <div className="text-[10px] font-semibold uppercase tracking-wider opacity-90">{t.common.off ?? "off"}</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-wider opacity-90">{(t.common as any).off ?? "off"}</div>
                 )}
               </div>
             </div>
@@ -374,11 +374,11 @@ function DealDetail() {
                 className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition active:scale-[0.98] hover:bg-primary/90"
               >
                 <Navigation className="h-4 w-4" />
-                <span>{t.deals?.directions ?? "Directions"}</span>
+                <span>{(t.deals as any)?.directions ?? "Directions"}</span>
               </a>
             ) : (
               <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl bg-muted text-sm font-semibold text-muted-foreground">
-                <Navigation className="h-4 w-4" /> {t.deals?.directions ?? "Directions"}
+                <Navigation className="h-4 w-4" /> {(t.deals as any)?.directions ?? "Directions"}
               </span>
             )}
             {store?.phone ? (
@@ -387,7 +387,7 @@ function DealDetail() {
                 onClick={() => trackEvent("call_clicked", { deal_id: deal.id, store_id: store?.id })}
                 className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
-                <Phone className="h-4 w-4" /> {t.merchant?.phone ?? "Call"}
+                <Phone className="h-4 w-4" /> {(t.merchant as any)?.phone ?? "Call"}
               </a>
             ) : null}
             {store?.website ? (
@@ -398,7 +398,7 @@ function DealDetail() {
                 onClick={() => trackEvent("website_clicked", { deal_id: deal.id, store_id: store?.id })}
                 className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
-                <Globe className="h-4 w-4" /> {t.merchant?.website ?? "Website"}
+                <Globe className="h-4 w-4" /> {(t.merchant as any)?.website ?? "Website"}
               </a>
             ) : null}
             <button
@@ -406,7 +406,7 @@ function DealDetail() {
               className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
             >
               <Heart className={`h-4 w-4 ${saved ? "fill-primary text-primary" : ""}`} />
-              {saved ? (t.deals?.saved ?? "Saved") : (t.deals?.save ?? "Save")}
+              {saved ? ((t.deals as any)?.saved ?? "Saved") : ((t.deals as any)?.save ?? "Save")}
             </button>
           </div>
         </div>
@@ -425,13 +425,13 @@ function DealDetail() {
         <section className="mt-8 rounded-3xl border border-border/60 bg-card p-5 sm:p-6">
           <div className="flex items-center gap-2">
             <Ticket className="h-5 w-5 text-primary" />
-            <h3 className="text-base font-bold">{t.deals?.howToRedeem ?? "How to redeem"}</h3>
+            <h3 className="text-base font-bold">{(t.deals as any)?.howToRedeem ?? "How to redeem"}</h3>
           </div>
           <ul className="mt-4 grid gap-3 sm:grid-cols-3">
             {[
-              { icon: Sparkles, label: t.deals?.noCodeNeeded ?? "No promo code needed" },
-              { icon: Check, label: t.deals?.justShowPage ?? "Just show this page in-store" },
-              { icon: BadgeCheck, label: t.deals?.mentionAtCheckout ?? "Mention the offer at checkout" },
+              { icon: Sparkles, label: (t.deals as any)?.noCodeNeeded ?? "No promo code needed" },
+              { icon: Check, label: (t.deals as any)?.justShowPage ?? "Just show this page in-store" },
+              { icon: BadgeCheck, label: (t.deals as any)?.mentionAtCheckout ?? "Mention the offer at checkout" },
             ].map((item, idx) => (
               <li key={idx} className="flex items-start gap-3 rounded-2xl bg-muted/50 p-3">
                 <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
@@ -455,7 +455,7 @@ function DealDetail() {
         {store && (
           <section className="mt-10">
             <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              {t.deals?.aboutBusiness ?? "About the business"}
+              {(t.deals as any)?.aboutBusiness ?? "About the business"}
             </h3>
 
             <Link
@@ -573,7 +573,7 @@ function DealDetail() {
         {images.length > 1 && (
           <section className="mt-10">
             <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              {t.deals?.morePhotos ?? "More photos"}
+              {(t.deals as any)?.morePhotos ?? "More photos"}
             </h3>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {images.slice(1).map((url, i) => (
@@ -586,7 +586,7 @@ function DealDetail() {
         {/* META */}
         {lastUpdated && (
           <p className="mt-10 text-center text-xs text-muted-foreground">
-            {t.deals?.lastUpdated ?? "Last updated"} · {lastUpdated}
+            {(t.deals as any)?.lastUpdated ?? "Last updated"} · {lastUpdated}
           </p>
         )}
 
