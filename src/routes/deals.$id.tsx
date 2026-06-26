@@ -10,7 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useI18n } from "@/i18n/use-i18n";
 import { useFavorites } from "@/lib/favorites";
 import { formatPrice } from "@/lib/utils";
-import { useCountdown } from "@/hooks/useCountdown";
+import { useCountdown, useIsLive } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
 import { ReportDealButton } from "@/components/ReportDealButton";
 
@@ -241,13 +241,8 @@ function DealDetail() {
       ? `€${formatPrice(deal.price_sale)}`
       : null);
 
-  // Currently active?
-  const now = Date.now();
-  const startsAtMs = deal.starts_at ? new Date(deal.starts_at).getTime() : null;
-  const endsAtMs = deal.ends_at ? new Date(deal.ends_at).getTime() : null;
-  const isLive = deal.status === "active"
-    && (startsAtMs == null || startsAtMs <= now)
-    && (endsAtMs == null || endsAtMs > now);
+  // Real-time "active now" — re-evaluates as start/end windows pass.
+  const isLive = useIsLive(deal.starts_at, deal.ends_at, deal.status);
 
   const gUrl = store ? googleMapsUrl(store) : null;
   const wUrl = store ? wazeUrl(store) : null;
