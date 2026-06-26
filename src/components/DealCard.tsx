@@ -96,16 +96,11 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
   // Discount headline
   const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;
 
-  // Currently active?
-  const now = Date.now();
-  const startsAtMs = deal.starts_at ? new Date(deal.starts_at).getTime() : null;
-  const endsAtMs = deal.ends_at ? new Date(deal.ends_at).getTime() : null;
-  const isLive = (deal.status ?? "active") === "active"
-    && (startsAtMs == null || startsAtMs <= now)
-    && (endsAtMs == null || endsAtMs > now);
+  // Real-time "active now" — re-evaluates as start/end windows pass.
+  const isLive = useIsLive(deal.starts_at ?? null, deal.ends_at ?? null, deal.status ?? null);
 
   const countdown = useCountdown(deal.ends_at ?? null);
-  const showCountdown = countdown && !countdown.expired && countdown.endingSoon;
+  const showCountdown = !!countdown && !countdown.expired && countdown.endingSoon;
 
   const gUrl = googleMapsUrl(store);
   const wUrl = wazeUrl(store);
