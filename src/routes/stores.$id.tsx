@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import {
@@ -12,7 +12,6 @@ import { ShareMenu } from "@/components/ShareMenu";
 import { ShopGallerySlider } from "@/components/ShopGallerySlider";
 import { useI18n } from "@/i18n/use-i18n";
 import { useSavedStores } from "@/lib/favorites";
-import { useIsLive } from "@/hooks/useCountdown";
 
 function trackEvent(name: string, payload: Record<string, unknown>) {
   try {
@@ -511,8 +510,6 @@ function StoreStickyBar({
   directionsUrl: string | null;
   storeId: string;
 }) {
-  // Used to enable the "Active" indicator on the CTA bar.
-  useIsLive(null, null, "active");
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 shadow-[0_-6px_24px_-8px_rgba(15,23,42,0.18)] backdrop-blur sm:hidden">
       <div className="grid grid-cols-3 gap-2">
@@ -555,6 +552,3 @@ function StoreStickyBar({
     </div>
   );
 }
-
-// silence unused import in trimmed builds
-void Link;
