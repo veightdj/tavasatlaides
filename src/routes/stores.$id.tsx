@@ -143,7 +143,7 @@ function StorePage() {
 
   const saved = has(store.id);
   const social = (store.social_links ?? {}) as Record<string, string | undefined>;
-  const categoryLabel = CATEGORY_LABEL[(store as any).category] ?? (store as any).category;
+  const categoryLabel = (t.cat as Record<string, string>)[(store as any).category] ?? (store as any).category;
 
   const dest = buildDest(store as any);
   const directionsUrl = dest
