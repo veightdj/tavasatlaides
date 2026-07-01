@@ -243,7 +243,7 @@ function StorePage() {
                 <div className="flex flex-wrap items-center gap-1.5">
                   <h1 className="truncate text-xl font-black tracking-tight sm:text-3xl">{store.name}</h1>
                   {store.is_verified && (
-                    <BadgeCheck className="h-5 w-5 shrink-0 text-primary" aria-label="Verificēts partneris" />
+                    <BadgeCheck className="h-5 w-5 shrink-0 text-primary" aria-label={t.store.verifiedPartner} />
                   )}
                 </div>
                 <p className="mt-1 truncate text-sm text-muted-foreground sm:text-base">
@@ -255,12 +255,12 @@ function StorePage() {
                   {ads.length > 0 && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-semibold text-primary">
                       <Sparkles className="h-3 w-3" />
-                      {ads.length} {ads.length === 1 ? "aktīva atlaide" : "aktīvas atlaides"}
+                      {t.store.activeDealsChip(ads.length)}
                     </span>
                   )}
                   {yearsInBusiness && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground">
-                      <Calendar className="h-3 w-3" /> {yearsInBusiness}+ {yearsInBusiness === 1 ? "gads" : "gadi"}
+                      <Calendar className="h-3 w-3" /> {t.store.yearsChip(yearsInBusiness)}
                     </span>
                   )}
                 </div>
