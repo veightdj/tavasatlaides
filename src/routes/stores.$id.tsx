@@ -321,7 +321,7 @@ function StorePage() {
         {description && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Par uzņēmumu
+              {t.store.about}
             </h2>
             <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-foreground/85">
               {aboutOpen || !isLongDesc ? description : shortDesc}
@@ -332,7 +332,7 @@ function StorePage() {
                 onClick={() => setAboutOpen((v) => !v)}
                 className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
               >
-                {aboutOpen ? "Lasīt mazāk" : "Lasīt vairāk"}
+                {aboutOpen ? t.store.readLess : t.store.readMore}
                 <ChevronDown className={`h-4 w-4 transition ${aboutOpen ? "rotate-180" : ""}`} />
               </button>
             )}
