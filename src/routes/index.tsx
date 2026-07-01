@@ -335,15 +335,15 @@ function Marketing() {
         <div className="grid gap-4 sm:grid-cols-3">
           <Link to="/about" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
             <h3 className="font-bold">{t.nav.about}</h3>
-            <p className="text-sm text-muted-foreground mt-1">Par projektu un mūsu misiju.</p>
+            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.aboutSub}</p>
           </Link>
           <Link to="/faq" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
             <h3 className="font-bold">FAQ</h3>
-            <p className="text-sm text-muted-foreground mt-1">Biežāk uzdotie jautājumi.</p>
+            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.faqSub}</p>
           </Link>
           <Link to="/contact" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
-            <h3 className="font-bold">Kontakti</h3>
-            <p className="text-sm text-muted-foreground mt-1">Sazinies ar mums.</p>
+            <h3 className="font-bold">{t.homeValues.contactTitle}</h3>
+            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.contactSub}</p>
           </Link>
         </div>
       </section>
