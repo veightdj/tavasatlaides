@@ -96,7 +96,7 @@ export function MobileBottomNav() {
                 >
                   <Icon className={`h-6 w-6 transition-transform ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.4 : 2} />
                 </span>
-                <span className={`text-[10.5px] leading-none font-medium tracking-tight min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
+                <span className={`text-[10.5px] leading-tight font-medium tracking-tight text-center min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
                   {tab.label}
                 </span>
               </Link>
