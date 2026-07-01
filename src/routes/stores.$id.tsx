@@ -350,11 +350,11 @@ function StorePage() {
         <section id="discounts" className="mt-12 scroll-mt-20">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Aktīvās atlaides</h2>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{t.store.activeDeals}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {ads.length > 0
-                  ? `${ads.length} ${ads.length === 1 ? "piedāvājums" : "piedāvājumi"} pieejami tagad`
-                  : "Pašlaik nav aktīvu piedāvājumu"}
+                  ? t.store.dealsAvailable(ads.length)
+                  : t.store.noActiveDeals}
               </p>
             </div>
           </div>
