@@ -212,7 +212,7 @@ function StorePage() {
               type="button"
               onClick={() => toggle(store.id)}
               className="grid h-10 w-10 place-items-center rounded-full bg-background/90 shadow-sm backdrop-blur transition hover:scale-105 hover:bg-background"
-              aria-label={saved ? "Saglabāts" : "Saglabāt"}
+              aria-label={saved ? t.store.saved : t.store.save}
             >
               <Heart className={`h-5 w-5 ${saved ? "fill-rose-500 text-rose-500" : ""}`} />
             </button>
