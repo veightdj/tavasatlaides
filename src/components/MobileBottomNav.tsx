@@ -73,30 +73,30 @@ export function MobileBottomNav() {
     <nav
       aria-label="Primary"
       className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85"
-      style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
+      style={{ paddingBottom: "max(8px, env(safe-area-inset-bottom))" }}
     >
-      <ul className="grid grid-cols-5">
+      <ul className="mx-auto grid max-w-md grid-cols-5 px-1 sm:px-2">
         {tabs.map((tab) => {
           const active = tab.match(pathname);
           const Icon = tab.icon;
           return (
-            <li key={tab.to}>
+            <li key={tab.to} className="min-w-0">
               <Link
                 to={tab.to}
                 aria-label={tab.label}
                 aria-current={active ? "page" : undefined}
-                className={`group relative flex flex-col items-center justify-start gap-1 min-h-[60px] px-1 pt-2 pb-1 transition-colors ${
+                className={`group relative flex flex-col items-center justify-start gap-1 min-h-[56px] px-0.5 pt-1.5 pb-1 transition-colors ${
                   active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <span
-                  className={`flex h-8 w-14 shrink-0 items-center justify-center rounded-full transition-all ${
+                  className={`flex h-7 w-12 shrink-0 items-center justify-center rounded-full transition-all sm:h-8 sm:w-14 ${
                     active ? "bg-primary/10" : "bg-transparent"
                   }`}
                 >
-                  <Icon className={`h-6 w-6 transition-transform ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.4 : 2} />
+                  <Icon className={`h-[22px] w-[22px] sm:h-6 sm:w-6 transition-transform ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.4 : 2} />
                 </span>
-                <span className={`w-full text-[10.5px] leading-tight font-medium tracking-tight text-center min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
+                <span className={`w-full truncate text-[10px] sm:text-[10.5px] leading-tight font-medium tracking-tight text-center min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
                   {tab.label}
                 </span>
               </Link>
