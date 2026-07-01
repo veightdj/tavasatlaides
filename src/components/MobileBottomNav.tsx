@@ -85,18 +85,18 @@ export function MobileBottomNav() {
                 to={tab.to}
                 aria-label={tab.label}
                 aria-current={active ? "page" : undefined}
-                className={`group relative flex flex-col items-center justify-center gap-0.5 min-h-[60px] px-1 py-2 transition-colors ${
+                className={`group relative flex flex-col items-center justify-start gap-1 min-h-[60px] px-1 pt-2 pb-1 transition-colors ${
                   active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <span
-                  className={`flex h-8 w-14 items-center justify-center rounded-full transition-all ${
+                  className={`flex h-8 w-14 shrink-0 items-center justify-center rounded-full transition-all ${
                     active ? "bg-primary/10" : "bg-transparent"
                   }`}
                 >
                   <Icon className={`h-6 w-6 transition-transform ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.4 : 2} />
                 </span>
-                <span className={`text-[10.5px] leading-tight font-medium tracking-tight text-center min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
+                <span className={`w-full text-[10.5px] leading-tight font-medium tracking-tight text-center min-[360px]:block hidden ${active ? "" : "opacity-90"}`}>
                   {tab.label}
                 </span>
               </Link>
