@@ -92,16 +92,6 @@ export const Route = createFileRoute("/stores/$id")({
   component: StorePage,
 });
 
-const CATEGORY_LABEL: Record<string, string> = {
-  food: "Restorāns",
-  cafes: "Kafejnīca",
-  beauty: "Skaistums",
-  auto: "Auto",
-  electronics: "Elektronika",
-  home: "Mājai",
-  kids: "Bērniem",
-  events: "Pasākumi",
-};
 
 function StorePage() {
   const { id } = Route.useParams();
