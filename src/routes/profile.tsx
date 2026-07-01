@@ -64,23 +64,23 @@ function GuestProfile() {
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t.nav.profile}</h1>
-          <p className="text-sm text-muted-foreground">Pieslēdzies, lai redzētu savu profilu</p>
+          <p className="text-sm text-muted-foreground">{t.signInPrompt.title}</p>
         </div>
       </header>
 
       <section className="rounded-2xl border bg-card p-5 space-y-3">
         <p className="text-sm text-muted-foreground">
-          Pieslēdzies, lai saglabātu mīļākos piedāvājumus, saņemtu paziņojumus un pārvaldītu savu kontu.
+          {t.signInPrompt.body}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Button asChild className="w-full min-h-11">
             <Link to="/login" search={{ redirect: "/profile" }}>
-              <LogIn className="h-4 w-4 mr-2" />Pieslēgties
+              <LogIn className="h-4 w-4 mr-2" />{t.signInPrompt.signIn}
             </Link>
           </Button>
           <Button asChild variant="outline" className="w-full min-h-11">
             <Link to="/signup">
-              <UserPlus className="h-4 w-4 mr-2" />Reģistrēties
+              <UserPlus className="h-4 w-4 mr-2" />{t.signInPrompt.signUp}
             </Link>
           </Button>
         </div>
