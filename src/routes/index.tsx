@@ -274,9 +274,9 @@ function Marketing() {
       <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
         <div className="grid gap-6 md:grid-cols-3">
           {[
-            { icon: MapPin, title: "Tuvumā tavai atrašanās vietai", body: "Atrodi piedāvājumus pēc GPS un kartes Rīgā un visā Baltijā." },
-            { icon: Zap, title: "Atjaunoti katru dienu", body: "Akcijas un atlaides parādās uzreiz, tiklīdz veikals tās publicē." },
-            { icon: ShieldCheck, title: "Uzticami vietējie veikali", body: "Verificēti partneri, caurspīdīga moderācija, godīgi piedāvājumi." },
+            { icon: MapPin, title: t.homeValues.nearTitle, body: t.homeValues.nearBody },
+            { icon: Zap, title: t.homeValues.dailyTitle, body: t.homeValues.dailyBody },
+            { icon: ShieldCheck, title: t.homeValues.trustTitle, body: t.homeValues.trustBody },
           ].map(({ icon: Icon, title, body }) => (
             <div key={title} className="rounded-2xl border border-border bg-card p-6">
               <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
