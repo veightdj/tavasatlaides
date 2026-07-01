@@ -92,16 +92,6 @@ export const Route = createFileRoute("/stores/$id")({
   component: StorePage,
 });
 
-const CATEGORY_LABEL: Record<string, string> = {
-  food: "Restorāns",
-  cafes: "Kafejnīca",
-  beauty: "Skaistums",
-  auto: "Auto",
-  electronics: "Elektronika",
-  home: "Mājai",
-  kids: "Bērniem",
-  events: "Pasākumi",
-};
 
 function StorePage() {
   const { id } = Route.useParams();
@@ -153,7 +143,7 @@ function StorePage() {
 
   const saved = has(store.id);
   const social = (store.social_links ?? {}) as Record<string, string | undefined>;
-  const categoryLabel = CATEGORY_LABEL[(store as any).category] ?? (store as any).category;
+  const categoryLabel = (t.cat as Record<string, string>)[(store as any).category] ?? (store as any).category;
 
   const dest = buildDest(store as any);
   const directionsUrl = dest
@@ -212,7 +202,7 @@ function StorePage() {
               type="button"
               onClick={() => toggle(store.id)}
               className="grid h-10 w-10 place-items-center rounded-full bg-background/90 shadow-sm backdrop-blur transition hover:scale-105 hover:bg-background"
-              aria-label={saved ? "Saglabāts" : "Saglabāt"}
+              aria-label={saved ? t.store.saved : t.store.save}
             >
               <Heart className={`h-5 w-5 ${saved ? "fill-rose-500 text-rose-500" : ""}`} />
             </button>
@@ -243,7 +233,7 @@ function StorePage() {
                 <div className="flex flex-wrap items-center gap-1.5">
                   <h1 className="truncate text-xl font-black tracking-tight sm:text-3xl">{store.name}</h1>
                   {store.is_verified && (
-                    <BadgeCheck className="h-5 w-5 shrink-0 text-primary" aria-label="Verificēts partneris" />
+                    <BadgeCheck className="h-5 w-5 shrink-0 text-primary" aria-label={t.store.verifiedPartner} />
                   )}
                 </div>
                 <p className="mt-1 truncate text-sm text-muted-foreground sm:text-base">
@@ -255,12 +245,12 @@ function StorePage() {
                   {ads.length > 0 && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-semibold text-primary">
                       <Sparkles className="h-3 w-3" />
-                      {ads.length} {ads.length === 1 ? "aktīva atlaide" : "aktīvas atlaides"}
+                      {t.store.activeDealsChip(ads.length)}
                     </span>
                   )}
                   {yearsInBusiness && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground">
-                      <Calendar className="h-3 w-3" /> {yearsInBusiness}+ {yearsInBusiness === 1 ? "gads" : "gadi"}
+                      <Calendar className="h-3 w-3" /> {t.store.yearsChip(yearsInBusiness)}
                     </span>
                   )}
                 </div>
@@ -273,7 +263,7 @@ function StorePage() {
                 href="#discounts"
                 className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
               >
-                <Sparkles className="h-4 w-4" /> Atlaides
+                <Sparkles className="h-4 w-4" /> {t.store.discounts}
               </a>
               {store.phone ? (
                 <a
@@ -281,11 +271,11 @@ function StorePage() {
                   onClick={() => trackEvent("call_clicked", { store_id: store.id })}
                   className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
                 >
-                  <Phone className="h-4 w-4" /> Zvanīt
+                  <Phone className="h-4 w-4" /> {t.store.call}
                 </a>
               ) : (
                 <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-                  <Phone className="h-4 w-4" /> Zvanīt
+                  <Phone className="h-4 w-4" /> {t.store.call}
                 </span>
               )}
               {directionsUrl ? (
@@ -296,11 +286,11 @@ function StorePage() {
                   onClick={() => trackEvent("directions_clicked", { store_id: store.id })}
                   className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
                 >
-                  <Navigation className="h-4 w-4" /> Maršruts
+                  <Navigation className="h-4 w-4" /> {t.store.directions}
                 </a>
               ) : (
                 <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-                  <Navigation className="h-4 w-4" /> Maršruts
+                  <Navigation className="h-4 w-4" /> {t.store.directions}
                 </span>
               )}
               <button
@@ -309,7 +299,7 @@ function StorePage() {
                 className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
                 <Heart className={`h-4 w-4 ${saved ? "fill-rose-500 text-rose-500" : ""}`} />
-                {saved ? "Saglabāts" : "Saglabāt"}
+                {saved ? t.store.saved : t.store.save}
               </button>
             </div>
           </div>
@@ -321,7 +311,7 @@ function StorePage() {
         {description && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Par uzņēmumu
+              {t.store.about}
             </h2>
             <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-foreground/85">
               {aboutOpen || !isLongDesc ? description : shortDesc}
@@ -332,7 +322,7 @@ function StorePage() {
                 onClick={() => setAboutOpen((v) => !v)}
                 className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
               >
-                {aboutOpen ? "Lasīt mazāk" : "Lasīt vairāk"}
+                {aboutOpen ? t.store.readLess : t.store.readMore}
                 <ChevronDown className={`h-4 w-4 transition ${aboutOpen ? "rotate-180" : ""}`} />
               </button>
             )}
@@ -350,11 +340,11 @@ function StorePage() {
         <section id="discounts" className="mt-12 scroll-mt-20">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Aktīvās atlaides</h2>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{t.store.activeDeals}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {ads.length > 0
-                  ? `${ads.length} ${ads.length === 1 ? "piedāvājums" : "piedāvājumi"} pieejami tagad`
-                  : "Pašlaik nav aktīvu piedāvājumu"}
+                  ? t.store.dealsAvailable(ads.length)
+                  : t.store.noActiveDeals}
               </p>
             </div>
           </div>
@@ -374,7 +364,7 @@ function StorePage() {
         {(mapEmbedSrc || store.address) && (
           <section className="mt-12">
             <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Atrašanās vieta
+              {t.store.location}
             </h2>
             <div className="mt-3 overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
               {mapEmbedSrc && (
@@ -473,17 +463,17 @@ function StorePage() {
         {/* TRUST / ACTIVITY */}
         <section className="mt-12 grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-border/60 bg-card p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Aktīvās atlaides</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t.store.activeDeals}</div>
             <div className="mt-1 text-2xl font-black">{ads.length}</div>
           </div>
           <div className="rounded-2xl border border-border/60 bg-card p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">PARTNERIS KOPŠ</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t.store.partnerSince}</div>
             <div className="mt-1 text-2xl font-black">
               {store.created_at ? new Date(store.created_at).getFullYear() : "—"}
             </div>
           </div>
           <div className="rounded-2xl border border-border/60 bg-card p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Atjaunots</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t.store.updated}</div>
             <div className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold">
               <Clock className="h-4 w-4 text-muted-foreground" /> {lastUpdated ?? "—"}
             </div>
@@ -510,6 +500,7 @@ function StoreStickyBar({
   directionsUrl: string | null;
   storeId: string;
 }) {
+  const { t } = useI18n();
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 shadow-[0_-6px_24px_-8px_rgba(15,23,42,0.18)] backdrop-blur sm:hidden">
       <div className="grid grid-cols-3 gap-2">
@@ -518,7 +509,7 @@ function StoreStickyBar({
           onClick={() => trackEvent("sticky_discounts_clicked", { store_id: storeId })}
           className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm active:scale-[0.98]"
         >
-          <Sparkles className="h-4 w-4" /> {adsCount > 0 ? `${adsCount} atlaides` : "Atlaides"}
+          <Sparkles className="h-4 w-4" /> {t.store.discountsCount(adsCount)}
         </a>
         {phone ? (
           <a
@@ -526,11 +517,11 @@ function StoreStickyBar({
             onClick={() => trackEvent("sticky_call_clicked", { store_id: storeId })}
             className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold active:scale-[0.98]"
           >
-            <Phone className="h-4 w-4" /> Zvanīt
+            <Phone className="h-4 w-4" /> {t.store.call}
           </a>
         ) : (
           <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-            <Phone className="h-4 w-4" /> Zvanīt
+            <Phone className="h-4 w-4" /> {t.store.call}
           </span>
         )}
         {directionsUrl ? (
@@ -541,11 +532,11 @@ function StoreStickyBar({
             onClick={() => trackEvent("sticky_directions_clicked", { store_id: storeId })}
             className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold active:scale-[0.98]"
           >
-            <Navigation className="h-4 w-4" /> Maršruts
+            <Navigation className="h-4 w-4" /> {t.store.directions}
           </a>
         ) : (
           <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-            <Navigation className="h-4 w-4" /> Maršruts
+            <Navigation className="h-4 w-4" /> {t.store.directions}
           </span>
         )}
       </div>

@@ -84,6 +84,28 @@ export const dict = {
     map: { title: "Karte" },
     about: { title: "Par TavasAtlaides", body: "TavasAtlaides ir vietējais piedāvājumu marketplace Rīgā. Mēs savienojam pircējus ar tuvāko veikalu akcijām." },
     forMerchants: { title: "Veikaliem", body: "Piesaistiet jaunus klientus ar Tavasatlaides.lv! Publicējiet savas akcijas, atlaides, preces un pakalpojumus platformā, kuru ik dienu apmeklē cilvēki, kas meklē izdevīgākos piedāvājumus. Palieliniet uzņēmuma redzamību, klientu plūsmu un pārdošanas apjomus ar vienkāršu un efektīvu reklāmas risinājumu.", cta: "Reģistrēties bez maksas", benefits: ["Bezmaksas piedāvājumu publicēšana", "Parādies kartē Rīgā", "Sasniedz trīsvalodu auditoriju (LV/EN/RU)", "Sekot līdzi skatījumiem un saglabājumiem"] },
+    store: {
+      discounts: "Atlaides", call: "Zvanīt", directions: "Maršruts", save: "Saglabāt", saved: "Saglabāts",
+      verifiedPartner: "Verificēts partneris", about: "Par uzņēmumu", readMore: "Lasīt vairāk", readLess: "Lasīt mazāk",
+      activeDeals: "Aktīvās atlaides", noActiveDeals: "Pašlaik nav aktīvu piedāvājumu",
+      location: "Atrašanās vieta", partnerSince: "PARTNERIS KOPŠ", updated: "Atjaunots",
+      activeDealsChip: (n: number) => `${n} ${n === 1 ? "aktīva atlaide" : "aktīvas atlaides"}`,
+      dealsAvailable: (n: number) => `${n} ${n === 1 ? "piedāvājums" : "piedāvājumi"} pieejami tagad`,
+      yearsChip: (n: number) => `${n}+ ${n === 1 ? "gads" : "gadi"}`,
+      discountsCount: (n: number) => (n > 0 ? `${n} atlaides` : "Atlaides"),
+    },
+    homeValues: {
+      nearTitle: "Tuvumā tavai atrašanās vietai", nearBody: "Atrodi piedāvājumus pēc GPS un kartes Rīgā un visā Baltijā.",
+      dailyTitle: "Atjaunoti katru dienu", dailyBody: "Akcijas un atlaides parādās uzreiz, tiklīdz veikals tās publicē.",
+      trustTitle: "Uzticami vietējie veikali", trustBody: "Verificēti partneri, caurspīdīga moderācija, godīgi piedāvājumi.",
+      aboutSub: "Par projektu un mūsu misiju.", faqSub: "Biežāk uzdotie jautājumi.",
+      contactTitle: "Kontakti", contactSub: "Sazinies ar mums.",
+    },
+    signInPrompt: {
+      title: "Pieslēdzies, lai redzētu savu profilu",
+      body: "Pieslēdzies, lai saglabātu mīļākos piedāvājumus, saņemtu paziņojumus un pārvaldītu savu kontu.",
+      signIn: "Pieslēgties", signUp: "Reģistrēties",
+    },
     common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide" },
     time: { day: "diena", days: "dienas", hour: "stunda", hours: "stundas", minute: "minūte", minutes: "minūtes", second: "sekunde", seconds: "sekundes", left: "atlicis", ended: "Beidzies" },
   },
@@ -164,6 +186,28 @@ export const dict = {
     map: { title: "Map" },
     about: { title: "About TavasAtlaides", body: "TavasAtlaides is a local deals marketplace for Riga. We connect shoppers with discounts from nearby stores." },
     forMerchants: { title: "For merchants", body: "Attract new customers with Tavasatlaides.lv! Publish your promotions, discounts, products and services on a platform visited every day by people looking for the best deals. Boost your business visibility, customer flow and sales with a simple and effective advertising solution.", cta: "Sign up free", benefits: ["Free to publish your deals", "Appear on the map in Riga", "Reach trilingual audience (LV/EN/RU)", "Track views and saves per ad"] },
+    store: {
+      discounts: "Deals", call: "Call", directions: "Directions", save: "Save", saved: "Saved",
+      verifiedPartner: "Verified partner", about: "About the business", readMore: "Read more", readLess: "Read less",
+      activeDeals: "Active deals", noActiveDeals: "No active deals right now",
+      location: "Location", partnerSince: "PARTNER SINCE", updated: "Updated",
+      activeDealsChip: (n: number) => `${n} active deal${n === 1 ? "" : "s"}`,
+      dealsAvailable: (n: number) => `${n} deal${n === 1 ? "" : "s"} available now`,
+      yearsChip: (n: number) => `${n}+ year${n === 1 ? "" : "s"}`,
+      discountsCount: (n: number) => (n > 0 ? `${n} deals` : "Deals"),
+    },
+    homeValues: {
+      nearTitle: "Right where you are", nearBody: "Find deals by GPS and map in Riga and across the Baltics.",
+      dailyTitle: "Updated every day", dailyBody: "Promotions and discounts appear the moment a store publishes them.",
+      trustTitle: "Trusted local businesses", trustBody: "Verified partners, transparent moderation, fair offers.",
+      aboutSub: "About the project and our mission.", faqSub: "Frequently asked questions.",
+      contactTitle: "Contact", contactSub: "Get in touch with us.",
+    },
+    signInPrompt: {
+      title: "Sign in to see your profile",
+      body: "Sign in to save your favorite deals, get notifications and manage your account.",
+      signIn: "Sign in", signUp: "Sign up",
+    },
     common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off" },
     time: { day: "day", days: "days", hour: "hour", hours: "hours", minute: "minute", minutes: "minutes", second: "second", seconds: "seconds", left: "left", ended: "Ended" },
   },
@@ -244,6 +288,46 @@ export const dict = {
     map: { title: "Карта" },
     about: { title: "О TavasAtlaides", body: "TavasAtlaides — местный маркетпейс скидок в Риге. Мы соединяем покупателей с акциями ближайших магазинов." },
     forMerchants: { title: "Магазинам", body: "Привлекайте новых клиентов с Tavasatlaides.lv! Публикуйте свои акции, скидки, товары и услуги на платформе, которую ежедневно посещают люди в поиске самых выгодных предложений. Увеличивайте видимость бизнеса, поток клиентов и объёмы продаж с помощью простого и эффективного рекламного решения.", cta: "Регистрация бесплатно", benefits: ["Бесплатная публикация акций", "Появитесь на карте в Риге", "Аудитория на трёх языках (LV/EN/RU)", "Отслеживайте просмотры и сохранения"] },
+    store: {
+      discounts: "Акции", call: "Позвонить", directions: "Маршрут", save: "Сохранить", saved: "Сохранено",
+      verifiedPartner: "Проверенный партнёр", about: "О компании", readMore: "Читать далее", readLess: "Свернуть",
+      activeDeals: "Активные акции", noActiveDeals: "Сейчас нет активных акций",
+      location: "Расположение", partnerSince: "ПАРТНЁР С", updated: "Обновлено",
+      activeDealsChip: (n: number) => {
+        const m10 = n % 10, m100 = n % 100;
+        const w = m10 === 1 && m100 !== 11 ? "активная акция"
+          : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? "активные акции"
+          : "активных акций";
+        return `${n} ${w}`;
+      },
+      dealsAvailable: (n: number) => {
+        const m10 = n % 10, m100 = n % 100;
+        const w = m10 === 1 && m100 !== 11 ? "акция доступна сейчас"
+          : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? "акции доступны сейчас"
+          : "акций доступно сейчас";
+        return `${n} ${w}`;
+      },
+      yearsChip: (n: number) => {
+        const m10 = n % 10, m100 = n % 100;
+        const w = m10 === 1 && m100 !== 11 ? "год"
+          : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? "года"
+          : "лет";
+        return `${n}+ ${w}`;
+      },
+      discountsCount: (n: number) => (n > 0 ? `${n} акций` : "Акции"),
+    },
+    homeValues: {
+      nearTitle: "Рядом с вами", nearBody: "Находите акции по GPS и карте в Риге и по всей Прибалтике.",
+      dailyTitle: "Обновляется каждый день", dailyBody: "Акции и скидки появляются сразу, как только магазин их публикует.",
+      trustTitle: "Надёжные местные бизнесы", trustBody: "Проверенные партнёры, прозрачная модерация, честные предложения.",
+      aboutSub: "О проекте и нашей миссии.", faqSub: "Часто задаваемые вопросы.",
+      contactTitle: "Контакты", contactSub: "Свяжитесь с нами.",
+    },
+    signInPrompt: {
+      title: "Войдите, чтобы увидеть свой профиль",
+      body: "Войдите, чтобы сохранять любимые акции, получать уведомления и управлять аккаунтом.",
+      signIn: "Войти", signUp: "Регистрация",
+    },
     common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка" },
     time: { day: "день", days: "дня", hours: "часа", hour: "час", minute: "минута", minutes: "минуты", second: "секунда", seconds: "секунды", left: "осталось", ended: "Закончилось" },
   },

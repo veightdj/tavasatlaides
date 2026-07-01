@@ -274,9 +274,9 @@ function Marketing() {
       <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
         <div className="grid gap-6 md:grid-cols-3">
           {[
-            { icon: MapPin, title: "Tuvumā tavai atrašanās vietai", body: "Atrodi piedāvājumus pēc GPS un kartes Rīgā un visā Baltijā." },
-            { icon: Zap, title: "Atjaunoti katru dienu", body: "Akcijas un atlaides parādās uzreiz, tiklīdz veikals tās publicē." },
-            { icon: ShieldCheck, title: "Uzticami vietējie veikali", body: "Verificēti partneri, caurspīdīga moderācija, godīgi piedāvājumi." },
+            { icon: MapPin, title: t.homeValues.nearTitle, body: t.homeValues.nearBody },
+            { icon: Zap, title: t.homeValues.dailyTitle, body: t.homeValues.dailyBody },
+            { icon: ShieldCheck, title: t.homeValues.trustTitle, body: t.homeValues.trustBody },
           ].map(({ icon: Icon, title, body }) => (
             <div key={title} className="rounded-2xl border border-border bg-card p-6">
               <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -335,15 +335,15 @@ function Marketing() {
         <div className="grid gap-4 sm:grid-cols-3">
           <Link to="/about" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
             <h3 className="font-bold">{t.nav.about}</h3>
-            <p className="text-sm text-muted-foreground mt-1">Par projektu un mūsu misiju.</p>
+            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.aboutSub}</p>
           </Link>
           <Link to="/faq" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
             <h3 className="font-bold">FAQ</h3>
-            <p className="text-sm text-muted-foreground mt-1">Biežāk uzdotie jautājumi.</p>
+            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.faqSub}</p>
           </Link>
           <Link to="/contact" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
-            <h3 className="font-bold">Kontakti</h3>
-            <p className="text-sm text-muted-foreground mt-1">Sazinies ar mums.</p>
+            <h3 className="font-bold">{t.homeValues.contactTitle}</h3>
+            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.contactSub}</p>
           </Link>
         </div>
       </section>
