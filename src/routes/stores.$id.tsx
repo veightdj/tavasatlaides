@@ -510,6 +510,7 @@ function StoreStickyBar({
   directionsUrl: string | null;
   storeId: string;
 }) {
+  const { t } = useI18n();
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 shadow-[0_-6px_24px_-8px_rgba(15,23,42,0.18)] backdrop-blur sm:hidden">
       <div className="grid grid-cols-3 gap-2">
@@ -518,7 +519,7 @@ function StoreStickyBar({
           onClick={() => trackEvent("sticky_discounts_clicked", { store_id: storeId })}
           className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm active:scale-[0.98]"
         >
-          <Sparkles className="h-4 w-4" /> {adsCount > 0 ? `${adsCount} atlaides` : "Atlaides"}
+          <Sparkles className="h-4 w-4" /> {t.store.discountsCount(adsCount)}
         </a>
         {phone ? (
           <a
@@ -526,11 +527,11 @@ function StoreStickyBar({
             onClick={() => trackEvent("sticky_call_clicked", { store_id: storeId })}
             className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold active:scale-[0.98]"
           >
-            <Phone className="h-4 w-4" /> Zvanīt
+            <Phone className="h-4 w-4" /> {t.store.call}
           </a>
         ) : (
           <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-            <Phone className="h-4 w-4" /> Zvanīt
+            <Phone className="h-4 w-4" /> {t.store.call}
           </span>
         )}
         {directionsUrl ? (
@@ -541,11 +542,11 @@ function StoreStickyBar({
             onClick={() => trackEvent("sticky_directions_clicked", { store_id: storeId })}
             className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold active:scale-[0.98]"
           >
-            <Navigation className="h-4 w-4" /> Maršruts
+            <Navigation className="h-4 w-4" /> {t.store.directions}
           </a>
         ) : (
           <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-            <Navigation className="h-4 w-4" /> Maršruts
+            <Navigation className="h-4 w-4" /> {t.store.directions}
           </span>
         )}
       </div>
