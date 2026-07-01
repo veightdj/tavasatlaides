@@ -374,7 +374,7 @@ function StorePage() {
         {(mapEmbedSrc || store.address) && (
           <section className="mt-12">
             <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Atrašanās vieta
+              {t.store.location}
             </h2>
             <div className="mt-3 overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
               {mapEmbedSrc && (
