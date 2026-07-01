@@ -1119,6 +1119,7 @@ export type Database = {
         Returns: boolean
       }
       detect_deal_fraud: { Args: { _ad_id: string }; Returns: number }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
