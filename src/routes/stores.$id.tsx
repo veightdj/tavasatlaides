@@ -273,7 +273,7 @@ function StorePage() {
                 href="#discounts"
                 className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
               >
-                <Sparkles className="h-4 w-4" /> Atlaides
+                <Sparkles className="h-4 w-4" /> {t.store.discounts}
               </a>
               {store.phone ? (
                 <a
@@ -281,11 +281,11 @@ function StorePage() {
                   onClick={() => trackEvent("call_clicked", { store_id: store.id })}
                   className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
                 >
-                  <Phone className="h-4 w-4" /> Zvanīt
+                  <Phone className="h-4 w-4" /> {t.store.call}
                 </a>
               ) : (
                 <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-                  <Phone className="h-4 w-4" /> Zvanīt
+                  <Phone className="h-4 w-4" /> {t.store.call}
                 </span>
               )}
               {directionsUrl ? (
@@ -296,11 +296,11 @@ function StorePage() {
                   onClick={() => trackEvent("directions_clicked", { store_id: store.id })}
                   className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
                 >
-                  <Navigation className="h-4 w-4" /> Maršruts
+                  <Navigation className="h-4 w-4" /> {t.store.directions}
                 </a>
               ) : (
                 <span className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted text-sm font-semibold text-muted-foreground">
-                  <Navigation className="h-4 w-4" /> Maršruts
+                  <Navigation className="h-4 w-4" /> {t.store.directions}
                 </span>
               )}
               <button
@@ -309,7 +309,7 @@ function StorePage() {
                 className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-sm font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
                 <Heart className={`h-4 w-4 ${saved ? "fill-rose-500 text-rose-500" : ""}`} />
-                {saved ? "Saglabāts" : "Saglabāt"}
+                {saved ? t.store.saved : t.store.save}
               </button>
             </div>
           </div>
