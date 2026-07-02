@@ -224,6 +224,10 @@ function DealDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deal?.id]);
 
+  // Real-time "active now" — re-evaluates as start/end windows pass.
+  // Must be called before any early returns to keep hook order stable.
+  const isLive = useIsLive(deal?.starts_at ?? null, deal?.ends_at ?? null, deal?.status ?? null);
+
   if (isLoading) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
   if (error || !deal) throw notFound();
 
@@ -241,8 +245,6 @@ function DealDetail() {
       ? `€${formatPrice(deal.price_sale)}`
       : null);
 
-  // Real-time "active now" — re-evaluates as start/end windows pass.
-  const isLive = useIsLive(deal.starts_at, deal.ends_at, deal.status);
 
   const gUrl = store ? googleMapsUrl(store) : null;
   const wUrl = store ? wazeUrl(store) : null;
