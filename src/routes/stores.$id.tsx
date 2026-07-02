@@ -139,6 +139,12 @@ function StorePage() {
     },
   });
 
+  const yearsInBusiness = useMemo(() => {
+    if (!store?.created_at) return null;
+    const years = (Date.now() - new Date(store.created_at).getTime()) / (365.25 * 86400000);
+    return years >= 1 ? Math.floor(years) : null;
+  }, [store?.created_at]);
+
   if (!store) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
 
   const saved = has(store.id);
@@ -167,11 +173,6 @@ function StorePage() {
     ? bestOffer.discount_pct ? `-${bestOffer.discount_pct}% ${bestOffer.title}` : bestOffer.title
     : undefined;
 
-  const yearsInBusiness = useMemo(() => {
-    if (!store.created_at) return null;
-    const years = (Date.now() - new Date(store.created_at).getTime()) / (365.25 * 86400000);
-    return years >= 1 ? Math.floor(years) : null;
-  }, [store.created_at]);
 
   const lastUpdated = store.updated_at
     ? new Date(store.updated_at).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })
