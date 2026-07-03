@@ -157,8 +157,41 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
         </label>
       </div>
 
-      <F label={t.merchant.adTitle}><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></F>
-      <F label={t.merchant.adDescription}><Textarea rows={4} className="min-h-[120px]" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></F>
+      <div className="space-y-2">
+        <Label>{t.merchant.adTitle} / {t.merchant.adDescription}</Label>
+        <Tabs defaultValue="lv" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            {LOCALE_TABS.map((tab) => (
+              <TabsTrigger key={tab.code} value={tab.code} className="text-sm">
+                <span className="mr-1.5">{tab.flag}</span>
+                {tab.code.toUpperCase()}
+                {tab.code === "lv" && <span className="ml-1 text-destructive">*</span>}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {LOCALE_TABS.map((tab) => {
+            const titleKey = `title_${tab.code}` as const;
+            const descKey = `description_${tab.code}` as const;
+            return (
+              <TabsContent key={tab.code} value={tab.code} className="space-y-3 pt-3">
+                <Input
+                  placeholder={`${t.merchant.adTitle} (${tab.label})`}
+                  value={form[titleKey]}
+                  onChange={(e) => setForm({ ...form, [titleKey]: e.target.value })}
+                  required={tab.code === "lv"}
+                />
+                <Textarea
+                  placeholder={`${t.merchant.adDescription} (${tab.label})`}
+                  rows={4}
+                  className="min-h-[120px]"
+                  value={form[descKey]}
+                  onChange={(e) => setForm({ ...form, [descKey]: e.target.value })}
+                />
+              </TabsContent>
+            );
+          })}
+        </Tabs>
+      </div>
       <F label={t.merchant.category}>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
