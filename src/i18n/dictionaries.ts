@@ -79,7 +79,10 @@ export const dict = {
       noAds: "Vēl nav neviena sludinājuma.", createFirst: "Izveido pirmo sludinājumu",
       stats: { views: "Skatījumi", active: "Aktīvi", total: "Kopā", clicks: "Klikšķi", ctr: "CTR", saves: "Saglabāts", shares: "Dalīšanās", topDeals: "Top piedāvājumi", topDealsSub: "Labākie pēc klikšķiem", noData: "Vēl nav datu" },
       delete: "Dzēst", edit: "Rediģēt", confirmDelete: "Vai tiešām dzēst?",
+      titleRequiredLv: "Latviešu virsraksts ir obligāts",
+      fixTabLv: "Aizpildi cilni LV, lai saglabātu",
     },
+
     favorites: { title: "Saglabātie piedāvājumi", empty: "Vēl neviens piedāvājums nav saglabāts." },
     map: { title: "Karte" },
     about: { title: "Par TavasAtlaides", body: "TavasAtlaides ir vietējais piedāvājumu marketplace Rīgā. Mēs savienojam pircējus ar tuvāko veikalu akcijām." },
@@ -181,7 +184,10 @@ export const dict = {
       noAds: "No ads yet.", createFirst: "Create your first ad",
       stats: { views: "Views", active: "Active", total: "Total", clicks: "Clicks", ctr: "CTR", saves: "Saves", shares: "Shares", topDeals: "Top Deals", topDealsSub: "Best performing by clicks", noData: "No data yet" },
       delete: "Delete", edit: "Edit", confirmDelete: "Really delete?",
+      titleRequiredLv: "Latvian title is required",
+      fixTabLv: "Fill in the LV tab to save",
     },
+
     favorites: { title: "Saved deals", empty: "No saved deals yet." },
     map: { title: "Map" },
     about: { title: "About TavasAtlaides", body: "TavasAtlaides is a local deals marketplace for Riga. We connect shoppers with discounts from nearby stores." },
@@ -283,7 +289,10 @@ export const dict = {
       noAds: "Пока нет объявлений.", createFirst: "Создать первое",
       stats: { views: "Просмотры", active: "Активные", total: "Всего", clicks: "Клики", ctr: "CTR", saves: "Сохранения", shares: "Поделились", topDeals: "Топ акций", topDealsSub: "Лучшие по кликам", noData: "Пока нет данных" },
       delete: "Удалить", edit: "Изменить", confirmDelete: "Точно удалить?",
+      titleRequiredLv: "Латышский заголовок обязателен",
+      fixTabLv: "Заполните вкладку LV, чтобы сохранить",
     },
+
     favorites: { title: "Сохранённые акции", empty: "Пока ничего не сохранено." },
     map: { title: "Карта" },
     about: { title: "О TavasAtlaides", body: "TavasAtlaides — местный маркетпейс скидок в Риге. Мы соединяем покупателей с акциями ближайших магазинов." },
