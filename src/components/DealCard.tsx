@@ -3,6 +3,7 @@ import { Heart, BadgeCheck, MapPin, Navigation, Clock } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
 import { useCategories, localizedCategoryName } from "@/lib/categories";
+import { localizedDealTitle } from "@/lib/deal-i18n";
 
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
@@ -20,6 +21,12 @@ type Deal = {
   starts_at?: string | null;
   status?: string | null;
   description?: string | null;
+  title_lv?: string | null;
+  title_en?: string | null;
+  title_ru?: string | null;
+  description_lv?: string | null;
+  description_en?: string | null;
+  description_ru?: string | null;
   stores?: {
     id: string;
     name: string;
@@ -85,6 +92,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
   const categorySlug = store?.category ?? deal.category;
   const categoryRow = categories.find((c) => c.slug === categorySlug);
   const categoryLabel = categoryRow ? localizedCategoryName(categoryRow, lang) : categorySlug;
+  const dealTitle = localizedDealTitle(deal, lang);
 
   // Discount headline
   const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;
@@ -109,7 +117,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
         {deal.cover_image_url ? (
           <img
             src={deal.cover_image_url}
-            alt={deal.title}
+            alt={dealTitle}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
           />
@@ -175,7 +183,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
 
         <DealShareButton
           dealId={deal.id}
-          title={deal.title}
+          title={dealTitle}
           description={store?.name}
           discountPct={deal.discount_pct}
           className="absolute bottom-3 right-3 h-9 w-9 min-h-0 min-w-0 rounded-full bg-background/90 backdrop-blur hover:bg-background"
@@ -228,7 +236,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
         {/* Deal title */}
         <Link to="/deals/$id" params={{ id: deal.id }}>
           <h4 className="line-clamp-2 text-[15px] font-semibold leading-snug text-foreground/90 transition group-hover:text-primary">
-            {deal.title}
+            {dealTitle}
           </h4>
         </Link>
 

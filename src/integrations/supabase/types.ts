@@ -264,6 +264,9 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           description: string | null
+          description_en: string | null
+          description_lv: string | null
+          description_ru: string | null
           discount_pct: number | null
           ends_at: string | null
           id: string
@@ -274,6 +277,9 @@ export type Database = {
           status: string
           store_id: string
           title: string
+          title_en: string | null
+          title_lv: string
+          title_ru: string | null
           updated_at: string
         }
         Insert: {
@@ -282,6 +288,9 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           description?: string | null
+          description_en?: string | null
+          description_lv?: string | null
+          description_ru?: string | null
           discount_pct?: number | null
           ends_at?: string | null
           id?: string
@@ -292,6 +301,9 @@ export type Database = {
           status?: string
           store_id: string
           title: string
+          title_en?: string | null
+          title_lv: string
+          title_ru?: string | null
           updated_at?: string
         }
         Update: {
@@ -300,6 +312,9 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           description?: string | null
+          description_en?: string | null
+          description_lv?: string | null
+          description_ru?: string | null
           discount_pct?: number | null
           ends_at?: string | null
           id?: string
@@ -310,6 +325,9 @@ export type Database = {
           status?: string
           store_id?: string
           title?: string
+          title_en?: string | null
+          title_lv?: string
+          title_ru?: string | null
           updated_at?: string
         }
         Relationships: [

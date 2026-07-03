@@ -9,9 +9,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useI18n } from "@/i18n/use-i18n";
 import { useCategories } from "@/lib/categories";
 import { uploadImage } from "@/lib/upload";
+
+const LOCALE_TABS: { code: "lv" | "en" | "ru"; label: string; flag: string }[] = [
+  { code: "lv", label: "Latviešu", flag: "🇱🇻" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "ru", label: "Русский", flag: "🇷🇺" },
+];
 
 export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?: () => void; embedded?: boolean }) {
   const isNew = !adId;
@@ -34,7 +41,9 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
   });
 
   const [form, setForm] = useState({
-    title: "", description: "", category: "food",
+    title_lv: "", title_en: "", title_ru: "",
+    description_lv: "", description_en: "", description_ru: "",
+    category: "food",
     discount_pct: "" as string,
     price_original: "" as string, price_sale: "" as string,
     starts_at: new Date().toISOString().slice(0, 10),
@@ -47,16 +56,22 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
 
   useEffect(() => {
     if (!isNew && ad) {
+      const a = ad as any;
       setForm({
-        title: ad.title, description: ad.description ?? "",
-        category: ad.category,
-        discount_pct: ad.discount_pct?.toString() ?? "",
-        price_original: ad.price_original?.toString() ?? "",
-        price_sale: ad.price_sale?.toString() ?? "",
-        starts_at: ad.starts_at ? new Date(ad.starts_at).toISOString().slice(0, 10) : "",
-        ends_at: ad.ends_at ? new Date(ad.ends_at).toISOString().slice(0, 10) : "",
-        status: ad.status,
-        cover_image_url: ad.cover_image_url ?? "",
+        title_lv: a.title_lv ?? a.title ?? "",
+        title_en: a.title_en ?? "",
+        title_ru: a.title_ru ?? "",
+        description_lv: a.description_lv ?? a.description ?? "",
+        description_en: a.description_en ?? "",
+        description_ru: a.description_ru ?? "",
+        category: a.category,
+        discount_pct: a.discount_pct?.toString() ?? "",
+        price_original: a.price_original?.toString() ?? "",
+        price_sale: a.price_sale?.toString() ?? "",
+        starts_at: a.starts_at ? new Date(a.starts_at).toISOString().slice(0, 10) : "",
+        ends_at: a.ends_at ? new Date(a.ends_at).toISOString().slice(0, 10) : "",
+        status: a.status,
+        cover_image_url: a.cover_image_url ?? "",
       });
     } else if (isNew && store) {
       // Restore draft from localStorage if present
@@ -87,8 +102,14 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
       if (!store) throw new Error("Store not set up");
       const payload: any = {
         store_id: store.id,
-        title: form.title,
-        description: form.description || null,
+        title: form.title_lv,
+        description: form.description_lv || null,
+        title_lv: form.title_lv,
+        title_en: form.title_en || null,
+        title_ru: form.title_ru || null,
+        description_lv: form.description_lv || null,
+        description_en: form.description_en || null,
+        description_ru: form.description_ru || null,
         category: form.category,
         discount_pct: form.discount_pct ? Number(form.discount_pct) : null,
         price_original: form.price_original ? Number(form.price_original) : null,
@@ -136,8 +157,41 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
         </label>
       </div>
 
-      <F label={t.merchant.adTitle}><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></F>
-      <F label={t.merchant.adDescription}><Textarea rows={4} className="min-h-[120px]" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></F>
+      <div className="space-y-2">
+        <Label>{t.merchant.adTitle} / {t.merchant.adDescription}</Label>
+        <Tabs defaultValue="lv" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            {LOCALE_TABS.map((tab) => (
+              <TabsTrigger key={tab.code} value={tab.code} className="text-sm">
+                <span className="mr-1.5">{tab.flag}</span>
+                {tab.code.toUpperCase()}
+                {tab.code === "lv" && <span className="ml-1 text-destructive">*</span>}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {LOCALE_TABS.map((tab) => {
+            const titleKey = `title_${tab.code}` as const;
+            const descKey = `description_${tab.code}` as const;
+            return (
+              <TabsContent key={tab.code} value={tab.code} className="space-y-3 pt-3">
+                <Input
+                  placeholder={`${t.merchant.adTitle} (${tab.label})`}
+                  value={form[titleKey]}
+                  onChange={(e) => setForm({ ...form, [titleKey]: e.target.value })}
+                  required={tab.code === "lv"}
+                />
+                <Textarea
+                  placeholder={`${t.merchant.adDescription} (${tab.label})`}
+                  rows={4}
+                  className="min-h-[120px]"
+                  value={form[descKey]}
+                  onChange={(e) => setForm({ ...form, [descKey]: e.target.value })}
+                />
+              </TabsContent>
+            );
+          })}
+        </Tabs>
+      </div>
       <F label={t.merchant.category}>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
