@@ -21,6 +21,12 @@ type Deal = {
   starts_at?: string | null;
   status?: string | null;
   description?: string | null;
+  title_lv?: string | null;
+  title_en?: string | null;
+  title_ru?: string | null;
+  description_lv?: string | null;
+  description_en?: string | null;
+  description_ru?: string | null;
   stores?: {
     id: string;
     name: string;
