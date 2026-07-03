@@ -99,9 +99,19 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
     return () => clearTimeout(id);
   }, [form, isNew, draftKey]);
 
+  const [showErrors, setShowErrors] = useState(false);
+  const [activeLocaleTab, setActiveLocaleTab] = useState<"lv" | "en" | "ru">("lv");
+  const errors = {
+    title_lv: !form.title_lv.trim() ? (t.merchant as any).titleRequiredLv as string : "",
+  };
+  const hasLvError = !!errors.title_lv;
+
   const save = useMutation({
     mutationFn: async () => {
       if (!store) throw new Error("Store not set up");
+      if (hasLvError) {
+        throw new Error((t.merchant as any).fixTabLv as string);
+      }
       const payload: any = {
         store_id: store.id,
         title: form.title_lv,
@@ -135,6 +145,17 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
     },
     onError: (e: any) => toast.error(e.message),
   });
+
+  const onSave = () => {
+    setShowErrors(true);
+    if (hasLvError) {
+      setActiveLocaleTab("lv");
+      toast.error((t.merchant as any).fixTabLv as string);
+      return;
+    }
+    save.mutate();
+  };
+
 
   const onCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
