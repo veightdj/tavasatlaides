@@ -458,7 +458,7 @@ function DealDetail() {
         {store && (
           <section className="mt-10">
             <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              {(t.deals as any)?.aboutBusiness ?? "About the business"}
+              {t.deals.aboutBusiness}
             </h3>
 
             <Link
