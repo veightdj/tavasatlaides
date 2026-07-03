@@ -258,6 +258,8 @@ export const dict = {
       save: "Сохранить",
       saved: "Сохранено",
       viewStore: "Магазин",
+      viewDeal: "Смотреть акцию",
+
       shareTitle: "Поделиться", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Скопировать ссылку", shareNative: "Ещё...", shareCopied: "Ссылка скопирована",
       shareAndSave: "Поделиться и сохранить",
       shareCardTitle: "Нравится акция?",
