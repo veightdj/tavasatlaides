@@ -31,7 +31,9 @@ const ICON_CHOICES: Record<string, LucideIcon> = {
 };
 
 type Form = {
-  name: string;
+  name_lv: string;
+  name_en: string;
+  name_ru: string;
   slug: string;
   icon: string;
   sort_order: number;
@@ -50,7 +52,7 @@ const COLOR_PRESETS = [
   "oklch(0.65 0.16 25)",
 ];
 
-const EMPTY: Form = { name: "", slug: "", icon: "Tag", sort_order: 100, active: true, color: COLOR_PRESETS[1] };
+const EMPTY: Form = { name_lv: "", name_en: "", name_ru: "", slug: "", icon: "Tag", sort_order: 100, active: true, color: COLOR_PRESETS[1] };
 
 function AdminCategoriesPage() {
   const qc = useQueryClient();
