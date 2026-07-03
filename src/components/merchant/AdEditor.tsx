@@ -102,8 +102,14 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
       if (!store) throw new Error("Store not set up");
       const payload: any = {
         store_id: store.id,
-        title: form.title,
-        description: form.description || null,
+        title: form.title_lv,
+        description: form.description_lv || null,
+        title_lv: form.title_lv,
+        title_en: form.title_en || null,
+        title_ru: form.title_ru || null,
+        description_lv: form.description_lv || null,
+        description_en: form.description_en || null,
+        description_ru: form.description_ru || null,
         category: form.category,
         discount_pct: form.discount_pct ? Number(form.discount_pct) : null,
         price_original: form.price_original ? Number(form.price_original) : null,
