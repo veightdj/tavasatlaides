@@ -270,7 +270,7 @@ function DealDetail() {
       <div className="relative">
         <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted sm:aspect-[21/9]">
           {images[0] ? (
-            <img src={images[0]} alt={deal.title} className="h-full w-full object-cover" />
+            <img src={images[0]} alt={dealTitle} className="h-full w-full object-cover" />
           ) : (
             <div className="h-full w-full bg-gradient-warm" />
           )}
@@ -351,7 +351,7 @@ function DealDetail() {
             <div className="text-[15vw] font-black leading-none tracking-tighter text-primary sm:text-8xl">
               {discountHeadline}
             </div>
-            <h1 className="mt-4 text-balance text-2xl font-bold tracking-tight sm:text-3xl">{deal.title}</h1>
+            <h1 className="mt-4 text-balance text-2xl font-bold tracking-tight sm:text-3xl">{dealTitle}</h1>
             {(deal.price_sale != null || deal.price_original != null) && deal.discount_pct && (
               <div className="mt-2 flex items-baseline justify-center gap-2 text-base">
                 {deal.price_sale != null && <span className="font-bold text-primary">€{formatPrice(deal.price_sale)}</span>}
@@ -361,7 +361,7 @@ function DealDetail() {
           </section>
         )}
         {!discountHeadline && (
-          <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">{deal.title}</h1>
+          <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">{dealTitle}</h1>
         )}
 
         {/* PRIMARY ACTION BAR (sticky on mobile) */}
@@ -414,9 +414,9 @@ function DealDetail() {
         </div>
 
         {/* DESCRIPTION */}
-        {deal.description && (
+        {dealDescription && (
           <section className="mt-10">
-            <p className="whitespace-pre-line text-lg leading-relaxed text-foreground/85">{deal.description}</p>
+            <p className="whitespace-pre-line text-lg leading-relaxed text-foreground/85">{dealDescription}</p>
           </section>
         )}
 
@@ -445,7 +445,7 @@ function DealDetail() {
 
         {/* SHARE + SAVE viral block */}
         <ShareSaveCard
-          title={deal.title}
+          title={dealTitle}
           discountPct={deal.discount_pct}
           storeName={store?.name}
           saved={saved}
