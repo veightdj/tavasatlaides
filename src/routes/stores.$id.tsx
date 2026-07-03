@@ -12,6 +12,7 @@ import { ShareMenu } from "@/components/ShareMenu";
 import { ShopGallerySlider } from "@/components/ShopGallerySlider";
 import { useI18n } from "@/i18n/use-i18n";
 import { useSavedStores } from "@/lib/favorites";
+import { useCategories, localizedCategoryName } from "@/lib/categories";
 
 function trackEvent(name: string, payload: Record<string, unknown>) {
   try {
@@ -95,7 +96,8 @@ export const Route = createFileRoute("/stores/$id")({
 
 function StorePage() {
   const { id } = Route.useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { data: categories = [] } = useCategories();
   const { has, toggle } = useSavedStores();
   const [aboutOpen, setAboutOpen] = useState(false);
 
@@ -149,7 +151,9 @@ function StorePage() {
 
   const saved = has(store.id);
   const social = (store.social_links ?? {}) as Record<string, string | undefined>;
-  const categoryLabel = (t.cat as Record<string, string>)[(store as any).category] ?? (store as any).category;
+  const storeCategorySlug = (store as any).category as string | undefined;
+  const storeCategoryRow = categories.find((c) => c.slug === storeCategorySlug);
+  const categoryLabel = storeCategoryRow ? localizedCategoryName(storeCategoryRow, lang) : storeCategorySlug ?? "";
 
   const dest = buildDest(store as any);
   const directionsUrl = dest

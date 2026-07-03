@@ -13,6 +13,7 @@ import { formatPrice } from "@/lib/utils";
 import { useCountdown, useIsLive } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
 import { ReportDealButton } from "@/components/ReportDealButton";
+import { useCategories, localizedCategoryName } from "@/lib/categories";
 
 function buildDestination(store: any): { query: string; hasCoords: boolean } | null {
   if (!store) return null;
@@ -190,7 +191,8 @@ export const Route = createFileRoute("/deals/$id")({
 
 function DealDetail() {
   const { id } = Route.useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { data: categories = [] } = useCategories();
   const { has, toggle } = useFavorites();
 
   const { data: deal, isLoading, error } = useQuery({
@@ -323,7 +325,7 @@ function DealDetail() {
                   )}
                 </div>
                 <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                  <span>{(t.cat as any)?.[deal.category] ?? deal.category}</span>
+                  <span>{(() => { const r = categories.find((c) => c.slug === deal.category); return r ? localizedCategoryName(r, lang) : deal.category; })()}</span>
                   {store?.city && <> · {store.city}</>}
                 </p>
               </div>

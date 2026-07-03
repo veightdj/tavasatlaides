@@ -6,7 +6,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
-import { useCategories, type CategorySlug } from "@/lib/categories";
+import { useCategories, localizedCategoryName, type CategorySlug } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -19,16 +19,15 @@ type Meta = { bg: string; iconColor: string; ring: string };
 const DEFAULT_META: Meta = { bg: "bg-muted", iconColor: "text-foreground", ring: "ring-muted-foreground/30" };
 
 export function CategoryCircles({ activeSlug }: { activeSlug?: CategorySlug | string }) {
-  const { t } = useI18n();
+  const { lang } = useI18n();
   const { data: categories = [] } = useCategories();
 
   const items = categories.map((c) => ({
     slug: c.slug,
-    name: c.name,
     Icon: ICONS[c.icon] ?? Tag,
     color: c.color,
     meta: DEFAULT_META,
-    label: (t.cat as any)[c.slug] ?? c.name,
+    label: localizedCategoryName(c, lang),
   }));
 
   return (

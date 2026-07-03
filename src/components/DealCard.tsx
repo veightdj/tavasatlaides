@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Heart, BadgeCheck, MapPin, Navigation, Clock } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
+import { useCategories, localizedCategoryName } from "@/lib/categories";
 
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
@@ -70,20 +71,10 @@ function wazeUrl(store: Deal["stores"]): string | null {
     : `https://www.waze.com/ul?q=${encodeURIComponent(dest.query)}&navigate=yes`;
 }
 
-const CATEGORY_LABEL: Record<string, string> = {
-  food: "Restorāns",
-  cafes: "Kafejnīca",
-  beauty: "Skaistums",
-  auto: "Auto",
-  electronics: "Elektronika",
-  home: "Mājai",
-  kids: "Bērniem",
-  events: "Pasākumi",
-};
-
 export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: Deal; distanceKm?: number; showNavigation?: boolean }) {
   const { has, toggle } = useFavorites();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { data: categories = [] } = useCategories();
   const saved = has(deal.id);
   const store = deal.stores;
 
@@ -92,7 +83,8 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
       ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
       : null;
   const categorySlug = store?.category ?? deal.category;
-  const categoryLabel = (t.cat as Record<string, string>)[categorySlug] ?? CATEGORY_LABEL[categorySlug] ?? categorySlug;
+  const categoryRow = categories.find((c) => c.slug === categorySlug);
+  const categoryLabel = categoryRow ? localizedCategoryName(categoryRow, lang) : categorySlug;
 
   // Discount headline
   const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;

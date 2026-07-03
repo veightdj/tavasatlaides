@@ -31,7 +31,9 @@ const ICON_CHOICES: Record<string, LucideIcon> = {
 };
 
 type Form = {
-  name: string;
+  name_lv: string;
+  name_en: string;
+  name_ru: string;
   slug: string;
   icon: string;
   sort_order: number;
@@ -50,7 +52,7 @@ const COLOR_PRESETS = [
   "oklch(0.65 0.16 25)",
 ];
 
-const EMPTY: Form = { name: "", slug: "", icon: "Tag", sort_order: 100, active: true, color: COLOR_PRESETS[1] };
+const EMPTY: Form = { name_lv: "", name_en: "", name_ru: "", slug: "", icon: "Tag", sort_order: 100, active: true, color: COLOR_PRESETS[1] };
 
 function AdminCategoriesPage() {
   const qc = useQueryClient();
@@ -64,7 +66,10 @@ function AdminCategoriesPage() {
     if (open) {
       if (editing) {
         setForm({
-          name: editing.name, slug: editing.slug, icon: editing.icon,
+          name_lv: (editing as any).name_lv ?? editing.name ?? "",
+          name_en: (editing as any).name_en ?? "",
+          name_ru: (editing as any).name_ru ?? "",
+          slug: editing.slug, icon: editing.icon,
           sort_order: editing.sort_order, active: editing.active,
           color: editing.color || COLOR_PRESETS[1],
         });
@@ -79,14 +84,17 @@ function AdminCategoriesPage() {
   const save = useMutation({
     mutationFn: async (f: Form) => {
       const payload = {
-        name: f.name.trim(),
+        name: f.name_lv.trim(),
+        name_lv: f.name_lv.trim(),
+        name_en: f.name_en.trim() || null,
+        name_ru: f.name_ru.trim() || null,
         slug: f.slug.trim(),
         icon: f.icon,
         sort_order: Number(f.sort_order) || 0,
         active: f.active,
         color: f.color,
       };
-      if (!payload.name || !payload.slug) throw new Error("Name and slug are required");
+      if (!payload.name_lv || !payload.slug) throw new Error("Latvian name and slug are required");
       if (editing) {
         const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
         if (error) throw error;
@@ -202,14 +210,22 @@ function AdminCategoriesPage() {
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="grid gap-2">
-              <Label>Name</Label>
+              <Label>Name (LV)</Label>
               <Input
-                value={form.name}
+                value={form.name_lv}
                 onChange={(e) => {
-                  const name = e.target.value;
-                  setForm((f) => ({ ...f, name, slug: slugEdited ? f.slug : slugify(name) }));
+                  const name_lv = e.target.value;
+                  setForm((f) => ({ ...f, name_lv, slug: slugEdited ? f.slug : slugify(name_lv) }));
                 }}
               />
+            </div>
+            <div className="grid gap-2">
+              <Label>Name (EN)</Label>
+              <Input value={form.name_en} onChange={(e) => setForm((f) => ({ ...f, name_en: e.target.value }))} />
+            </div>
+            <div className="grid gap-2">
+              <Label>Name (RU)</Label>
+              <Input value={form.name_ru} onChange={(e) => setForm((f) => ({ ...f, name_ru: e.target.value }))} />
             </div>
             <div className="grid gap-2">
               <Label>Slug</Label>
