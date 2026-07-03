@@ -271,6 +271,12 @@ export const dict = {
       saved: "Сохранено",
       viewStore: "Магазин",
       viewDeal: "Смотреть акцию",
+      howToRedeem: "Как использовать акцию",
+      noCodeNeeded: "Промокод не нужен",
+      justShowPage: "Просто покажите эту страницу в магазине",
+      mentionAtCheckout: "Упомяните акцию на кассе",
+      aboutBusiness: "О компании",
+
 
       shareTitle: "Поделиться", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Скопировать ссылку", shareNative: "Ещё...", shareCopied: "Ссылка скопирована",
       shareAndSave: "Поделиться и сохранить",
