@@ -29,9 +29,14 @@ export function slugify(input: string): string {
     .slice(0, 60);
 }
 
+export type Locale = "lv" | "en" | "ru";
+
 export type Category = {
   id: string;
   name: string;
+  name_lv: string | null;
+  name_en: string | null;
+  name_ru: string | null;
   slug: string;
   icon: string;
   sort_order: number;
@@ -39,9 +44,24 @@ export type Category = {
   color: string;
 };
 
+/**
+ * Strict per-locale name resolver.
+ * No cross-language fallback: if a translation is missing we return the slug,
+ * never another language's text.
+ */
+export function localizedCategoryName(c: Pick<Category, "slug" | "name_lv" | "name_en" | "name_ru">, locale: Locale): string {
+  const value = locale === "lv" ? c.name_lv : locale === "en" ? c.name_en : c.name_ru;
+  return (value ?? "").trim() || c.slug;
+}
+
+const CATEGORY_COLS = "id,name,name_lv,name_en,name_ru,slug,icon,sort_order,active,color";
+
 const FALLBACK_CATEGORIES: Category[] = CATEGORY_SLUGS.map((slug, i) => ({
   id: slug,
   name: slug,
+  name_lv: slug,
+  name_en: slug,
+  name_ru: slug,
   slug,
   icon: "Tag",
   sort_order: (i + 1) * 10,
@@ -56,7 +76,7 @@ export function useCategories() {
     queryFn: async (): Promise<Category[]> => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id,name,slug,icon,sort_order,active,color")
+        .select(CATEGORY_COLS)
         .eq("active", true)
         .order("sort_order", { ascending: true });
       if (error || !data || data.length === 0) return FALLBACK_CATEGORIES;
@@ -73,7 +93,7 @@ export function useAllCategories() {
     queryFn: async (): Promise<Category[]> => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id,name,slug,icon,sort_order,active,color")
+        .select(CATEGORY_COLS)
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return (data ?? []) as Category[];
