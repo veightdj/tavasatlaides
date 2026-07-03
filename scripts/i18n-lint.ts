@@ -109,6 +109,7 @@ function isSkipped(rel: string): boolean {
   if (TEST_SUFFIX.test(rel)) return true;
   if (SKIP_PREFIXES.some((p) => rel.startsWith(p))) return true;
   if (ADMIN_PATTERNS.some((r) => r.test(rel))) return true;
+  if (LEGACY_FILES.has(rel)) return true;
   return false;
 }
 
