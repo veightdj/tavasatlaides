@@ -271,7 +271,7 @@ export const dict = {
       radius5: "В пределах 5 км",
       radius10: "В пределах 10 км",
     },
-    cat: { all: "Все", food: "Еда", auto: "Авто", beauty: "Красота", electronics: "Электроника", home: "Для дома", kids: "Детям", cafes: "Кафе", events: "События" },
+    cat: { all: "Все", food: "Еда", auto: "Авто", beauty: "Красота", electronics: "Электроника", home: "Для дома", kids: "Детям", cafes: "Кафе", events: "События", dzivnieki: "Животные", veikali: "Магазины", sports: "Спорт" },
     auth: { email: "Эл. почта", password: "Пароль", fullName: "Имя", signIn: "Войти", signUp: "Регистрация", continueGoogle: "Войти через Google", or: "или", haveAccount: "Уже есть аккаунт?", noAccount: "Нет аккаунта?", forgot: "Забыли пароль?", agreePrefix: "Я согласен с", agreeTerms: "Условиями", agreeAnd: "и", agreePrivacy: "Политикой конфиденциальности", agreeRequired: "Необходимо принять Условия, чтобы продолжить." },
     merchant: {
       dashboard: "Обзор", store: "Профиль магазина", ads: "Объявления", newAd: "Новое", logout: "Выйти",
