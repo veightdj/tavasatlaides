@@ -13,6 +13,7 @@ import { formatPrice } from "@/lib/utils";
 import { useCountdown, useIsLive } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
 import { ReportDealButton } from "@/components/ReportDealButton";
+import { useCategories, localizedCategoryName } from "@/lib/categories";
 
 function buildDestination(store: any): { query: string; hasCoords: boolean } | null {
   if (!store) return null;
