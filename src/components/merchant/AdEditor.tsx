@@ -182,27 +182,45 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
 
       <div className="space-y-2">
         <Label>{t.merchant.adTitle} / {t.merchant.adDescription}</Label>
-        <Tabs defaultValue="lv" className="w-full">
+        <Tabs value={activeLocaleTab} onValueChange={(v) => setActiveLocaleTab(v as "lv" | "en" | "ru")} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            {LOCALE_TABS.map((tab) => (
-              <TabsTrigger key={tab.code} value={tab.code} className="text-sm">
-                <span className="mr-1.5">{tab.flag}</span>
-                {tab.code.toUpperCase()}
-                {tab.code === "lv" && <span className="ml-1 text-destructive">*</span>}
-              </TabsTrigger>
-            ))}
+            {LOCALE_TABS.map((tab) => {
+              const tabHasError = showErrors && tab.code === "lv" && hasLvError;
+              return (
+                <TabsTrigger
+                  key={tab.code}
+                  value={tab.code}
+                  className={`text-sm ${tabHasError ? "ring-2 ring-destructive ring-offset-1 text-destructive data-[state=active]:text-destructive" : ""}`}
+                >
+                  <span className="mr-1.5">{tab.flag}</span>
+                  {tab.code.toUpperCase()}
+                  {tab.code === "lv" && <span className="ml-1 text-destructive">*</span>}
+                  {tabHasError && <AlertCircle className="ml-1.5 h-3.5 w-3.5" />}
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
           {LOCALE_TABS.map((tab) => {
             const titleKey = `title_${tab.code}` as const;
             const descKey = `description_${tab.code}` as const;
+            const titleErr = showErrors && tab.code === "lv" ? errors.title_lv : "";
             return (
               <TabsContent key={tab.code} value={tab.code} className="space-y-3 pt-3">
-                <Input
-                  placeholder={`${t.merchant.adTitle} (${tab.label})`}
-                  value={form[titleKey]}
-                  onChange={(e) => setForm({ ...form, [titleKey]: e.target.value })}
-                  required={tab.code === "lv"}
-                />
+                <div className="space-y-1.5">
+                  <Input
+                    placeholder={`${t.merchant.adTitle} (${tab.label})`}
+                    value={form[titleKey]}
+                    onChange={(e) => setForm({ ...form, [titleKey]: e.target.value })}
+                    required={tab.code === "lv"}
+                    aria-invalid={!!titleErr}
+                    className={titleErr ? "border-destructive focus-visible:ring-destructive" : ""}
+                  />
+                  {titleErr && (
+                    <p className="text-xs text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3.5 w-3.5" /> {titleErr}
+                    </p>
+                  )}
+                </div>
                 <Textarea
                   placeholder={`${t.merchant.adDescription} (${tab.label})`}
                   rows={4}
@@ -215,6 +233,7 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
           })}
         </Tabs>
       </div>
+
       <F label={t.merchant.category}>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
