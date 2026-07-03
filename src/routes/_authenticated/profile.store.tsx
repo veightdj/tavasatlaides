@@ -327,22 +327,13 @@ function StoreEditor() {
           {save.isPending ? t.common.loading : t.merchant.save}
         </Button>
         {store && (
-          <>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/stores/$id" params={{ id: store.id }} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-1.5" /> Preview
-              </Link>
-            </Button>
-            <Button
-              variant={isPublished ? "ghost" : "secondary"}
-              size="lg"
-              disabled={togglePublish.isPending}
-              onClick={() => togglePublish.mutate(isPublished)}
-            >
-              {isPublished ? (<><EyeOff className="h-4 w-4 mr-1.5" /> Unpublish</>) : (<><Eye className="h-4 w-4 mr-1.5" /> Publish</>)}
-            </Button>
-          </>
+          <Button asChild variant="outline" size="lg">
+            <Link to="/stores/$id" params={{ id: store.id }} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="h-4 w-4 mr-1.5" /> Preview
+            </Link>
+          </Button>
         )}
+
       </div>
     </div>
   );
