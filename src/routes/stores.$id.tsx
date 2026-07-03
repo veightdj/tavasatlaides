@@ -151,7 +151,9 @@ function StorePage() {
 
   const saved = has(store.id);
   const social = (store.social_links ?? {}) as Record<string, string | undefined>;
-  const categoryLabel = (t.cat as Record<string, string>)[(store as any).category] ?? (store as any).category;
+  const storeCategorySlug = (store as any).category as string | undefined;
+  const storeCategoryRow = categories.find((c) => c.slug === storeCategorySlug);
+  const categoryLabel = storeCategoryRow ? localizedCategoryName(storeCategoryRow, lang) : storeCategorySlug ?? "";
 
   const dest = buildDest(store as any);
   const directionsUrl = dest
