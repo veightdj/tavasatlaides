@@ -45,6 +45,12 @@ export const dict = {
       saved: "Saglabāts",
       viewStore: "Skatīt veikalu",
       viewDeal: "Skatīt akciju",
+      howToRedeem: "Kā izmantot akciju",
+      noCodeNeeded: "Promo kods nav vajadzīgs",
+      justShowPage: "Vienkārši parādi šo lapu veikalā",
+      mentionAtCheckout: "Piemini piedāvājumu pie kases",
+      aboutBusiness: "Par uzņēmumu",
+
 
       shareTitle: "Dalies", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Kopēt saiti", shareNative: "Citur...", shareCopied: "Saite nokopēta",
       shareAndSave: "Dalies un saglabā",
