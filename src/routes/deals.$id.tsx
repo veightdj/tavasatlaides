@@ -325,7 +325,7 @@ function DealDetail() {
                   )}
                 </div>
                 <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                  <span>{(t.cat as any)?.[deal.category] ?? deal.category}</span>
+                  <span>{(() => { const r = categories.find((c) => c.slug === deal.category); return r ? localizedCategoryName(r, lang) : deal.category; })()}</span>
                   {store?.city && <> · {store.city}</>}
                 </p>
               </div>
