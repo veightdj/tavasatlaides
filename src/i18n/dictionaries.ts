@@ -79,7 +79,10 @@ export const dict = {
       noAds: "Vēl nav neviena sludinājuma.", createFirst: "Izveido pirmo sludinājumu",
       stats: { views: "Skatījumi", active: "Aktīvi", total: "Kopā", clicks: "Klikšķi", ctr: "CTR", saves: "Saglabāts", shares: "Dalīšanās", topDeals: "Top piedāvājumi", topDealsSub: "Labākie pēc klikšķiem", noData: "Vēl nav datu" },
       delete: "Dzēst", edit: "Rediģēt", confirmDelete: "Vai tiešām dzēst?",
+      titleRequiredLv: "Latviešu virsraksts ir obligāts",
+      fixTabLv: "Aizpildi cilni LV, lai saglabātu",
     },
+
     favorites: { title: "Saglabātie piedāvājumi", empty: "Vēl neviens piedāvājums nav saglabāts." },
     map: { title: "Karte" },
     about: { title: "Par TavasAtlaides", body: "TavasAtlaides ir vietējais piedāvājumu marketplace Rīgā. Mēs savienojam pircējus ar tuvāko veikalu akcijām." },
