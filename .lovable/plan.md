@@ -1,107 +1,70 @@
-# Strict RU / LV / EN localization
+## Goal
 
-Enforce full language isolation. Focus on the two current leaks:
-DB category names (currently Latvian for everyone) and a handful of
-routes/components that fall back to Latvian slugs or English literals.
+Automated safety net that (1) proves every UI string is defined for **all three locales** and (2) blocks new hardcoded user-facing text (Latvian, English, or Russian literals) from slipping into components.
 
-## 1. Database — per-locale category names
+Runs on every `bun test` (and in CI via the existing test command). No runtime cost in production.
 
-Add three columns to `public.categories` and backfill from the current
-Latvian `name`, plus English/Russian translations for the 11 existing
-categories.
+---
 
-```
-name_lv text  -- required going forward
-name_en text
-name_ru text
-```
+## What gets checked
 
-Backfill map (by slug):
+### 1. Dictionary parity — `src/i18n/__tests__/dictionaries.parity.test.ts`
+
+For `dict.lv`, `dict.en`, `dict.ru`:
+
+- **Same key set** at every depth (recursive walk). Missing / extra keys fail with the exact dotted path (`merchant.adTitle`).
+- **No empty strings** — every leaf must be a non-empty string (or array of non-empty strings for the few array entries).
+- **No cross-language leakage** — heuristic per locale:
+  - `ru`: every leaf must contain at least one Cyrillic char AND zero Latvian-only diacritics (`āčēģīķļņšūž`).
+  - `lv`: every leaf must contain zero Cyrillic chars. (Latvian diacritics not required — many words are ASCII.)
+  - `en`: every leaf must contain zero Cyrillic AND zero Latvian diacritics.
+  - Whitelist for unavoidable tokens (brand name `TavasAtlaides`, `€`, digits, punctuation, emoji flags).
+- **Array shape parity** — array-valued keys (e.g. `forMerchants.benefits`) must have identical length in all three locales.
+
+### 2. Category translation completeness — `src/i18n/__tests__/categories.parity.test.ts`
+
+Fetches `public.categories` via the publishable client and asserts every row has non-empty `name_lv`, `name_en`, `name_ru`. Skipped when `SUPABASE_URL` env is absent (local offline runs).
+
+### 3. Hardcoded-string lint — `scripts/i18n-lint.ts` + `src/i18n/__tests__/no-hardcoded-strings.test.ts`
+
+AST-based scan (using the TypeScript compiler already in the toolchain) over `src/components/**`, `src/routes/**` (excluding `admin.*`, `_authenticated/*` admin surfaces, and test files).
+
+Flags:
+- JSX text nodes containing a Cyrillic char OR a Latvian diacritic OR ≥2 alpha words separated by a space and not wrapped in `{t.…}` / `t()` / a component call.
+- String-literal props known to be user-visible (`title`, `placeholder`, `aria-label`, `alt`, `label`, `description`) when the value is a plain literal ≥3 chars matching the language heuristic above.
+
+Ignores:
+- Values inside `// i18n-ignore` line comments.
+- Values inside `data-*` attributes, `className`, `id`, `key`, `to`, `href`, `type`, `role`, event handlers.
+- Test files, `src/i18n/**`, `src/lib/email-templates/**` (emails are localized elsewhere), and the admin surfaces (RU/LV/EN mixing is not a requirement there per prior scope).
+- File-level opt-out via `// @i18n-ignore-file` at the top.
+
+Fails the test with a grouped `file:line — "<snippet>"` report and a hint to move the string into `src/i18n/dictionaries.ts`.
+
+### 4. Dev-mode runtime guard — `src/i18n/use-i18n.tsx`
+
+In development only, wrap the returned `t` in a `Proxy` that logs a `console.error` when a resolved value is `undefined`. Zero cost in production (guarded by `import.meta.env.DEV`).
+
+---
+
+## Deliverables
 
 ```text
-food         LV Ēdiens      EN Food         RU Еда
-auto         LV Auto        EN Auto         RU Авто
-beauty       LV Skaistums   EN Beauty       RU Красота
-electronics  LV Elektronika EN Electronics  RU Электроника
-home         LV Mājai       EN Home         RU Для дома
-kids         LV Bērniem     EN Kids         RU Детям
-cafes        LV Kafejnīcas  EN Cafes        RU Кафе
-events       LV Pasākumi    EN Events       RU События
-dzivnieki    LV Dzīvnieki   EN Pets         RU Животные
-veikali      LV Veikali     EN Shops        RU Магазины
-sports       LV Sports      EN Sports       RU Спорт
+src/i18n/__tests__/dictionaries.parity.test.ts     new
+src/i18n/__tests__/categories.parity.test.ts       new
+src/i18n/__tests__/no-hardcoded-strings.test.ts    new
+scripts/i18n-lint.ts                               new (exports scanFiles for the test)
+src/i18n/use-i18n.tsx                              edit (dev proxy)
 ```
 
-Admin category form is extended so new categories require all three
-names before save.
+No package additions — uses the bundled `typescript` package and existing `bunx vitest` runner.
 
-## 2. Category resolver (client)
+## Out of scope
 
-Introduce `useLocalizedCategoryName(slug)` and
-`localizeCategory(cat, locale)` that read `name_lv/en/ru` off the
-categories query. Rule: if the row's field for the active locale is
-missing, render the slug itself (never another language's name).
+- Auto-translating missing strings (partner-supplied ad titles/descriptions still fall back to LV as agreed).
+- Admin console — remains English-only.
+- User-generated content (deal/store text authored by merchants).
 
-Replace every current call site that reads `c.name` or falls back to
-another language:
+## Ship criteria
 
-- `src/components/CategoryCircles.tsx`
-- `src/components/CategoryCirclesFilter.tsx`
-- `src/components/CategoryPills.tsx`
-- `src/components/DealCard.tsx` (categoryLabel)
-- `src/routes/stores.$id.tsx` (categoryLabel)
-- `src/routes/deals.$id.tsx` (category chip)
-- `src/routes/categories.$slug.tsx` (h1 + `<head>` title)
-- `src/routes/admin.categories.tsx` (list + editor)
-
-The static `t.cat` dictionary and inline `CATEGORY_LABEL` maps are
-removed — DB is the single source of truth so admins can add
-categories without a code change.
-
-## 3. Route metadata per locale
-
-`categories.$slug.tsx` currently hard-codes an English title. Move
-title/description into `head()` built from the resolved localized
-name for the active locale, with `og:url` and canonical pointed at
-`/categories/{slug}`. `robots: noindex` on the fallback state where
-the localized name is missing, so untranslated categories don't get
-indexed in the wrong language.
-
-## 4. UI audit — remove residual English literals
-
-Sweep and route through `useI18n()` any hard-coded strings still in
-components that ship to end users. Known offenders to fix:
-
-- `categories.$slug.tsx`: "Loading…", "404"
-- Any `placeholder="…"` / `aria-label="…"` still in English inside
-  `src/components/**` and `src/routes/**` that are not admin-only.
-
-Admin routes (`src/routes/admin.*`, `src/components/admin/**`) stay
-English by policy — they are staff tools, not end-user UI.
-
-## 5. Language switch behavior
-
-`useI18n` already reruns render on locale change. Add a
-`queryClient.invalidateQueries({ queryKey: ["categories"] })` on
-locale change so the categories query re-derives labels immediately
-without a full reload.
-
-## 6. Out of scope (called out explicitly)
-
-- User-generated content — deal titles, ad descriptions, store
-  descriptions — stays in whatever language the merchant wrote it in.
-  Auto-translating merchant copy is a separate feature and not part
-  of this pass.
-- Emails and OneSignal push templates already have their own locale
-  handling; not touched here.
-
-## Technical notes
-
-- Migration adds the three columns as nullable, backfills the 11
-  existing rows, then sets `name_lv NOT NULL` (LV is the site's
-  base admin language). `name_en` / `name_ru` stay nullable so the
-  resolver's "show slug" rule is the guardrail against half-translated
-  new rows rather than a hard DB constraint.
-- `useCategories()` selects the new columns; consumers get a typed
-  `{ nameLv, nameEn, nameRu }` shape via a thin mapper.
-- No GRANT changes — `categories` already exposes SELECT to anon.
+`bunx vitest run src/i18n` passes locally, and running `bunx vitest run` in CI blocks a PR that introduces a bare `"Загрузка..."` in a TSX file or removes a key from one locale but not the others.
