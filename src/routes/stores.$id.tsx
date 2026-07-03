@@ -11,6 +11,7 @@ import { StoreStatus } from "@/components/StoreStatus";
 import { ShareMenu } from "@/components/ShareMenu";
 import { ShopGallerySlider } from "@/components/ShopGallerySlider";
 import { useI18n } from "@/i18n/use-i18n";
+import { localizedDealTitle } from "@/lib/deal-i18n";
 import { useSavedStores } from "@/lib/favorites";
 import { useCategories, localizedCategoryName } from "@/lib/categories";
 
