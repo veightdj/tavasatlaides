@@ -52,7 +52,7 @@ export const Route = createFileRoute("/deals/")({
 
 function DealsPage() {
   const { t } = useI18n();
-  const navigate = useNavigate({ from: "/deals" });
+  const navigate = useNavigate({ from: "/deals/" });
   const { near } = Route.useSearch();
   const origin = useMemo(() => parseNear(near), [near]);
 
@@ -252,7 +252,7 @@ function DealsPage() {
 
 function useGetLocation() {
   const { t } = useI18n();
-  const navigate = useNavigate({ from: "/deals" });
+  const navigate = useNavigate({ from: "/deals/" });
   const [loading, setLoading] = useState(false);
   const fetch = () => {
     if (!("geolocation" in navigator)) {
