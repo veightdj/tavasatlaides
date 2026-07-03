@@ -44,6 +44,8 @@ export const dict = {
       save: "Saglabāt",
       saved: "Saglabāts",
       viewStore: "Skatīt veikalu",
+      viewDeal: "Skatīt akciju",
+
       shareTitle: "Dalies", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Kopēt saiti", shareNative: "Citur...", shareCopied: "Saite nokopēta",
       shareAndSave: "Dalies un saglabā",
       shareCardTitle: "Patīk šis piedāvājums?",
@@ -149,6 +151,8 @@ export const dict = {
       save: "Save",
       saved: "Saved",
       viewStore: "View store",
+      viewDeal: "View deal",
+
       shareTitle: "Share", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Copy link", shareNative: "More...", shareCopied: "Link copied",
       shareAndSave: "Share & save",
       shareCardTitle: "Love this deal?",
@@ -254,6 +258,8 @@ export const dict = {
       save: "Сохранить",
       saved: "Сохранено",
       viewStore: "Магазин",
+      viewDeal: "Смотреть акцию",
+
       shareTitle: "Поделиться", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Скопировать ссылку", shareNative: "Ещё...", shareCopied: "Ссылка скопирована",
       shareAndSave: "Поделиться и сохранить",
       shareCardTitle: "Нравится акция?",
