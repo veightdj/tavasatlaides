@@ -117,7 +117,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
         {deal.cover_image_url ? (
           <img
             src={deal.cover_image_url}
-            alt={deal.title}
+            alt={dealTitle}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
           />
@@ -183,7 +183,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
 
         <DealShareButton
           dealId={deal.id}
-          title={deal.title}
+          title={dealTitle}
           description={store?.name}
           discountPct={deal.discount_pct}
           className="absolute bottom-3 right-3 h-9 w-9 min-h-0 min-w-0 rounded-full bg-background/90 backdrop-blur hover:bg-background"
@@ -236,7 +236,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
         {/* Deal title */}
         <Link to="/deals/$id" params={{ id: deal.id }}>
           <h4 className="line-clamp-2 text-[15px] font-semibold leading-snug text-foreground/90 transition group-hover:text-primary">
-            {deal.title}
+            {dealTitle}
           </h4>
         </Link>
 
