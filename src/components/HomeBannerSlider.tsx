@@ -34,10 +34,9 @@ export function HomeBannerSlider() {
     staleTime: 60_000,
   });
 
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: "start" },
-    [Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })]
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" }, [
+    Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }),
+  ]);
   const [selected, setSelected] = useState(0);
   const [snaps, setSnaps] = useState<number[]>([]);
 
