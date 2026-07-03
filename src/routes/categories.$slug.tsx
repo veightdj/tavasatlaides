@@ -46,7 +46,7 @@ function CategoryPage() {
   });
 
   if (catsLoading) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
-  if (!valid) return <div className="p-10 text-center">{t.common.notFound ?? slug}</div>;
+  if (!valid) return <div className="p-10 text-center text-muted-foreground">{slug}</div>;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
