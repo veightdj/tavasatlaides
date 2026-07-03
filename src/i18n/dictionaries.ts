@@ -44,6 +44,8 @@ export const dict = {
       save: "Saglabāt",
       saved: "Saglabāts",
       viewStore: "Skatīt veikalu",
+      viewDeal: "Skatīt akciju",
+
       shareTitle: "Dalies", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Kopēt saiti", shareNative: "Citur...", shareCopied: "Saite nokopēta",
       shareAndSave: "Dalies un saglabā",
       shareCardTitle: "Patīk šis piedāvājums?",
