@@ -14,6 +14,7 @@ import { useCountdown, useIsLive } from "@/hooks/useCountdown";
 import { buildShareUrl } from "@/lib/referral";
 import { ReportDealButton } from "@/components/ReportDealButton";
 import { useCategories, localizedCategoryName } from "@/lib/categories";
+import { localizedDealTitle, localizedDealDescription } from "@/lib/deal-i18n";
 
 function buildDestination(store: any): { query: string; hasCoords: boolean } | null {
   if (!store) return null;
