@@ -6,32 +6,15 @@ import { useI18n } from "@/i18n/use-i18n";
 import { useCategories, type CategorySlug } from "@/lib/categories";
 import { CategoryCircles } from "@/components/CategoryCircles";
 
-const CATEGORY_LABEL: Record<string, string> = {
-  food: "Food",
-  auto: "Auto",
-  beauty: "Beauty",
-  electronics: "Electronics",
-  home: "Home",
-  kids: "Kids",
-  cafes: "Cafes",
-  events: "Events",
-};
-
 export const Route = createFileRoute("/categories/$slug")({
   head: ({ params }) => {
-    const label = CATEGORY_LABEL[params.slug] ?? params.slug;
-    const title = `${label} deals — TavasAtlaides`;
-    const desc = `Active ${label.toLowerCase()} discounts and promotions in Riga.`;
-    const url = `https://superatlaides.lovable.app/categories/${params.slug}`;
+    const url = `https://tavasatlaides.lv/categories/${params.slug}`;
+    const title = `${params.slug} — TavasAtlaides`;
     return {
       meta: [
         { title },
-        { name: "description", content: desc },
         { property: "og:title", content: title },
-        { property: "og:description", content: desc },
         { property: "og:url", content: url },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
       ],
       links: [{ rel: "canonical", href: url }],
     };

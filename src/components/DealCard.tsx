@@ -91,7 +91,8 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
     typeof distanceKm === "number" && Number.isFinite(distanceKm)
       ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
       : null;
-  const categoryLabel = CATEGORY_LABEL[store?.category ?? deal.category] ?? (store?.category ?? deal.category);
+  const categorySlug = store?.category ?? deal.category;
+  const categoryLabel = (t.cat as Record<string, string>)[categorySlug] ?? CATEGORY_LABEL[categorySlug] ?? categorySlug;
 
   // Discount headline
   const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;
