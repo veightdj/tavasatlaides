@@ -45,6 +45,12 @@ export const dict = {
       saved: "Saglabāts",
       viewStore: "Skatīt veikalu",
       viewDeal: "Skatīt akciju",
+      howToRedeem: "Kā izmantot akciju",
+      noCodeNeeded: "Promo kods nav vajadzīgs",
+      justShowPage: "Vienkārši parādi šo lapu veikalā",
+      mentionAtCheckout: "Piemini piedāvājumu pie kases",
+      aboutBusiness: "Par uzņēmumu",
+
 
       shareTitle: "Dalies", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Kopēt saiti", shareNative: "Citur...", shareCopied: "Saite nokopēta",
       shareAndSave: "Dalies un saglabā",
@@ -152,6 +158,12 @@ export const dict = {
       saved: "Saved",
       viewStore: "View store",
       viewDeal: "View deal",
+      howToRedeem: "How to redeem",
+      noCodeNeeded: "No promo code needed",
+      justShowPage: "Just show this page in-store",
+      mentionAtCheckout: "Mention the offer at checkout",
+      aboutBusiness: "About the business",
+
 
       shareTitle: "Share", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Copy link", shareNative: "More...", shareCopied: "Link copied",
       shareAndSave: "Share & save",
@@ -259,6 +271,12 @@ export const dict = {
       saved: "Сохранено",
       viewStore: "Магазин",
       viewDeal: "Смотреть акцию",
+      howToRedeem: "Как использовать акцию",
+      noCodeNeeded: "Промокод не нужен",
+      justShowPage: "Просто покажите эту страницу в магазине",
+      mentionAtCheckout: "Упомяните акцию на кассе",
+      aboutBusiness: "О компании",
+
 
       shareTitle: "Поделиться", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Скопировать ссылку", shareNative: "Ещё...", shareCopied: "Ссылка скопирована",
       shareAndSave: "Поделиться и сохранить",
