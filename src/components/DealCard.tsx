@@ -258,7 +258,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
           params={{ id: deal.id }}
           className="inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
         >
-          Skatīt akciju
+          {t.deals.viewDeal}
         </Link>
 
         {/* Navigation buttons */}
