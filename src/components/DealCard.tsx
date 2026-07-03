@@ -3,6 +3,7 @@ import { Heart, BadgeCheck, MapPin, Navigation, Clock } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
 import { useCategories, localizedCategoryName } from "@/lib/categories";
+import { localizedDealTitle } from "@/lib/deal-i18n";
 
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
