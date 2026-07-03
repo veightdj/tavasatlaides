@@ -289,7 +289,10 @@ export const dict = {
       noAds: "Пока нет объявлений.", createFirst: "Создать первое",
       stats: { views: "Просмотры", active: "Активные", total: "Всего", clicks: "Клики", ctr: "CTR", saves: "Сохранения", shares: "Поделились", topDeals: "Топ акций", topDealsSub: "Лучшие по кликам", noData: "Пока нет данных" },
       delete: "Удалить", edit: "Изменить", confirmDelete: "Точно удалить?",
+      titleRequiredLv: "Латышский заголовок обязателен",
+      fixTabLv: "Заполните вкладку LV, чтобы сохранить",
     },
+
     favorites: { title: "Сохранённые акции", empty: "Пока ничего не сохранено." },
     map: { title: "Карта" },
     about: { title: "О TavasAtlaides", body: "TavasAtlaides — местный маркетпейс скидок в Риге. Мы соединяем покупателей с акциями ближайших магазинов." },
