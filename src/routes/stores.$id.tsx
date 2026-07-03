@@ -96,7 +96,8 @@ export const Route = createFileRoute("/stores/$id")({
 
 function StorePage() {
   const { id } = Route.useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { data: categories = [] } = useCategories();
   const { has, toggle } = useSavedStores();
   const [aboutOpen, setAboutOpen] = useState(false);
 
