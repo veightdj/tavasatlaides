@@ -24,6 +24,7 @@ function detect(): Lang {
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("lv");
+  const qc = useQueryClient();
 
   useEffect(() => {
     setLangState(detect());
@@ -35,6 +36,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       window.localStorage.setItem(STORAGE_KEY, l);
       document.documentElement.lang = l;
     }
+    // Rehydrate locale-derived caches (category names, etc).
+    qc.invalidateQueries({ queryKey: ["categories"] });
   };
 
   return (
