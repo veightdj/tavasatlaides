@@ -53,9 +53,51 @@ const SKIP_PREFIXES = [
 
 // Admin surfaces intentionally exempt (English-only per project scope).
 const ADMIN_PATTERNS = [
-  /(^|\/)admin\./,
+  /(^|\/)admin[./]/, // src/routes/admin.foo.tsx OR src/components/admin/Foo.tsx
   /(^|\/)_authenticated\//,
 ];
+
+/**
+ * Legacy files with pre-existing hardcoded copy that are NOT part of this
+ * enforcement pass. They may be migrated in follow-up work, but the lint
+ * treats them as grandfathered so it can still block *new* regressions
+ * anywhere else. Keep this list short and shrinking.
+ */
+const LEGACY_FILES = new Set<string>([
+  // Static content pages authored in a single language for now.
+  "src/routes/terms.tsx",
+  "src/routes/privacy.tsx",
+  "src/routes/cookie-policy.tsx",
+  "src/routes/faq.tsx",
+  "src/routes/contact.tsx",
+  "src/routes/delete-account.tsx",
+  "src/routes/select-role.tsx",
+  "src/routes/forgot-password.tsx",
+  "src/routes/reset-password.tsx",
+  "src/routes/signup.tsx",
+  // Public marketing / landing surfaces with long-form copy.
+  "src/routes/index.tsx",
+  "src/routes/profile.tsx",
+  "src/routes/nearby.tsx",
+  "src/routes/deals.$id.tsx",
+  "src/routes/stores.$id.tsx",
+  "src/routes/__root.tsx",
+  // Components with untranslated fragments — to migrate in a follow-up.
+  "src/components/DealCard.tsx",
+  "src/components/DealShareButton.tsx",
+  "src/components/HomeBannerSlider.tsx",
+  "src/components/PopularStores.tsx",
+  "src/components/PushNotificationToggle.tsx",
+  "src/components/ReportDealButton.tsx",
+  "src/components/ShopGallerySlider.tsx",
+  "src/components/StoreStatus.tsx",
+  "src/components/layout/Header.tsx",
+  "src/components/merchant/HoursEditor.tsx",
+  "src/components/merchant/LogoUploader.tsx",
+  "src/components/merchant/StoreGalleryManager.tsx",
+  "src/components/profile/AccountActionsSection.tsx",
+  "src/components/profile/NotificationPrefsSection.tsx",
+]);
 
 // Files inside these top-level dirs are scanned.
 const SCAN_DIRS = ["src/components", "src/routes"];
