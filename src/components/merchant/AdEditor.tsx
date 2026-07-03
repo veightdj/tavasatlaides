@@ -56,16 +56,22 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
 
   useEffect(() => {
     if (!isNew && ad) {
+      const a = ad as any;
       setForm({
-        title: ad.title, description: ad.description ?? "",
-        category: ad.category,
-        discount_pct: ad.discount_pct?.toString() ?? "",
-        price_original: ad.price_original?.toString() ?? "",
-        price_sale: ad.price_sale?.toString() ?? "",
-        starts_at: ad.starts_at ? new Date(ad.starts_at).toISOString().slice(0, 10) : "",
-        ends_at: ad.ends_at ? new Date(ad.ends_at).toISOString().slice(0, 10) : "",
-        status: ad.status,
-        cover_image_url: ad.cover_image_url ?? "",
+        title_lv: a.title_lv ?? a.title ?? "",
+        title_en: a.title_en ?? "",
+        title_ru: a.title_ru ?? "",
+        description_lv: a.description_lv ?? a.description ?? "",
+        description_en: a.description_en ?? "",
+        description_ru: a.description_ru ?? "",
+        category: a.category,
+        discount_pct: a.discount_pct?.toString() ?? "",
+        price_original: a.price_original?.toString() ?? "",
+        price_sale: a.price_sale?.toString() ?? "",
+        starts_at: a.starts_at ? new Date(a.starts_at).toISOString().slice(0, 10) : "",
+        ends_at: a.ends_at ? new Date(a.ends_at).toISOString().slice(0, 10) : "",
+        status: a.status,
+        cover_image_url: a.cover_image_url ?? "",
       });
     } else if (isNew && store) {
       // Restore draft from localStorage if present
