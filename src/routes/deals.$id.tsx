@@ -191,7 +191,8 @@ export const Route = createFileRoute("/deals/$id")({
 
 function DealDetail() {
   const { id } = Route.useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { data: categories = [] } = useCategories();
   const { has, toggle } = useFavorites();
 
   const { data: deal, isLoading, error } = useQuery({
