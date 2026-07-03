@@ -264,12 +264,13 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
       </F>
 
       <Button
-        onClick={() => save.mutate()}
+        onClick={onSave}
         disabled={save.isPending}
         className="w-full sm:w-auto h-12 text-base font-semibold"
       >
         {t.merchant.save}
       </Button>
+
     </div>
   );
 }
