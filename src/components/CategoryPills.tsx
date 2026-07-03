@@ -5,7 +5,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useI18n } from "@/i18n/use-i18n";
-import { useCategories } from "@/lib/categories";
+import { useCategories, localizedCategoryName } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -20,14 +20,14 @@ type Props = {
 };
 
 export function CategoryPills({ activeSlug, onSelect }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { data: categories = [] } = useCategories();
 
   const items: Array<{ slug: string; label: string; Icon: LucideIcon; color?: string }> = [
-    { slug: "all", label: (t.cat as any).all ?? "All", Icon: LayoutGrid },
+    { slug: "all", label: (t.cat as any).all, Icon: LayoutGrid },
     ...categories.map((c) => ({
       slug: c.slug,
-      label: (t.cat as any)[c.slug] ?? c.name,
+      label: localizedCategoryName(c, lang),
       Icon: ICONS[c.icon] ?? Tag,
       color: c.color,
     })),
