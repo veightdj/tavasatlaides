@@ -427,13 +427,14 @@ function DealDetail() {
         <section className="mt-8 rounded-3xl border border-border/60 bg-card p-5 sm:p-6">
           <div className="flex items-center gap-2">
             <Ticket className="h-5 w-5 text-primary" />
-            <h3 className="text-base font-bold">{(t.deals as any)?.howToRedeem ?? "How to redeem"}</h3>
+            <h3 className="text-base font-bold">{t.deals.howToRedeem}</h3>
           </div>
           <ul className="mt-4 grid gap-3 sm:grid-cols-3">
             {[
-              { icon: Sparkles, label: (t.deals as any)?.noCodeNeeded ?? "No promo code needed" },
-              { icon: Check, label: (t.deals as any)?.justShowPage ?? "Just show this page in-store" },
-              { icon: BadgeCheck, label: (t.deals as any)?.mentionAtCheckout ?? "Mention the offer at checkout" },
+              { icon: Sparkles, label: t.deals.noCodeNeeded },
+              { icon: Check, label: t.deals.justShowPage },
+              { icon: BadgeCheck, label: t.deals.mentionAtCheckout },
+
             ].map((item, idx) => (
               <li key={idx} className="flex items-start gap-3 rounded-2xl bg-muted/50 p-3">
                 <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
