@@ -3,18 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard } from "@/components/DealCard";
 import { useI18n } from "@/i18n/use-i18n";
-import { useCategories, type CategorySlug } from "@/lib/categories";
+import { useCategories, localizedCategoryName, type CategorySlug } from "@/lib/categories";
 import { CategoryCircles } from "@/components/CategoryCircles";
 
 export const Route = createFileRoute("/categories/$slug")({
   head: ({ params }) => {
     const url = `https://tavasatlaides.lv/categories/${params.slug}`;
-    const title = `${params.slug} — TavasAtlaides`;
     return {
       meta: [
-        { title },
-        { property: "og:title", content: title },
+        { title: `${params.slug} — TavasAtlaides` },
         { property: "og:url", content: url },
+        { name: "robots", content: "index,follow" },
       ],
       links: [{ rel: "canonical", href: url }],
     };
@@ -24,11 +23,12 @@ export const Route = createFileRoute("/categories/$slug")({
 
 function CategoryPage() {
   const { slug } = Route.useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { data: cats, isLoading: catsLoading } = useCategories();
 
-  const valid = !catsLoading && (cats ?? []).some((c) => c.slug === slug);
-  const label = (cats ?? []).find((c) => c.slug === slug)?.name;
+  const row = (cats ?? []).find((c) => c.slug === slug);
+  const valid = !catsLoading && !!row;
+  const label = row ? localizedCategoryName(row, lang) : slug;
 
   const { data: ads = [] } = useQuery({
     queryKey: ["category", slug],
@@ -45,12 +45,12 @@ function CategoryPage() {
     },
   });
 
-  if (catsLoading) return <div className="p-10 text-center text-muted-foreground">Loading…</div>;
-  if (!valid) return <div className="p-10 text-center">404</div>;
+  if (catsLoading) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
+  if (!valid) return <div className="p-10 text-center">{t.common.notFound ?? slug}</div>;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight px-4">{(t.cat as any)[slug] ?? label ?? slug}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight px-4">{label}</h1>
       <p className="mt-1 text-muted-foreground px-4">{t.deals.title}</p>
 
       <div className="mt-6 mb-8">
