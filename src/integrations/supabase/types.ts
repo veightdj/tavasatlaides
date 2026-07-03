@@ -390,6 +390,9 @@ export type Database = {
           icon: string
           id: string
           name: string
+          name_en: string | null
+          name_lv: string
+          name_ru: string | null
           slug: string
           sort_order: number
           updated_at: string
@@ -401,6 +404,9 @@ export type Database = {
           icon?: string
           id?: string
           name: string
+          name_en?: string | null
+          name_lv: string
+          name_ru?: string | null
           slug: string
           sort_order?: number
           updated_at?: string
@@ -412,6 +418,9 @@ export type Database = {
           icon?: string
           id?: string
           name?: string
+          name_en?: string | null
+          name_lv?: string
+          name_ru?: string | null
           slug?: string
           sort_order?: number
           updated_at?: string

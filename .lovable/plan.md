@@ -1,58 +1,107 @@
-## Phase 1 — Admin Businesses page
+# Strict RU / LV / EN localization
 
-A focused first slice. Email activation flow + audit log UI come in Phase 2.
+Enforce full language isolation. Focus on the two current leaks:
+DB category names (currently Latvian for everyone) and a handful of
+routes/components that fall back to Latvian slugs or English literals.
 
-### Database (one migration)
+## 1. Database — per-locale category names
 
-Extend `stores` and add audit log:
+Add three columns to `public.categories` and backfill from the current
+Latvian `name`, plus English/Russian translations for the 11 existing
+categories.
 
-- Add columns to `public.stores`:
-  - `contact_email text`
-  - `subscription_plan` enum `subscription_plan` = ('bronze','silver','gold') — default `'bronze'`
-  - `partner_status` enum `partner_status` = ('pending_activation','active','managed_by_admin','suspended','expired') — default `'pending_activation'`
-- New table `public.admin_audit_logs` (admin_id, action, target_user_id, target_store_id, payload jsonb, created_at). Admin-read-only RLS.
+```
+name_lv text  -- required going forward
+name_en text
+name_ru text
+```
 
-### Server functions (`src/lib/admin-businesses.functions.ts`)
+Backfill map (by slug):
 
-All `.middleware([requireSupabaseAuth])` + admin check via `has_role`, then load `supabaseAdmin` inside handler.
+```text
+food         LV Ēdiens      EN Food         RU Еда
+auto         LV Auto        EN Auto         RU Авто
+beauty       LV Skaistums   EN Beauty       RU Красота
+electronics  LV Elektronika EN Electronics  RU Электроника
+home         LV Mājai       EN Home         RU Для дома
+kids         LV Bērniem     EN Kids         RU Детям
+cafes        LV Kafejnīcas  EN Cafes        RU Кафе
+events       LV Pasākumi    EN Events       RU События
+dzivnieki    LV Dzīvnieki   EN Pets         RU Животные
+veikali      LV Veikali     EN Shops        RU Магазины
+sports       LV Sports      EN Sports       RU Спорт
+```
 
-- `createBusinessWithPartner({ name, contact_email, phone, category, city, address, website, description, logo_url, subscription_plan })`
-  - Generates slug, creates auth user with `supabaseAdmin.auth.admin.createUser` (random password, `email_confirm: true`), inserts `user_roles` row with `partner`, inserts `stores` row with `owner_id = new user id`, `partner_status = 'pending_activation'`.
-  - Returns `{ store_id, partner_user_id }`. Email send is stubbed (`activation_pending`) for Phase 2.
-- `updateBusiness({ id, patch })` — admin updates store fields.
-- `setBusinessPlan({ id, plan })`, `setBusinessStatus({ id, status })`.
-- `sendActivationEmail({ id })` — Phase 2 stub: calls `supabaseAdmin.auth.admin.generateLink({ type: 'recovery' })` and logs the link. Real branded email arrives in Phase 2.
-- `resetPartnerPassword({ id })` — same `generateLink('recovery')`.
-- `deleteBusinessAccount({ id })` — deletes store + auth user.
-- `startImpersonation({ store_id })` — writes audit log, returns `{ store_id, owner_id }`.
+Admin category form is extended so new categories require all three
+names before save.
 
-### Admin UI — `/admin/businesses`
+## 2. Category resolver (client)
 
-`AdminShell` page mirroring `admin.companies.tsx` layout. Adds:
+Introduce `useLocalizedCategoryName(slug)` and
+`localizeCategory(cat, locale)` that read `name_lv/en/ru` off the
+categories query. Rule: if the row's field for the active locale is
+missing, render the slug itself (never another language's name).
 
-- Search by name/email.
-- Filters: status, plan, city, category (loaded from existing distinct values).
-- Pagination (20/page).
-- "New business" button → dialog with all fields.
-- Row columns: Logo, Name, Email, Phone, Plan, Status, Created, Actions menu.
-- Actions menu per row: Edit, Login as Partner, Send activation email, Reset password, Suspend / Reactivate, Change plan, Delete.
+Replace every current call site that reads `c.name` or falls back to
+another language:
 
-Add "Businesses" entry to `AdminShell` nav.
+- `src/components/CategoryCircles.tsx`
+- `src/components/CategoryCirclesFilter.tsx`
+- `src/components/CategoryPills.tsx`
+- `src/components/DealCard.tsx` (categoryLabel)
+- `src/routes/stores.$id.tsx` (categoryLabel)
+- `src/routes/deals.$id.tsx` (category chip)
+- `src/routes/categories.$slug.tsx` (h1 + `<head>` title)
+- `src/routes/admin.categories.tsx` (list + editor)
 
-### Impersonation (session-based, minimal)
+The static `t.cat` dictionary and inline `CATEGORY_LABEL` maps are
+removed — DB is the single source of truth so admins can add
+categories without a code change.
 
-- "Login as Partner" sets `sessionStorage.setItem('admin_impersonation', JSON.stringify({ store_id, owner_id, started_at }))`, calls `startImpersonation` (audit log), and navigates to `/profile`.
-- Add a top-of-page yellow banner component `<ImpersonationBanner />` mounted in `__root.tsx` that shows when the flag is set, with "Exit impersonation" button (clears flag, reloads).
-- Profile/partner pages are not rewired in Phase 1. The banner makes impersonation visible; deeper "view-as" rewiring of partner queries comes when Profile is refactored. (Calling this out so it's not a surprise.)
+## 3. Route metadata per locale
 
-### Deferred to Phase 2
+`categories.$slug.tsx` currently hard-codes an English title. Move
+title/description into `head()` built from the resolved localized
+name for the active locale, with `og:url` and canonical pointed at
+`/categories/{slug}`. `robots: noindex` on the fallback state where
+the localized name is missing, so untranslated categories don't get
+indexed in the wrong language.
 
-- Branded Lovable activation email (requires email domain setup).
-- Full "act as partner" data scoping in Profile.
-- Admin audit log viewer UI.
+## 4. UI audit — remove residual English literals
 
-### Token-efficiency notes
+Sweep and route through `useI18n()` any hard-coded strings still in
+components that ship to end users. Known offenders to fix:
 
-- Single combined query with `count: 'exact'` per page load.
-- Distinct cities/categories loaded once via cached query (5min stale).
-- Mutations invalidate only the `admin-businesses` query key.
+- `categories.$slug.tsx`: "Loading…", "404"
+- Any `placeholder="…"` / `aria-label="…"` still in English inside
+  `src/components/**` and `src/routes/**` that are not admin-only.
+
+Admin routes (`src/routes/admin.*`, `src/components/admin/**`) stay
+English by policy — they are staff tools, not end-user UI.
+
+## 5. Language switch behavior
+
+`useI18n` already reruns render on locale change. Add a
+`queryClient.invalidateQueries({ queryKey: ["categories"] })` on
+locale change so the categories query re-derives labels immediately
+without a full reload.
+
+## 6. Out of scope (called out explicitly)
+
+- User-generated content — deal titles, ad descriptions, store
+  descriptions — stays in whatever language the merchant wrote it in.
+  Auto-translating merchant copy is a separate feature and not part
+  of this pass.
+- Emails and OneSignal push templates already have their own locale
+  handling; not touched here.
+
+## Technical notes
+
+- Migration adds the three columns as nullable, backfills the 11
+  existing rows, then sets `name_lv NOT NULL` (LV is the site's
+  base admin language). `name_en` / `name_ru` stay nullable so the
+  resolver's "show slug" rule is the guardrail against half-translated
+  new rows rather than a hard DB constraint.
+- `useCategories()` selects the new columns; consumers get a typed
+  `{ nameLv, nameEn, nameRu }` shape via a thin mapper.
+- No GRANT changes — `categories` already exposes SELECT to anon.
