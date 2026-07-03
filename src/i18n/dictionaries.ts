@@ -67,7 +67,7 @@ export const dict = {
       radius5: "5 km robežās",
       radius10: "10 km robežās",
     },
-    cat: { all: "Visas", food: "Ēdiens", auto: "Auto", beauty: "Skaistums", electronics: "Elektronika", home: "Mājai", kids: "Bērniem", cafes: "Kafejnīcas", events: "Notikumi" },
+    cat: { all: "Visas", food: "Ēdiens", auto: "Auto", beauty: "Skaistums", electronics: "Elektronika", home: "Mājai", kids: "Bērniem", cafes: "Kafejnīcas", events: "Pasākumi", dzivnieki: "Dzīvnieki", veikali: "Veikali", sports: "Sports" },
     auth: { email: "E-pasts", password: "Parole", fullName: "Vārds, uzvārds", signIn: "Ienākt", signUp: "Reģistrēties", continueGoogle: "Turpināt ar Google", or: "vai", haveAccount: "Jau ir konts?", noAccount: "Nav konta?", forgot: "Aizmirsi paroli?", agreePrefix: "Piekrītu", agreeTerms: "Noteikumiem", agreeAnd: "un", agreePrivacy: "Privātuma politikai", agreeRequired: "Lai turpinātu, jāpiekrīt Noteikumiem un Privātuma politikai." },
     merchant: {
       dashboard: "Pārskats", store: "Veikala profils", ads: "Sludinājumi", newAd: "Jauns sludinājums", logout: "Iziet",
