@@ -12,6 +12,7 @@ import { ShareMenu } from "@/components/ShareMenu";
 import { ShopGallerySlider } from "@/components/ShopGallerySlider";
 import { useI18n } from "@/i18n/use-i18n";
 import { useSavedStores } from "@/lib/favorites";
+import { useCategories, localizedCategoryName } from "@/lib/categories";
 
 function trackEvent(name: string, payload: Record<string, unknown>) {
   try {
