@@ -184,7 +184,10 @@ export const dict = {
       noAds: "No ads yet.", createFirst: "Create your first ad",
       stats: { views: "Views", active: "Active", total: "Total", clicks: "Clicks", ctr: "CTR", saves: "Saves", shares: "Shares", topDeals: "Top Deals", topDealsSub: "Best performing by clicks", noData: "No data yet" },
       delete: "Delete", edit: "Edit", confirmDelete: "Really delete?",
+      titleRequiredLv: "Latvian title is required",
+      fixTabLv: "Fill in the LV tab to save",
     },
+
     favorites: { title: "Saved deals", empty: "No saved deals yet." },
     map: { title: "Map" },
     about: { title: "About TavasAtlaides", body: "TavasAtlaides is a local deals marketplace for Riga. We connect shoppers with discounts from nearby stores." },
