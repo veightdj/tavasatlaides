@@ -88,16 +88,20 @@ describe("i18n dictionaries — no empty leaves & array parity", () => {
 });
 
 describe("i18n dictionaries — no cross-language leakage", () => {
-  it("ru leaves are Cyrillic-bearing and free of Latvian-only diacritics", () => {
+  it("ru leaves that contain natural-language phrases are Cyrillic and free of Latvian diacritics", () => {
     const bad: string[] = [];
+    const HAS_TWO_WORDS = /\p{L}{2,}\s+\p{L}{2,}/u;
     walk(dict.ru as unknown as Node, "", (path, value) => {
       if (WHITELIST_PATHS.has(path)) return;
       const values = Array.isArray(value) ? value : [value as string];
       values.forEach((v, i) => {
         const label = Array.isArray(value) ? `${path}[${i}]` : path;
         if (typeof v !== "string") return;
-        const hasLetters = /\p{L}/u.test(v);
-        if (hasLetters && !CYRILLIC.test(v)) bad.push(`ru:${label} — expected Cyrillic: "${v}"`);
+        // Single-word Latin tokens (brand names, acronyms like "Cookies", "SMS",
+        // "WhatsApp", "CTR") are allowed as-is — they are not translatable copy.
+        if (HAS_TWO_WORDS.test(v) && !CYRILLIC.test(v)) {
+          bad.push(`ru:${label} — expected Cyrillic phrase: "${v}"`);
+        }
         if (LV_DIACRITICS.test(v)) bad.push(`ru:${label} — contains Latvian diacritics: "${v}"`);
       });
     });
