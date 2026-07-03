@@ -9,9 +9,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useI18n } from "@/i18n/use-i18n";
 import { useCategories } from "@/lib/categories";
 import { uploadImage } from "@/lib/upload";
+
+const LOCALE_TABS: { code: "lv" | "en" | "ru"; label: string; flag: string }[] = [
+  { code: "lv", label: "Latviešu", flag: "🇱🇻" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "ru", label: "Русский", flag: "🇷🇺" },
+];
 
 export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?: () => void; embedded?: boolean }) {
   const isNew = !adId;
