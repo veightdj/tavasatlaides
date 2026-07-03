@@ -210,14 +210,22 @@ function AdminCategoriesPage() {
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="grid gap-2">
-              <Label>Name</Label>
+              <Label>Name (LV)</Label>
               <Input
-                value={form.name}
+                value={form.name_lv}
                 onChange={(e) => {
-                  const name = e.target.value;
-                  setForm((f) => ({ ...f, name, slug: slugEdited ? f.slug : slugify(name) }));
+                  const name_lv = e.target.value;
+                  setForm((f) => ({ ...f, name_lv, slug: slugEdited ? f.slug : slugify(name_lv) }));
                 }}
               />
+            </div>
+            <div className="grid gap-2">
+              <Label>Name (EN)</Label>
+              <Input value={form.name_en} onChange={(e) => setForm((f) => ({ ...f, name_en: e.target.value }))} />
+            </div>
+            <div className="grid gap-2">
+              <Label>Name (RU)</Label>
+              <Input value={form.name_ru} onChange={(e) => setForm((f) => ({ ...f, name_ru: e.target.value }))} />
             </div>
             <div className="grid gap-2">
               <Label>Slug</Label>
