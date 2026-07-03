@@ -237,6 +237,8 @@ function DealDetail() {
   const saved = has(deal.id);
   const images = [deal.cover_image_url, ...((deal.ad_images ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order).map((i: any) => i.url))].filter(Boolean);
   const store = deal.stores as any;
+  const dealTitle = localizedDealTitle(deal as any, lang);
+  const dealDescription = localizedDealDescription(deal as any, lang);
   const social = (store?.social_links ?? {}) as Record<string, string | undefined>;
 
   const isReferred = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("ref");
