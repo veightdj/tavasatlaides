@@ -173,8 +173,9 @@ function StorePage() {
   const bestOffer = ads.length > 0
     ? ads.reduce((best: any, a: any) => (a.discount_pct ?? 0) > (best.discount_pct ?? 0) ? a : best, ads[0])
     : null;
+  const bestOfferTitle = bestOffer ? localizedDealTitle(bestOffer, lang) : "";
   const offerText = bestOffer
-    ? bestOffer.discount_pct ? `-${bestOffer.discount_pct}% ${bestOffer.title}` : bestOffer.title
+    ? bestOffer.discount_pct ? `-${bestOffer.discount_pct}% ${bestOfferTitle}` : bestOfferTitle
     : undefined;
 
 
