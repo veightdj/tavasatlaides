@@ -92,6 +92,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
   const categorySlug = store?.category ?? deal.category;
   const categoryRow = categories.find((c) => c.slug === categorySlug);
   const categoryLabel = categoryRow ? localizedCategoryName(categoryRow, lang) : categorySlug;
+  const dealTitle = localizedDealTitle(deal, lang);
 
   // Discount headline
   const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;
