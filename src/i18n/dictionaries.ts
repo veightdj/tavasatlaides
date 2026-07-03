@@ -158,6 +158,12 @@ export const dict = {
       saved: "Saved",
       viewStore: "View store",
       viewDeal: "View deal",
+      howToRedeem: "How to redeem",
+      noCodeNeeded: "No promo code needed",
+      justShowPage: "Just show this page in-store",
+      mentionAtCheckout: "Mention the offer at checkout",
+      aboutBusiness: "About the business",
+
 
       shareTitle: "Share", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Copy link", shareNative: "More...", shareCopied: "Link copied",
       shareAndSave: "Share & save",
