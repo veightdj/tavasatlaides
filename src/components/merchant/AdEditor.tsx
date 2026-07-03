@@ -41,7 +41,9 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
   });
 
   const [form, setForm] = useState({
-    title: "", description: "", category: "food",
+    title_lv: "", title_en: "", title_ru: "",
+    description_lv: "", description_en: "", description_ru: "",
+    category: "food",
     discount_pct: "" as string,
     price_original: "" as string, price_sale: "" as string,
     starts_at: new Date().toISOString().slice(0, 10),
