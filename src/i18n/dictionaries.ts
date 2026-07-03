@@ -151,6 +151,8 @@ export const dict = {
       save: "Save",
       saved: "Saved",
       viewStore: "View store",
+      viewDeal: "View deal",
+
       shareTitle: "Share", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Copy link", shareNative: "More...", shareCopied: "Link copied",
       shareAndSave: "Share & save",
       shareCardTitle: "Love this deal?",
