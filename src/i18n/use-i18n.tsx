@@ -40,9 +40,34 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     qc.invalidateQueries({ queryKey: ["categories"] });
   };
 
-  return (
-    <I18nContext.Provider value={{ lang, setLang, t: dict[lang] }}>{children}</I18nContext.Provider>
-  );
+  const raw = dict[lang];
+  const t = (import.meta.env?.DEV ? wrapDictForDev(raw, lang) : raw) as Dict;
+
+  return <I18nContext.Provider value={{ lang, setLang, t }}>{children}</I18nContext.Provider>;
+}
+
+/**
+ * Dev-only Proxy that logs a `console.error` when code reads an undefined
+ * dictionary key. Never runs in production builds.
+ */
+function wrapDictForDev(node: unknown, lang: Lang, path = ""): unknown {
+  if (node === null || typeof node !== "object" || Array.isArray(node)) return node;
+  return new Proxy(node as Record<string, unknown>, {
+    get(target, prop, receiver) {
+      if (typeof prop === "symbol" || prop === "then") return Reflect.get(target, prop, receiver);
+      const value = Reflect.get(target, prop, receiver);
+      const full = path ? `${path}.${String(prop)}` : String(prop);
+      if (value === undefined) {
+        // eslint-disable-next-line no-console
+        console.error(`[i18n] Missing key "${full}" for locale "${lang}"`);
+        return "";
+      }
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        return wrapDictForDev(value, lang, full);
+      }
+      return value;
+    },
+  });
 }
 
 export function useI18n() {
