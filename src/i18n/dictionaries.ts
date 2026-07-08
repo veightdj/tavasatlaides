@@ -166,6 +166,9 @@ export const dict = {
       justShowPage: "Just show this page in-store",
       mentionAtCheckout: "Mention the offer at checkout",
       aboutBusiness: "About the business",
+      directions: "Directions",
+      lastUpdated: "Last updated",
+      morePhotos: "More photos",
 
 
       shareTitle: "Share", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Copy link", shareNative: "More...", shareCopied: "Link copied",
