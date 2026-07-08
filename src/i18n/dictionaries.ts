@@ -370,7 +370,7 @@ export const dict = {
       body: "Войдите, чтобы сохранять любимые акции, получать уведомления и управлять аккаунтом.",
       signIn: "Войти", signUp: "Регистрация",
     },
-    common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка" },
+    common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка", active: "Сейчас активно" },
     time: { day: "день", days: "дня", hours: "часа", hour: "час", minute: "минута", minutes: "минуты", second: "секунда", seconds: "секунды", left: "осталось", ended: "Закончилось" },
   },
 };
