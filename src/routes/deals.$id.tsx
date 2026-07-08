@@ -196,7 +196,7 @@ function DealDetail() {
   const { data: categories = [] } = useCategories();
   const { has, toggle } = useFavorites();
 
-  const { data: deal, isLoading, error } = useQuery({
+  const { data: deal, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["deal", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -207,6 +207,7 @@ function DealDetail() {
       if (error) throw error;
       return data;
     },
+    retry: 1,
   });
 
   const trackView = useMutation({
@@ -231,8 +232,10 @@ function DealDetail() {
   // Must be called before any early returns to keep hook order stable.
   const isLive = useIsLive(deal?.starts_at ?? null, deal?.ends_at ?? null, deal?.status ?? null);
 
-  if (isLoading) return <div className="p-10 text-center text-muted-foreground">{t.common.loading}</div>;
-  if (error || !deal) throw notFound();
+  if (isLoading) return <DealDetailSkeleton label={t.common.loading} />;
+  if (isError) return <DealDetailError message={t.common.loadError} retryLabel={t.common.retry} onRetry={() => refetch()} busy={isFetching} />;
+  if (!deal) throw notFound();
+
 
   const saved = has(deal.id);
   const images = [deal.cover_image_url, ...((deal.ad_images ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order).map((i: any) => i.url))].filter(Boolean);
