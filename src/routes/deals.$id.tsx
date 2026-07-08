@@ -190,6 +190,44 @@ export const Route = createFileRoute("/deals/$id")({
   component: DealDetail,
 });
 
+function DealDetailSkeleton({ label }: { label: string }) {
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6" role="status" aria-live="polite" aria-busy="true">
+      <span className="sr-only">{label}</span>
+      <div className="animate-pulse space-y-6">
+        <div className="h-64 w-full rounded-2xl bg-muted sm:h-80" />
+        <div className="space-y-3">
+          <div className="h-8 w-3/4 rounded-lg bg-muted" />
+          <div className="h-4 w-1/2 rounded bg-muted" />
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="h-24 rounded-2xl bg-muted" />
+          <div className="h-24 rounded-2xl bg-muted" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-4 w-full rounded bg-muted" />
+          <div className="h-4 w-11/12 rounded bg-muted" />
+          <div className="h-4 w-4/5 rounded bg-muted" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DealDetailError({ message, retryLabel, onRetry, busy }: { message: string; retryLabel: string; onRetry: () => void; busy?: boolean }) {
+  return (
+    <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-16 text-center" role="alert">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+        <ExternalLink className="h-6 w-6" aria-hidden="true" />
+      </div>
+      <p className="text-base text-muted-foreground">{message}</p>
+      <Button onClick={onRetry} disabled={busy} className="h-11 min-w-[140px]">
+        {busy ? <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" /> : retryLabel}
+      </Button>
+    </div>
+  );
+}
+
 function DealDetail() {
   const { id } = Route.useParams();
   const { t, lang } = useI18n();
