@@ -50,6 +50,9 @@ export const dict = {
       justShowPage: "Vienkārši parādi šo lapu veikalā",
       mentionAtCheckout: "Piemini piedāvājumu pie kases",
       aboutBusiness: "Par uzņēmumu",
+      directions: "Maršruts",
+      lastUpdated: "Atjaunināts",
+      morePhotos: "Vairāk foto",
 
 
       shareTitle: "Dalies", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Kopēt saiti", shareNative: "Citur...", shareCopied: "Saite nokopēta",
