@@ -282,6 +282,9 @@ export const dict = {
       justShowPage: "Просто покажите эту страницу в магазине",
       mentionAtCheckout: "Упомяните акцию на кассе",
       aboutBusiness: "О компании",
+      directions: "Маршрут",
+      lastUpdated: "Обновлено",
+      morePhotos: "Больше фото",
 
 
       shareTitle: "Поделиться", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Скопировать ссылку", shareNative: "Ещё...", shareCopied: "Ссылка скопирована",
