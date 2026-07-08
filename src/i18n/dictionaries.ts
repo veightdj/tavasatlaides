@@ -120,7 +120,7 @@ export const dict = {
       body: "Pieslēdzies, lai saglabātu mīļākos piedāvājumus, saņemtu paziņojumus un pārvaldītu savu kontu.",
       signIn: "Pieslēgties", signUp: "Reģistrēties",
     },
-    common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide", active: "Aktīvs" },
+    common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide", active: "Aktīvs", retry: "Mēģināt vēlreiz", loadError: "Neizdevās ielādēt piedāvājumu. Pārbaudi savienojumu un mēģini vēlreiz." },
     time: { day: "diena", days: "dienas", hour: "stunda", hours: "stundas", minute: "minūte", minutes: "minūtes", second: "sekunde", seconds: "sekundes", left: "atlicis", ended: "Beidzies" },
   },
   en: {
