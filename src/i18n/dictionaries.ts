@@ -236,7 +236,7 @@ export const dict = {
       body: "Sign in to save your favorite deals, get notifications and manage your account.",
       signIn: "Sign in", signUp: "Sign up",
     },
-    common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off", active: "Active now" },
+    common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off", active: "Active now", retry: "Try again", loadError: "Couldn't load the deal. Check your connection and try again." },
     time: { day: "day", days: "days", hour: "hour", hours: "hours", minute: "minute", minutes: "minutes", second: "second", seconds: "seconds", left: "left", ended: "Ended" },
   },
   ru: {
