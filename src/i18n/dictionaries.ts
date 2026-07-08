@@ -50,6 +50,9 @@ export const dict = {
       justShowPage: "Vienkārši parādi šo lapu veikalā",
       mentionAtCheckout: "Piemini piedāvājumu pie kases",
       aboutBusiness: "Par uzņēmumu",
+      directions: "Maršruts",
+      lastUpdated: "Atjaunināts",
+      morePhotos: "Vairāk foto",
 
 
       shareTitle: "Dalies", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Kopēt saiti", shareNative: "Citur...", shareCopied: "Saite nokopēta",
@@ -117,7 +120,7 @@ export const dict = {
       body: "Pieslēdzies, lai saglabātu mīļākos piedāvājumus, saņemtu paziņojumus un pārvaldītu savu kontu.",
       signIn: "Pieslēgties", signUp: "Reģistrēties",
     },
-    common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide" },
+    common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide", active: "Aktīvs" },
     time: { day: "diena", days: "dienas", hour: "stunda", hours: "stundas", minute: "minūte", minutes: "minūtes", second: "sekunde", seconds: "sekundes", left: "atlicis", ended: "Beidzies" },
   },
   en: {
@@ -163,6 +166,9 @@ export const dict = {
       justShowPage: "Just show this page in-store",
       mentionAtCheckout: "Mention the offer at checkout",
       aboutBusiness: "About the business",
+      directions: "Directions",
+      lastUpdated: "Last updated",
+      morePhotos: "More photos",
 
 
       shareTitle: "Share", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Copy link", shareNative: "More...", shareCopied: "Link copied",
@@ -230,7 +236,7 @@ export const dict = {
       body: "Sign in to save your favorite deals, get notifications and manage your account.",
       signIn: "Sign in", signUp: "Sign up",
     },
-    common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off" },
+    common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off", active: "Active now" },
     time: { day: "day", days: "days", hour: "hour", hours: "hours", minute: "minute", minutes: "minutes", second: "second", seconds: "seconds", left: "left", ended: "Ended" },
   },
   ru: {
@@ -276,6 +282,9 @@ export const dict = {
       justShowPage: "Просто покажите эту страницу в магазине",
       mentionAtCheckout: "Упомяните акцию на кассе",
       aboutBusiness: "О компании",
+      directions: "Маршрут",
+      lastUpdated: "Обновлено",
+      morePhotos: "Больше фото",
 
 
       shareTitle: "Поделиться", shareWhatsapp: "WhatsApp", shareTelegram: "Telegram", shareSms: "SMS", shareFacebook: "Facebook", shareCopy: "Скопировать ссылку", shareNative: "Ещё...", shareCopied: "Ссылка скопирована",
@@ -361,7 +370,7 @@ export const dict = {
       body: "Войдите, чтобы сохранять любимые акции, получать уведомления и управлять аккаунтом.",
       signIn: "Войти", signUp: "Регистрация",
     },
-    common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка" },
+    common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка", active: "Сейчас активно" },
     time: { day: "день", days: "дня", hours: "часа", hour: "час", minute: "минута", minutes: "минуты", second: "секунда", seconds: "секунды", left: "осталось", ended: "Закончилось" },
   },
 };
