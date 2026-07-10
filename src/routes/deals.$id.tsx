@@ -301,7 +301,7 @@ function DealDetail() {
   const isLive = useIsLive(deal?.starts_at ?? null, deal?.ends_at ?? null, deal?.status ?? null);
 
   if (isLoading) return <DealDetailSkeleton label={t.common.loading} />;
-  if (isError) return <DealDetailError message={t.common.loadError} retryLabel={t.common.retry} onRetry={() => refetch()} busy={isFetching} />;
+  if (isError) return <DealDetailError message={t.common.loadError} retryLabel={t.common.retry} onRetry={() => { refetch(); }} busy={isFetching} retryingInTemplate={t.common.retryingIn} cancelLabel={t.common.cancel} />;
   if (!deal) throw notFound();
 
 
