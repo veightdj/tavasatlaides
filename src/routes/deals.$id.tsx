@@ -214,19 +214,49 @@ function DealDetailSkeleton({ label }: { label: string }) {
   );
 }
 
-function DealDetailError({ message, retryLabel, onRetry, busy }: { message: string; retryLabel: string; onRetry: () => void; busy?: boolean }) {
+function DealDetailError({ message, retryLabel, onRetry, busy, autoRetrySeconds = 8, retryingInTemplate, cancelLabel }: { message: string; retryLabel: string; onRetry: () => void; busy?: boolean; autoRetrySeconds?: number; retryingInTemplate: string; cancelLabel: string }) {
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(autoRetrySeconds);
+
+  useEffect(() => {
+    if (secondsLeft === null) return;
+    if (secondsLeft <= 0) {
+      onRetry();
+      setSecondsLeft(null);
+      return;
+    }
+    const id = window.setTimeout(() => setSecondsLeft((s) => (s === null ? null : s - 1)), 1000);
+    return () => window.clearTimeout(id);
+  }, [secondsLeft, onRetry]);
+
+  const countdownText = secondsLeft !== null && secondsLeft > 0
+    ? retryingInTemplate.replace("{seconds}", String(secondsLeft))
+    : null;
+
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-16 text-center" role="alert">
+    <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-16 text-center" role="alert" aria-live="polite">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
         <ExternalLink className="h-6 w-6" aria-hidden="true" />
       </div>
       <p className="text-base text-muted-foreground">{message}</p>
-      <Button onClick={onRetry} disabled={busy} className="h-11 min-w-[140px]">
-        {busy ? <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" /> : retryLabel}
-      </Button>
+      {countdownText && <p className="text-sm text-muted-foreground" aria-live="polite">{countdownText}</p>}
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        <Button
+          onClick={() => { setSecondsLeft(null); onRetry(); }}
+          disabled={busy}
+          className="h-11 min-w-[140px]"
+        >
+          {busy ? <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" /> : retryLabel}
+        </Button>
+        {secondsLeft !== null && secondsLeft > 0 && (
+          <Button variant="outline" onClick={() => setSecondsLeft(null)} className="h-11">
+            {cancelLabel}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
+
 
 function DealDetail() {
   const { id } = Route.useParams();
@@ -271,7 +301,7 @@ function DealDetail() {
   const isLive = useIsLive(deal?.starts_at ?? null, deal?.ends_at ?? null, deal?.status ?? null);
 
   if (isLoading) return <DealDetailSkeleton label={t.common.loading} />;
-  if (isError) return <DealDetailError message={t.common.loadError} retryLabel={t.common.retry} onRetry={() => refetch()} busy={isFetching} />;
+  if (isError) return <DealDetailError message={t.common.loadError} retryLabel={t.common.retry} onRetry={() => { refetch(); }} busy={isFetching} retryingInTemplate={t.common.retryingIn} cancelLabel={t.common.cancel} />;
   if (!deal) throw notFound();
 
 

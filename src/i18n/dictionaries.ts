@@ -120,7 +120,7 @@ export const dict = {
       body: "Pieslēdzies, lai saglabātu mīļākos piedāvājumus, saņemtu paziņojumus un pārvaldītu savu kontu.",
       signIn: "Pieslēgties", signUp: "Reģistrēties",
     },
-    common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide", active: "Aktīvs", retry: "Mēģināt vēlreiz", loadError: "Neizdevās ielādēt piedāvājumu. Pārbaudi savienojumu un mēģini vēlreiz." },
+    common: { loading: "Ielādē...", error: "Kļūda", required: "Obligāts lauks", saved: "Saglabāts!", deleted: "Dzēsts", off: "atlaide", active: "Aktīvs", retry: "Mēģināt vēlreiz", loadError: "Neizdevās ielādēt piedāvājumu. Pārbaudi savienojumu un mēģini vēlreiz.", retryingIn: "Automātiska atkārtošana pēc {seconds} s", cancel: "Atcelt" },
     time: { day: "diena", days: "dienas", hour: "stunda", hours: "stundas", minute: "minūte", minutes: "minūtes", second: "sekunde", seconds: "sekundes", left: "atlicis", ended: "Beidzies" },
   },
   en: {
@@ -236,7 +236,7 @@ export const dict = {
       body: "Sign in to save your favorite deals, get notifications and manage your account.",
       signIn: "Sign in", signUp: "Sign up",
     },
-    common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off", active: "Active now", retry: "Try again", loadError: "Couldn't load the deal. Check your connection and try again." },
+    common: { loading: "Loading...", error: "Error", required: "Required", saved: "Saved!", deleted: "Deleted", off: "off", active: "Active now", retry: "Try again", loadError: "Couldn't load the deal. Check your connection and try again.", retryingIn: "Retrying automatically in {seconds}s", cancel: "Cancel" },
     time: { day: "day", days: "days", hour: "hour", hours: "hours", minute: "minute", minutes: "minutes", second: "second", seconds: "seconds", left: "left", ended: "Ended" },
   },
   ru: {
@@ -370,7 +370,7 @@ export const dict = {
       body: "Войдите, чтобы сохранять любимые акции, получать уведомления и управлять аккаунтом.",
       signIn: "Войти", signUp: "Регистрация",
     },
-    common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка", active: "Сейчас активно", retry: "Повторить", loadError: "Не удалось загрузить акцию. Проверьте соединение и попробуйте снова." },
+    common: { loading: "Загрузка...", error: "Ошибка", required: "Обязательно", saved: "Сохранено!", deleted: "Удалено", off: "скидка", active: "Сейчас активно", retry: "Повторить", loadError: "Не удалось загрузить акцию. Проверьте соединение и попробуйте снова.", retryingIn: "Автоповтор через {seconds} с", cancel: "Отменить" },
     time: { day: "день", days: "дня", hours: "часа", hour: "час", minute: "минута", minutes: "минуты", second: "секунда", seconds: "секунды", left: "осталось", ended: "Закончилось" },
   },
 };
