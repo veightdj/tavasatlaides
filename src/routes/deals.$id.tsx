@@ -214,7 +214,7 @@ function DealDetailSkeleton({ label }: { label: string }) {
   );
 }
 
-function DealDetailError({ message, retryLabel, onRetry, busy, autoRetrySeconds = 8, retryingInTemplate, cancelLabel }: { message: string; retryLabel: string; onRetry: () => void; busy?: boolean; autoRetrySeconds?: number; retryingInTemplate: string; cancelLabel: string }) {
+function DealDetailError({ message, retryLabel, onRetry, busy, autoRetrySeconds = 8, retryingInTemplate, cancelLabel, loadingLabel }: { message: string; retryLabel: string; onRetry: () => void; busy?: boolean; autoRetrySeconds?: number; retryingInTemplate: string; cancelLabel: string; loadingLabel: string }) {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(autoRetrySeconds);
 
   useEffect(() => {
