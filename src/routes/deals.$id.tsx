@@ -243,12 +243,29 @@ function DealDetailError({ message, retryLabel, onRetry, busy, autoRetrySeconds 
         <Button
           onClick={() => { setSecondsLeft(null); onRetry(); }}
           disabled={busy}
-          className="h-11 min-w-[140px]"
+          aria-busy={busy}
+          aria-live="polite"
+          className="h-11 min-w-[160px] gap-2"
         >
-          {busy ? <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" /> : retryLabel}
+          {busy ? (
+            <>
+              <span
+                className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                aria-hidden="true"
+              />
+              <span>{loadingLabel}</span>
+            </>
+          ) : (
+            retryLabel
+          )}
         </Button>
         {secondsLeft !== null && secondsLeft > 0 && (
-          <Button variant="outline" onClick={() => setSecondsLeft(null)} className="h-11">
+          <Button
+            variant="outline"
+            onClick={() => setSecondsLeft(null)}
+            disabled={busy}
+            className="h-11"
+          >
             {cancelLabel}
           </Button>
         )}
