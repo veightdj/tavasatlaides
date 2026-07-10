@@ -281,19 +281,67 @@ function DealDetail() {
   const { data: categories = [] } = useCategories();
   const { has, toggle } = useFavorites();
 
-  const { data: deal, isLoading, isError, refetch, isFetching } = useQuery({
+  const { data: deal, isLoading, isError, error, refetch, isFetching, failureCount } = useQuery({
     queryKey: ["deal", id],
     queryFn: async () => {
+      const startedAt = performance.now();
       const { data, error } = await supabase
         .from("ads")
         .select("*, stores(id,name,slug,category,description,address,city,postal_code,country,lat,lng,phone,website,hours_json,logo_url,cover_image_url), ad_images(url, sort_order)")
         .eq("id", id)
         .maybeSingle();
-      if (error) throw error;
+      const durationMs = Math.round(performance.now() - startedAt);
+      if (error) {
+        console.error("[deal] load failed", {
+          dealId: id,
+          durationMs,
+          online: typeof navigator !== "undefined" ? navigator.onLine : undefined,
+          code: (error as any)?.code,
+          status: (error as any)?.status,
+          message: error.message,
+          details: (error as any)?.details,
+          hint: (error as any)?.hint,
+        });
+        throw error;
+      }
+      console.info("[deal] load ok", { dealId: id, durationMs, found: !!data });
       return data;
     },
     retry: 1,
   });
+
+  // Log error boundary state + auto-retry outcomes for diagnostics.
+  useEffect(() => {
+    if (isError) {
+      console.warn("[deal] entering error state", {
+        dealId: id,
+        failureCount,
+        error: error instanceof Error ? { name: error.name, message: error.message } : error,
+      });
+    }
+  }, [isError, error, failureCount, id]);
+
+  const handleRetry = () => {
+    const attemptStartedAt = performance.now();
+    console.info("[deal] retry requested", { dealId: id, failureCount });
+    refetch()
+      .then((res) => {
+        const durationMs = Math.round(performance.now() - attemptStartedAt);
+        if (res.isError) {
+          console.error("[deal] retry failed", {
+            dealId: id,
+            durationMs,
+            error: res.error instanceof Error ? res.error.message : res.error,
+          });
+        } else {
+          console.info("[deal] retry succeeded", { dealId: id, durationMs, found: !!res.data });
+        }
+      })
+      .catch((err) => {
+        console.error("[deal] retry threw", { dealId: id, err });
+      });
+  };
+
 
   const trackView = useMutation({
     mutationFn: async () => {
@@ -318,7 +366,7 @@ function DealDetail() {
   const isLive = useIsLive(deal?.starts_at ?? null, deal?.ends_at ?? null, deal?.status ?? null);
 
   if (isLoading) return <DealDetailSkeleton label={t.common.loading} />;
-  if (isError) return <DealDetailError message={t.common.loadError} retryLabel={t.common.retry} onRetry={() => { refetch(); }} busy={isFetching} retryingInTemplate={t.common.retryingIn} cancelLabel={t.common.cancel} loadingLabel={t.common.loading} />;
+  if (isError) return <DealDetailError message={t.common.loadError} retryLabel={t.common.retry} onRetry={handleRetry} busy={isFetching} retryingInTemplate={t.common.retryingIn} cancelLabel={t.common.cancel} loadingLabel={t.common.loading} />;
   if (!deal) throw notFound();
 
 
