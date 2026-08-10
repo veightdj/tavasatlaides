@@ -1,0 +1,284 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://jubqdqokomgpequcfgwx.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "tavasatlaides",
+      "version": "0.1.0",
+      "title": "TavasAtlaides"
+    },
+    "tools": [
+      {
+        "name": "search_deals",
+        "title": "Search deals",
+        "description": "Search published deals across TavasAtlaides by keyword, category slug or city. Returns deal title, discount, dates and store.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Free-text match against the deal title.",
+              "type": "string"
+            },
+            "category": {
+              "description": "Category slug, e.g. 'veikali'.",
+              "type": "string"
+            },
+            "city": {
+              "description": "City name, e.g. 'Rīga'.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max results (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_deal",
+        "title": "Get deal",
+        "description": "Fetch one deal by id, including its store details, prices and validity dates.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Deal (ad) id."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_categories",
+        "title": "List categories",
+        "description": "List the active deal categories with their slugs and LV/EN/RU names.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_stores",
+        "title": "List my stores",
+        "description": "List the stores (businesses) owned by the signed-in user.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_deals",
+        "title": "List my deals",
+        "description": "List deals belonging to a store owned by the signed-in user, newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "store_id": {
+              "type": "string",
+              "description": "Store id owned by the signed-in user."
+            },
+            "status": {
+              "description": "Optional status filter, e.g. 'published' or 'draft'.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max results (default 50).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "store_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_deal",
+        "title": "Create deal",
+        "description": "Create a new deal (ad) for a store owned by the signed-in user. Created as a draft unless publish is true.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "store_id": {
+              "type": "string",
+              "description": "Store id owned by the signed-in user."
+            },
+            "title_lv": {
+              "type": "string",
+              "description": "Latvian title (required)."
+            },
+            "title_en": {
+              "description": "English title.",
+              "type": "string"
+            },
+            "title_ru": {
+              "description": "Russian title.",
+              "type": "string"
+            },
+            "description_lv": {
+              "description": "Latvian description.",
+              "type": "string"
+            },
+            "category": {
+              "type": "string",
+              "description": "Category slug, e.g. 'veikali'."
+            },
+            "discount_pct": {
+              "description": "Discount percentage, 1-100.",
+              "type": "number"
+            },
+            "price_original": {
+              "description": "Original price in EUR.",
+              "type": "number"
+            },
+            "price_sale": {
+              "description": "Sale price in EUR.",
+              "type": "number"
+            },
+            "starts_at": {
+              "description": "ISO start timestamp; defaults to now.",
+              "type": "string"
+            },
+            "ends_at": {
+              "description": "ISO end timestamp.",
+              "type": "string"
+            },
+            "publish": {
+              "description": "Publish immediately instead of saving as draft.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "store_id",
+            "title_lv",
+            "category"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "update_deal",
+        "title": "Update deal",
+        "description": "Update an existing deal owned by the signed-in user: titles, pricing, dates, publish status or visibility.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Deal (ad) id."
+            },
+            "title_lv": {
+              "description": "Latvian title.",
+              "type": "string"
+            },
+            "title_en": {
+              "description": "English title.",
+              "type": "string"
+            },
+            "title_ru": {
+              "description": "Russian title.",
+              "type": "string"
+            },
+            "description_lv": {
+              "description": "Latvian description.",
+              "type": "string"
+            },
+            "discount_pct": {
+              "description": "Discount percentage, 1-100.",
+              "type": "number"
+            },
+            "price_original": {
+              "description": "Original price in EUR.",
+              "type": "number"
+            },
+            "price_sale": {
+              "description": "Sale price in EUR.",
+              "type": "number"
+            },
+            "starts_at": {
+              "description": "ISO start timestamp.",
+              "type": "string"
+            },
+            "ends_at": {
+              "description": "ISO end timestamp.",
+              "type": "string"
+            },
+            "status": {
+              "description": "Deal status, e.g. 'draft' or 'published'.",
+              "type": "string"
+            },
+            "is_hidden": {
+              "description": "Hide the deal from public listings.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

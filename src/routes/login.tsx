@@ -10,7 +10,13 @@ import { useI18n } from "@/i18n/use-i18n";
 import { AUDIENCE_HOME, getHostAudience } from "@/lib/audience";
 
 
+type LoginSearch = { next?: string; redirect?: string };
+
 export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>): LoginSearch => ({
+    ...(typeof s.next === "string" ? { next: s.next } : {}),
+    ...(typeof s.redirect === "string" ? { redirect: s.redirect } : {}),
+  }),
   head: () => ({
     meta: [
       { title: "Sign in — TavasAtlaides" },
@@ -28,16 +34,22 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   // After auth, land on the home of whichever host we're on. Sessions are
   // localStorage-per-origin, so we must NOT cross-host redirect here.
+  // A `next`/`redirect` search param (e.g. the OAuth consent page) wins when it
+  // is a safe same-origin relative path.
   const destination = (() => {
+    const requested = search.next ?? search.redirect;
+    if (requested && requested.startsWith("/") && !requested.startsWith("//")) return requested;
     const h = getHostAudience();
     return h ? AUDIENCE_HOME[h] : "/profile";
   })();
+
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
