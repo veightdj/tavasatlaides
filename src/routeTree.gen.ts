@@ -17,6 +17,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as NearbyRouteImport } from './routes/nearby'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -42,6 +43,8 @@ import { Route as AdminCompaniesRouteImport } from './routes/admin.companies'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as AdminNotificationsDebugRouteImport } from './routes/admin.notifications.debug'
 import { Route as AuthenticatedProfileStoreRouteImport } from './routes/_authenticated/profile.store'
@@ -50,6 +53,7 @@ import { Route as AuthenticatedProfileNotificationsRouteImport } from './routes/
 import { Route as AuthenticatedProfileDashboardRouteImport } from './routes/_authenticated/profile.dashboard'
 import { Route as AuthenticatedProfileBillingRouteImport } from './routes/_authenticated/profile.billing'
 import { Route as AuthenticatedProfileAnalyticsRouteImport } from './routes/_authenticated/profile.analytics'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedProfileAdsIndexRouteImport } from './routes/_authenticated/profile.ads.index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
@@ -100,6 +104,11 @@ const PartnerRoute = PartnerRouteImport.update({
 const NearbyRoute = NearbyRouteImport.update({
   id: '/nearby',
   path: '/nearby',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -226,6 +235,18 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
   path: '/admin/banners',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -271,6 +292,12 @@ const AuthenticatedProfileAnalyticsRoute =
     id: '/profile/analytics',
     path: '/profile/analytics',
     getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
@@ -347,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/mcp': typeof McpRoute
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
@@ -355,6 +383,8 @@ export interface FileRoutesByFullPath {
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -369,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
   '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
@@ -400,6 +431,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/mcp': typeof McpRoute
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
@@ -408,6 +440,8 @@ export interface FileRoutesByTo {
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -422,6 +456,7 @@ export interface FileRoutesByTo {
   '/deals': typeof DealsIndexRoute
   '/stores': typeof StoresIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
   '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
@@ -455,6 +490,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/mcp': typeof McpRoute
   '/nearby': typeof NearbyRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
@@ -463,6 +499,8 @@ export interface FileRoutesById {
   '/select-role': typeof SelectRoleRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -477,6 +515,7 @@ export interface FileRoutesById {
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
   '/_authenticated/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/_authenticated/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
@@ -510,6 +549,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/map'
+    | '/mcp'
     | '/nearby'
     | '/partner'
     | '/privacy'
@@ -518,6 +558,8 @@ export interface FileRouteTypes {
     | '/select-role'
     | '/signup'
     | '/terms'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/banners'
     | '/admin/businesses'
     | '/admin/categories'
@@ -532,6 +574,7 @@ export interface FileRouteTypes {
     | '/deals/'
     | '/stores/'
     | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/profile/analytics'
     | '/profile/billing'
     | '/profile/dashboard'
@@ -563,6 +606,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/map'
+    | '/mcp'
     | '/nearby'
     | '/partner'
     | '/privacy'
@@ -571,6 +615,8 @@ export interface FileRouteTypes {
     | '/select-role'
     | '/signup'
     | '/terms'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/banners'
     | '/admin/businesses'
     | '/admin/categories'
@@ -585,6 +631,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/stores'
     | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/profile/analytics'
     | '/profile/billing'
     | '/profile/dashboard'
@@ -617,6 +664,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/map'
+    | '/mcp'
     | '/nearby'
     | '/partner'
     | '/privacy'
@@ -625,6 +673,8 @@ export interface FileRouteTypes {
     | '/select-role'
     | '/signup'
     | '/terms'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/banners'
     | '/admin/businesses'
     | '/admin/categories'
@@ -639,6 +689,7 @@ export interface FileRouteTypes {
     | '/deals/'
     | '/stores/'
     | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/profile/analytics'
     | '/_authenticated/profile/billing'
     | '/_authenticated/profile/dashboard'
@@ -672,6 +723,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
+  McpRoute: typeof McpRoute
   NearbyRoute: typeof NearbyRoute
   PartnerRoute: typeof PartnerRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -680,6 +732,8 @@ export interface RootRouteChildren {
   SelectRoleRoute: typeof SelectRoleRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   AdminBannersRoute: typeof AdminBannersRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
@@ -694,6 +748,7 @@ export interface RootRouteChildren {
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   AdminNotificationsDebugRoute: typeof AdminNotificationsDebugRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicConfigMapsRoute: typeof ApiPublicConfigMapsRoute
@@ -761,6 +816,13 @@ declare module '@tanstack/react-router' {
       path: '/nearby'
       fullPath: '/nearby'
       preLoaderRoute: typeof NearbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -938,6 +1000,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -993,6 +1069,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/profile/analytics'
       preLoaderRoute: typeof AuthenticatedProfileAnalyticsRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
@@ -1116,6 +1199,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
+  McpRoute: McpRoute,
   NearbyRoute: NearbyRoute,
   PartnerRoute: PartnerRoute,
   PrivacyRoute: PrivacyRoute,
@@ -1124,6 +1208,9 @@ const rootRouteChildren: RootRouteChildren = {
   SelectRoleRoute: SelectRoleRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   AdminBannersRoute: AdminBannersRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
@@ -1138,6 +1225,7 @@ const rootRouteChildren: RootRouteChildren = {
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   AdminNotificationsDebugRoute: AdminNotificationsDebugRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicConfigMapsRoute: ApiPublicConfigMapsRoute,
