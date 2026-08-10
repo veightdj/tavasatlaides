@@ -11,6 +11,10 @@ import { AUDIENCE_HOME, getHostAudience } from "@/lib/audience";
 
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : undefined,
+    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Sign in — TavasAtlaides" },
