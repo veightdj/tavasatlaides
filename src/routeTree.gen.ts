@@ -50,6 +50,7 @@ import { Route as AuthenticatedProfileNotificationsRouteImport } from './routes/
 import { Route as AuthenticatedProfileDashboardRouteImport } from './routes/_authenticated/profile.dashboard'
 import { Route as AuthenticatedProfileBillingRouteImport } from './routes/_authenticated/profile.billing'
 import { Route as AuthenticatedProfileAnalyticsRouteImport } from './routes/_authenticated/profile.analytics'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedProfileAdsIndexRouteImport } from './routes/_authenticated/profile.ads.index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -271,6 +272,11 @@ const AuthenticatedProfileAnalyticsRoute =
     path: '/profile/analytics',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProfileAdsIndexRoute =
   AuthenticatedProfileAdsIndexRouteImport.update({
     id: '/profile/ads/',
@@ -362,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
   '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
@@ -414,6 +421,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/deals': typeof DealsIndexRoute
   '/stores': typeof StoresIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
   '/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
@@ -468,6 +476,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/deals/': typeof DealsIndexRoute
   '/stores/': typeof StoresIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/profile/analytics': typeof AuthenticatedProfileAnalyticsRoute
   '/_authenticated/profile/billing': typeof AuthenticatedProfileBillingRoute
   '/_authenticated/profile/dashboard': typeof AuthenticatedProfileDashboardRoute
@@ -522,6 +531,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/deals/'
     | '/stores/'
+    | '/.lovable/oauth/consent'
     | '/profile/analytics'
     | '/profile/billing'
     | '/profile/dashboard'
@@ -574,6 +584,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/deals'
     | '/stores'
+    | '/.lovable/oauth/consent'
     | '/profile/analytics'
     | '/profile/billing'
     | '/profile/dashboard'
@@ -627,6 +638,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/deals/'
     | '/stores/'
+    | '/.lovable/oauth/consent'
     | '/_authenticated/profile/analytics'
     | '/_authenticated/profile/billing'
     | '/_authenticated/profile/dashboard'
@@ -681,6 +693,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   DealsIndexRoute: typeof DealsIndexRoute
   StoresIndexRoute: typeof StoresIndexRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   AdminNotificationsDebugRoute: typeof AdminNotificationsDebugRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicConfigMapsRoute: typeof ApiPublicConfigMapsRoute
@@ -981,6 +994,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileAnalyticsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile/ads/': {
       id: '/_authenticated/profile/ads/'
       path: '/profile/ads'
@@ -1117,6 +1137,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   DealsIndexRoute: DealsIndexRoute,
   StoresIndexRoute: StoresIndexRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   AdminNotificationsDebugRoute: AdminNotificationsDebugRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicConfigMapsRoute: ApiPublicConfigMapsRoute,
