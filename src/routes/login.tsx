@@ -10,10 +10,12 @@ import { useI18n } from "@/i18n/use-i18n";
 import { AUDIENCE_HOME, getHostAudience } from "@/lib/audience";
 
 
+type LoginSearch = { next?: string; redirect?: string };
+
 export const Route = createFileRoute("/login")({
-  validateSearch: (s: Record<string, unknown>) => ({
-    next: typeof s.next === "string" ? s.next : undefined,
-    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+  validateSearch: (s: Record<string, unknown>): LoginSearch => ({
+    ...(typeof s.next === "string" ? { next: s.next } : {}),
+    ...(typeof s.redirect === "string" ? { redirect: s.redirect } : {}),
   }),
   head: () => ({
     meta: [
