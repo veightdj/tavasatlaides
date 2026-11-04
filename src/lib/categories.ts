@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { dict } from "@/i18n/dictionaries";
 
 // Fallback static list — kept for typing & i18n keys. Source of truth is the
 // `categories` table managed by admins.
@@ -46,22 +47,21 @@ export type Category = {
 
 /**
  * Strict per-locale name resolver.
- * No cross-language fallback: if a translation is missing we return the slug,
- * never another language's text.
+ * No cross-language fallback: missing labels use the selected locale's placeholder.
  */
 export function localizedCategoryName(c: Pick<Category, "slug" | "name_lv" | "name_en" | "name_ru">, locale: Locale): string {
   const value = locale === "lv" ? c.name_lv : locale === "en" ? c.name_en : c.name_ru;
-  return (value ?? "").trim() || c.slug;
+  return (value ?? "").trim() || dict[locale].deals.category;
 }
 
 const CATEGORY_COLS = "id,name,name_lv,name_en,name_ru,slug,icon,sort_order,active,color";
 
-const FALLBACK_CATEGORIES: Category[] = CATEGORY_SLUGS.map((slug, i) => ({
+export const FALLBACK_CATEGORIES: Category[] = CATEGORY_SLUGS.map((slug, i) => ({
   id: slug,
-  name: slug,
-  name_lv: slug,
-  name_en: slug,
-  name_ru: slug,
+  name: dict.lv.cat[slug],
+  name_lv: dict.lv.cat[slug],
+  name_en: dict.en.cat[slug],
+  name_ru: dict.ru.cat[slug],
   slug,
   icon: "Tag",
   sort_order: (i + 1) * 10,

@@ -13,14 +13,13 @@ type Translatable = {
 
 /**
  * Resolve the deal title for the active language.
- * LV is mandatory in the editor, so it is the guaranteed fallback for EN/RU
- * when a partner has not translated their deal yet.
+ * Legacy source fields are Latvian only. Never substitute them for EN/RU.
  */
 export function localizedDealTitle(deal: Translatable, lang: Lang): string {
   const per = lang === "en" ? deal.title_en : lang === "ru" ? deal.title_ru : deal.title_lv;
   const trimmed = per?.trim();
   if (trimmed) return trimmed;
-  return (deal.title_lv?.trim() || deal.title?.trim() || "") as string;
+  return lang === "lv" ? deal.title?.trim() || "" : "";
 }
 
 export function localizedDealDescription(deal: Translatable, lang: Lang): string | null {
@@ -28,6 +27,5 @@ export function localizedDealDescription(deal: Translatable, lang: Lang): string
     lang === "en" ? deal.description_en : lang === "ru" ? deal.description_ru : deal.description_lv;
   const trimmed = per?.trim();
   if (trimmed) return trimmed;
-  const fallback = deal.description_lv?.trim() || deal.description?.trim();
-  return fallback || null;
+  return lang === "lv" ? deal.description?.trim() || null : null;
 }

@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { CITIES, useCategories } from "@/lib/categories";
+import { CITIES, useCategories, localizedCategoryName } from "@/lib/categories";
 import { distanceKm as haversineKm } from "@/lib/distance";
 
 type SortMode = "newest" | "discount" | "expiring" | "nearest";
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/deals/")({
 });
 
 function DealsPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate({ from: "/deals/" });
   const { near } = Route.useSearch();
   const origin = useMemo(() => parseNear(near), [near]);
@@ -88,7 +88,7 @@ function DealsPage() {
     isFetching,
     isLoading,
   } = useInfiniteQuery({
-    queryKey: ["deals", city, cat, sort, debouncedQ, nearestMode],
+    queryKey: ["deals", lang, city, cat, sort, debouncedQ, nearestMode],
     initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
       const page = pageParam as number;
@@ -99,13 +99,13 @@ function DealsPage() {
       let query = supabase
         .from("ads")
         .select(
-          "id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng,address,logo_url,is_verified,category,hours_json)"
+          "id,title,title_lv,title_en,title_ru,description_lv,description_en,description_ru,category,discount_pct,price_original,price_sale,cover_image_url,starts_at,status,ends_at,created_at,stores!inner(id,name,city,slug,lat,lng,address,logo_url,is_verified,category,hours_json)"
         )
         .eq("status", "active");
 
       if (cat !== "all") query = query.eq("category", cat);
       if (city !== "all") query = query.eq("stores.city", city);
-      if (debouncedQ) query = query.ilike("title", `%${debouncedQ}%`);
+      if (debouncedQ) query = query.ilike(`title_${lang}`, `%${debouncedQ}%`);
 
       if (sort === "newest") query = query.order("created_at", { ascending: false });
       else if (sort === "discount") query = query.order("discount_pct", { ascending: false, nullsFirst: false });
@@ -182,7 +182,7 @@ function DealsPage() {
           <SelectTrigger className="min-w-[150px]"><SelectValue placeholder={t.deals.category} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.cat.all}</SelectItem>
-            {(categories ?? []).map((c) => <SelectItem key={c.slug} value={c.slug}>{(t.cat as any)[c.slug] ?? c.name}</SelectItem>)}
+            {(categories ?? []).map((c) => <SelectItem key={c.slug} value={c.slug}>{localizedCategoryName(c, lang)}</SelectItem>)}
           </SelectContent>
         </Select>
         {origin && (
