@@ -10,7 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2, Sparkles } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { generateDealFromImage } from "@/lib/ai-deal.functions";
 
 import { useI18n } from "@/i18n/use-i18n";
 import { useCategories } from "@/lib/categories";
@@ -166,6 +168,27 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
     } catch (err: any) { toast.error(err.message); }
   };
 
+  const m = t.merchant as any;
+  const [aiBusy, setAiBusy] = useState(false);
+  const aiFn = useServerFn(generateDealFromImage);
+  const onAiFill = async () => {
+    if (!form.cover_image_url) { toast.error(m.aiNeedImage); return; }
+    setAiBusy(true);
+    try {
+      const { draft, error } = await aiFn({ data: { imageUrl: form.cover_image_url } });
+      if (!draft || error) { toast.error(m.aiError); return; }
+      setForm((f) => ({
+        ...f,
+        title_lv: draft.title_lv || f.title_lv, title_en: draft.title_en || f.title_en, title_ru: draft.title_ru || f.title_ru,
+        description_lv: draft.description_lv || f.description_lv, description_en: draft.description_en || f.description_en, description_ru: draft.description_ru || f.description_ru,
+        discount_pct: draft.discount_pct != null ? String(Math.round(draft.discount_pct)) : f.discount_pct,
+        price_original: draft.price_original != null ? String(draft.price_original) : f.price_original,
+        price_sale: draft.price_sale != null ? String(draft.price_sale) : f.price_sale,
+      }));
+      toast.success(m.aiDone);
+    } catch { toast.error(m.aiError); } finally { setAiBusy(false); }
+  };
+
   if (!store) return <div>{t.merchant.setupStore}</div>;
 
   return (
@@ -178,6 +201,10 @@ export function AdEditor({ adId, onSaved, embedded }: { adId?: string; onSaved?:
           <span className="inline-flex items-center min-h-[44px] rounded-md bg-secondary px-4 py-2 text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70">{t.merchant.coverImage}</span>
           <input type="file" accept="image/*" className="hidden" onChange={onCover} />
         </label>
+        <Button type="button" variant="outline" className="min-h-[44px]" disabled={aiBusy} onClick={onAiFill}>
+          {aiBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+          {aiBusy ? m.aiWorking : m.aiFill}
+        </Button>
       </div>
 
       <div className="space-y-2">

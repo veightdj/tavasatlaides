@@ -29,7 +29,7 @@ export const Route = createFileRoute("/nearby")({
     <div className="mx-auto max-w-md px-4 py-16 text-center space-y-4">
       <AlertTriangle className="h-10 w-10 mx-auto text-destructive" />
       <h1 className="text-xl font-semibold">Something went wrong</h1>
-      <p className="text-sm text-muted-foreground break-words">{error?.message ?? "Could not load nearby deals."}</p>
+      <p className="text-sm text-muted-foreground break-words">{(error as Error)?.message ?? "Could not load nearby deals."}</p>
       <Button onClick={reset} variant="outline">Try again</Button>
     </div>
   ),
