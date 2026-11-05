@@ -1,3 +1,9 @@
+import { legal } from "./sections/legal";
+import { authPages } from "./sections/authPages";
+import { homePages } from "./sections/homePages";
+import { dealPages } from "./sections/dealPages";
+import { storePages } from "./sections/storePages";
+import { partnerPages } from "./sections/partnerPages";
 export type Lang = "lv" | "en" | "ru";
 
 export const LANGS: { code: Lang; label: string }[] = [
@@ -8,6 +14,12 @@ export const LANGS: { code: Lang; label: string }[] = [
 
 export const dict = {
   lv: {
+    legal: legal.lv,
+    authPages: authPages.lv,
+    homePages: homePages.lv,
+    dealPages: dealPages.lv,
+    storePages: storePages.lv,
+    partnerPages: partnerPages.lv,
     appName: "TavasAtlaides",
     tagline: "Atlaides un piedāvājumi tuvākajos veikalos",
     nav: { deals: "Piedāvājumi", stores: "Veikali", map: "Karte", favorites: "Saglabātie", about: "Par mums", forMerchants: "Veikaliem", privacy: "Privātums", terms: "Noteikumi", cookies: "Sīkdatnes", deleteAccount: "Konta dzēšana", settings: "Iestatījumi", profile: "Profils", switchToMerchant: "Pārslēgties uz veikala portālu" },
@@ -124,6 +136,12 @@ export const dict = {
     time: { day: "diena", days: "dienas", hour: "stunda", hours: "stundas", minute: "minūte", minutes: "minūtes", second: "sekunde", seconds: "sekundes", left: "atlicis", ended: "Beidzies" },
   },
   en: {
+    legal: legal.en,
+    authPages: authPages.en,
+    homePages: homePages.en,
+    dealPages: dealPages.en,
+    storePages: storePages.en,
+    partnerPages: partnerPages.en,
     appName: "TavasAtlaides",
     tagline: "Local store deals & discounts",
     nav: { deals: "Deals", stores: "Stores", map: "Map", favorites: "Saved", about: "About", forMerchants: "For merchants", privacy: "Privacy", terms: "Terms", cookies: "Cookies", deleteAccount: "Delete account", settings: "Settings", profile: "Profile", switchToMerchant: "Switch to merchant portal" },
@@ -240,6 +258,12 @@ export const dict = {
     time: { day: "day", days: "days", hour: "hour", hours: "hours", minute: "minute", minutes: "minutes", second: "second", seconds: "seconds", left: "left", ended: "Ended" },
   },
   ru: {
+    legal: legal.ru,
+    authPages: authPages.ru,
+    homePages: homePages.ru,
+    dealPages: dealPages.ru,
+    storePages: storePages.ru,
+    partnerPages: partnerPages.ru,
     appName: "TavasAtlaides",
     tagline: "Скидки и акции местных магазинов",
     nav: { deals: "Акции", stores: "Магазины", map: "Карта", favorites: "Избранное", about: "О нас", forMerchants: "Магазинам", privacy: "Конфиденциальность", terms: "Условия", cookies: "Cookies", deleteAccount: "Удаление аккаунта", settings: "Настройки", profile: "Профиль", switchToMerchant: "Перейти в портал магазина" },
