@@ -1,5 +1,5 @@
 export const authPages = {
-  lv: {},
-  en: {},
-  ru: {},
+  lv: { authorizationError: "Autorizācija neizdevās. Lūdzu, mēģiniet vēlreiz.", connect: "Savienot ar {client}", connectDescription: "Tas ļauj lietotnei {client} piekļūt TavasAtlaides jūsu vārdā — pārlūkot piedāvājumus un pārvaldīt jums piederošos uzņēmumus un piedāvājumus.", app: "lietotni", approve: "Atļaut", deny: "Noraidīt", noRedirect: "Autorizācijas saite nav pieejama. Lūdzu, mēģiniet vēlreiz.", notFound: "Lapa nav atrasta.", goHome: "Uz sākumlapu", somethingWrong: "Radās kļūda", tryAgain: "Mēģināt vēlreiz" },
+  en: { authorizationError: "Authorization failed. Please try again.", connect: "Connect {client}", connectDescription: "This lets {client} access TavasAtlaides as you — browsing deals and managing the businesses and deals you own.", app: "an app", approve: "Approve", deny: "Deny", noRedirect: "The authorization link is unavailable. Please try again.", notFound: "Page not found.", goHome: "Go home", somethingWrong: "Something went wrong", tryAgain: "Try again" },
+  ru: { authorizationError: "Авторизация не удалась. Попробуйте ещё раз.", connect: "Подключить {client}", connectDescription: "Это позволит приложению {client} пользоваться TavasAtlaides от вашего имени — просматривать предложения и управлять принадлежащими вам компаниями и предложениями.", app: "приложение", approve: "Разрешить", deny: "Отклонить", noRedirect: "Ссылка авторизации недоступна. Попробуйте ещё раз.", notFound: "Страница не найдена.", goHome: "На главную", somethingWrong: "Что-то пошло не так", tryAgain: "Повторить попытку" },
 };

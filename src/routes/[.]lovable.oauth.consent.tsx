@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/use-i18n";
 
 type OAuthDetails = {
   client?: { name?: string } | null;
@@ -29,7 +30,8 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
     if (!data.session) throw redirect({ to: "/login", search: { next } });
   },
   loader: async ({ location }) => {
-    const authorizationId = new URLSearchParams(location.search).get("authorization_id")!;
+    const authorizationId = new URLSearchParams(location.search).get("authorization_id");
+    if (!authorizationId) throw new Error("Missing authorization_id");
     const { data, error } = await oauth().getAuthorizationDetails(authorizationId);
     if (error) throw error;
     const immediate = data?.redirect_url ?? data?.redirect_to;
@@ -37,22 +39,21 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
     return data;
   },
   component: Consent,
-  errorComponent: ({ error }) => (
-    <main className="mx-auto max-w-md px-4 py-16 text-center">
-      <h1 className="text-xl font-semibold">Authorization error</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {String((error as Error)?.message ?? error)}
-      </p>
-    </main>
-  ),
+  errorComponent: ConsentError,
 });
 
+function ConsentError() {
+  const { t } = useI18n();
+  return <main className="mx-auto max-w-md px-4 py-16 text-center"><h1 className="text-xl font-semibold">{t.authPages.authorizationError}</h1></main>;
+}
+
 function Consent() {
+  const { t } = useI18n();
   const details = Route.useLoaderData();
   const { authorization_id } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const clientName = details?.client?.name ?? "an app";
+  const clientName = details?.client?.name ?? t.authPages.app;
 
   async function decide(approve: boolean) {
     setBusy(true);
@@ -62,13 +63,14 @@ function Consent() {
       : await oauth().denyAuthorization(authorization_id);
     if (err) {
       setBusy(false);
-      setError(err.message);
+      console.error("[oauth] authorization failed", err);
+      setError(t.authPages.authorizationError);
       return;
     }
     const target = data?.redirect_url ?? data?.redirect_to;
     if (!target) {
       setBusy(false);
-      setError("No redirect returned by the authorization server.");
+      setError(t.authPages.noRedirect);
       return;
     }
     window.location.href = target;
@@ -77,10 +79,9 @@ function Consent() {
   return (
     <main className="mx-auto max-w-md px-4 py-16">
       <div className="rounded-2xl border bg-card p-8 shadow-sm space-y-4">
-        <h1 className="text-2xl font-bold">Connect {clientName}</h1>
+        <h1 className="text-2xl font-bold">{t.authPages.connect.replace("{client}", clientName)}</h1>
         <p className="text-sm text-muted-foreground">
-          This lets {clientName} access TavasAtlaides as you — browsing deals and managing the
-          businesses and deals you own.
+          {t.authPages.connectDescription.replace("{client}", clientName)}
         </p>
         {error && (
           <p role="alert" className="text-sm text-destructive">
@@ -89,10 +90,10 @@ function Consent() {
         )}
         <div className="flex gap-2 pt-2">
           <Button className="flex-1" disabled={busy} onClick={() => decide(true)}>
-            Approve
+            {t.authPages.approve}
           </Button>
           <Button variant="outline" className="flex-1" disabled={busy} onClick={() => decide(false)}>
-            Deny
+            {t.authPages.deny}
           </Button>
         </div>
       </div>
