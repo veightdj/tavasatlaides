@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Bell, LocateFixed, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
+import { fmt } from "@/i18n/sections/homePages";
+import { useI18n } from "@/i18n/use-i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DealCard } from "@/components/DealCard";
@@ -28,9 +30,7 @@ export const Route = createFileRoute("/nearby")({
   errorComponent: ({ error, reset }) => (
     <div className="mx-auto max-w-md px-4 py-16 text-center space-y-4">
       <AlertTriangle className="h-10 w-10 mx-auto text-destructive" />
-      <h1 className="text-xl font-semibold">Something went wrong</h1>
-      <p className="text-sm text-muted-foreground break-words">{(error as Error)?.message ?? "Could not load nearby deals."}</p>
-      <Button onClick={reset} variant="outline">Try again</Button>
+      <NearbyErrorText error={error} reset={reset} />
     </div>
   ),
 });
@@ -48,7 +48,20 @@ type Deal = {
   stores: { id: string; name: string; city: string; slug: string; lat: number | null; lng: number | null } | null;
 };
 
+function NearbyErrorText({ error, reset }: { error: unknown; reset: () => void }) {
+  const n = useI18n().t.homePages.nearby;
+  return (
+    <>
+      <h1 className="text-xl font-semibold">{n.wrong}</h1>
+      <p className="text-sm text-muted-foreground break-words">{(error as Error)?.message ?? n.couldNotLoad}</p>
+      <Button onClick={reset} variant="outline">{n.tryAgain}</Button>
+    </>
+  );
+}
+
 function NearbyPage() {
+  const { t } = useI18n();
+  const n = t.homePages.nearby;
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [watching, setWatching] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +78,7 @@ function NearbyPage() {
   const startWatch = async () => {
     try {
       if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-        setError("Geolocation is not supported in this browser.");
+        setError(n.unsupported);
         return;
       }
       // Ask for notification permission once we start tracking (non-blocking failure)
@@ -76,17 +89,17 @@ function NearbyPage() {
         (p) => setPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
         (e) => {
           const msg =
-            e.code === 1 ? "Location permission denied. Enable it in your browser settings."
-            : e.code === 2 ? "Location unavailable. Check your GPS or network."
-            : e.code === 3 ? "Location request timed out. Try again."
-            : (e.message || "Could not get your location.");
+            e.code === 1 ? n.denied
+            : e.code === 2 ? n.unavailable
+            : e.code === 3 ? n.timeout
+            : n.noLocation;
           setError(msg);
           setWatching(false);
         },
         { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
       );
     } catch (err: any) {
-      setError(err?.message || "Could not start location tracking.");
+      setError(n.noLocation);
       setWatching(false);
     }
   };
@@ -167,13 +180,13 @@ function NearbyPage() {
           if (!canNotify(d.id, prefs)) continue;
           const dist = Math.round(d._km * 1000);
           const distLabel = dist < 1000 ? `${dist} m` : `${(d._km).toFixed(1)} km`;
-          const pct = d.discount_pct ? `${d.discount_pct}% off ` : "";
+          const pct = d.discount_pct ? fmt(n.off, { pct: d.discount_pct }) : "";
           try {
             await showDealNotification(
               {
                 adId: d.id,
                 title: `🔥 ${pct}${d.title}`,
-                body: `${d.stores?.name ?? ""} · ${distLabel} away`,
+                body: `${d.stores?.name ?? ""} · ${fmt(n.away, { d: distLabel })}`,
                 distanceM: dist,
                 url: `/deals/${d.id}`,
                 imageUrl: d.cover_image_url,
@@ -192,7 +205,7 @@ function NearbyPage() {
             }
           } catch { /* ignore */ }
 
-          toast.message(`${pct}${d.title}`, { description: `${d.stores?.name ?? ""} · ${distLabel} away` });
+          toast.message(`${pct}${d.title}`, { description: `${d.stores?.name ?? ""} · ${fmt(n.away, { d: distLabel })}` });
         }
       } catch (e) {
         console.warn("[nearby] notification loop failed", e);
@@ -204,21 +217,21 @@ function NearbyPage() {
     <div className="mx-auto w-full max-w-3xl px-3 sm:px-4 py-4 sm:py-6 md:py-10 pb-24 md:pb-10 space-y-4 sm:space-y-6 overflow-x-hidden">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2 sm:gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight truncate">Deals Near Me</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight truncate">{n.title}</h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 truncate">
-            Within {prefs.radiusKm} km · {prefs.categories.length} categories
+            {fmt(n.within, { km: prefs.radiusKm, n: prefs.categories.length })}
           </p>
         </div>
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="shrink-0 rounded-full">
               <SettingsIcon className="h-4 w-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">Distance</span>
+              <span className="hidden sm:inline">{n.distance}</span>
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-[min(16rem,calc(100vw-1.5rem))]">
             <div className="space-y-3">
-              <div className="text-sm font-medium">Search radius</div>
+              <div className="text-sm font-medium">{n.radius}</div>
               <div className="grid grid-cols-3 gap-2">
                 {RADIUS_OPTIONS.map((r) => (
                   <Button
@@ -236,7 +249,7 @@ function NearbyPage() {
                 ))}
               </div>
               <Link to="/profile/notifications" className="block text-xs text-muted-foreground underline pt-1">
-                More notification settings
+                {n.moreSettings}
               </Link>
             </div>
           </PopoverContent>
@@ -250,39 +263,39 @@ function NearbyPage() {
           <span className={`relative inline-flex rounded-full h-3 w-3 ${watching ? "bg-green-500" : "bg-muted-foreground"}`} />
         </span>
         <div className="flex-1 min-w-0 text-sm">
-          {watching ? <span className="text-green-600 font-medium">Active</span> : <span className="text-muted-foreground">Inactive</span>}
+          {watching ? <span className="text-green-600 font-medium">{n.active}</span> : <span className="text-muted-foreground">{n.inactive}</span>}
           {error && <span className="text-destructive block mt-1 text-xs break-words">{error}</span>}
         </div>
         {!watching ? (
           <Button onClick={startWatch} size="sm" className="shrink-0 rounded-full">
             <LocateFixed className="h-4 w-4 sm:mr-1.5" />
-            <span className="hidden sm:inline">Start</span>
+            <span className="hidden sm:inline">{n.start}</span>
           </Button>
         ) : (
-          <Button onClick={stopWatch} variant="outline" size="sm" className="shrink-0 rounded-full">Stop</Button>
+          <Button onClick={stopWatch} variant="outline" size="sm" className="shrink-0 rounded-full">{n.stop}</Button>
         )}
       </div>
 
       {!prefs.enabled && (
         <div className="rounded-2xl border border-dashed p-4 text-sm flex items-center gap-3">
           <Bell className="h-5 w-5 shrink-0 text-muted-foreground" />
-          Notifications are disabled. <Link to="/profile" className="underline">Enable in settings</Link>.
+          {n.notifOff} <Link to="/profile" className="underline">{n.enableInSettings}</Link>
         </div>
       )}
 
       {/* Live list */}
       <div className="space-y-3">
         <h2 className="text-lg font-semibold">
-          {pos ? `${ranked.length} deal${ranked.length === 1 ? "" : "s"} within ${prefs.radiusKm} km` : "Start tracking to see nearby deals"}
+          {pos ? fmt(n.count, { km: prefs.radiusKm, n: ranked.length }) : n.startHint}
         </h2>
 
         {isError && (
           <div className="rounded-2xl border border-destructive/40 bg-destructive/5 p-4 text-sm space-y-2">
-            <p className="text-destructive font-medium">Couldn't load deals.</p>
+            <p className="text-destructive font-medium">{n.loadError}</p>
             <p className="text-muted-foreground text-xs break-words">
-              {(queryError as Error)?.message ?? "Network or server error."}
+              {(queryError as Error)?.message ?? n.networkError}
             </p>
-            <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
+            <Button size="sm" variant="outline" onClick={() => refetch()}>{n.retry}</Button>
           </div>
         )}
 
@@ -296,8 +309,8 @@ function NearbyPage() {
 
         {!isLoading && !isError && pos && ranked.length === 0 && (
           <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
-            No active deals in your {prefs.radiusKm} km radius right now.
-            <div className="mt-2 text-sm">Try increasing your radius above.</div>
+            {fmt(n.empty, { km: prefs.radiusKm })}
+            <div className="mt-2 text-sm">{n.emptyHint}</div>
           </div>
         )}
 
@@ -314,7 +327,7 @@ function NearbyPage() {
       </div>
 
       <p className="text-xs text-muted-foreground pt-4 border-t">
-        Note: location tracking only runs while this tab is open. For true background alerts, install the app to your home screen on a supported device.
+        {n.note}
       </p>
     </div>
   );

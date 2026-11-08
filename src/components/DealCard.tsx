@@ -141,11 +141,11 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 </span>
-                Aktīva
+                {t.homePages.active}
               </>
             ) : (
               <>
-                <Clock className="h-3 w-3" /> Drīz
+                <Clock className="h-3 w-3" /> {t.homePages.soon}
               </>
             )}
           </span>

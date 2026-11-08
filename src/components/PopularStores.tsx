@@ -2,17 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BadgeCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
-const CATEGORY_LABEL: Record<string, string> = {
-  food: "Restorāns",
-  cafes: "Kafejnīca",
-  beauty: "Skaistums",
-  auto: "Auto",
-  electronics: "Elektronika",
-  home: "Mājai",
-  kids: "Bērniem",
-  events: "Pasākumi",
-};
+import { useI18n } from "@/i18n/use-i18n";
 
 type Store = {
   id: string;
@@ -24,6 +14,8 @@ type Store = {
 };
 
 export function PopularStores() {
+  const { t } = useI18n();
+  const h = t.homePages;
   const { data: stores = [] } = useQuery({
     queryKey: ["popular-stores"],
     queryFn: async () => {
@@ -46,9 +38,9 @@ export function PopularStores() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-3 md:py-5">
       <div className="flex items-end justify-between mb-3">
-        <h2 className="text-lg sm:text-xl font-bold tracking-tight">Populāri veikali</h2>
+        <h2 className="text-lg sm:text-xl font-bold tracking-tight">{h.popularStores}</h2>
         <Link to="/stores" className="text-sm text-primary font-medium hover:underline shrink-0">
-          Skatīt visus →
+          {h.seeAll}
         </Link>
       </div>
       <div className="-mx-4 px-4 overflow-x-auto scrollbar-none">
@@ -79,7 +71,7 @@ export function PopularStores() {
                   {s.name}
                 </p>
                 <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-1">
-                  {CATEGORY_LABEL[s.category] ?? s.category}
+                  {h.storeCat[s.category] ?? ""}
                 </p>
               </Link>
             </li>
