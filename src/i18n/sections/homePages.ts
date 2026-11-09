@@ -1,5 +1,8 @@
+import { marketplaceHome } from "./marketplaceHome";
+
 export const homePages = {
   lv: {
+    marketplace: marketplaceHome.lv,
     popularStores: "Populāri veikali", seeAll: "Skatīt visus →",
     storeCat: { food: "Restorāns", cafes: "Kafejnīca", beauty: "Skaistums", auto: "Auto", electronics: "Elektronika", home: "Mājai", kids: "Bērniem", events: "Pasākumi" } as Record<string, string>,
     active: "Aktīva", soon: "Drīz",
@@ -21,6 +24,7 @@ export const homePages = {
     },
   },
   en: {
+    marketplace: marketplaceHome.en,
     popularStores: "Popular stores", seeAll: "See all →",
     storeCat: { food: "Restaurant", cafes: "Café", beauty: "Beauty", auto: "Auto", electronics: "Electronics", home: "Home", kids: "Kids", events: "Events" } as Record<string, string>,
     active: "Active", soon: "Soon",
@@ -42,6 +46,7 @@ export const homePages = {
     },
   },
   ru: {
+    marketplace: marketplaceHome.ru,
     popularStores: "Популярные магазины", seeAll: "Смотреть все →",
     storeCat: { food: "Ресторан", cafes: "Кафе", beauty: "Красота", auto: "Авто", electronics: "Электроника", home: "Для дома", kids: "Детям", events: "Мероприятия" } as Record<string, string>,
     active: "Активна", soon: "Скоро",

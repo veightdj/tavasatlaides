@@ -4,12 +4,11 @@ import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
 import { useCategories, localizedCategoryName } from "@/lib/categories";
 import { localizedDealTitle } from "@/lib/deal-i18n";
-
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
 import { useCountdown, useIsLive } from "@/hooks/useCountdown";
 
-type Deal = {
+export type Deal = {
   id: string;
   title: string;
   category: string;
@@ -27,6 +26,7 @@ type Deal = {
   description_lv?: string | null;
   description_en?: string | null;
   description_ru?: string | null;
+  created_at?: string;
   stores?: {
     id: string;
     name: string;
@@ -60,22 +60,22 @@ function trackEvent(name: string, payload: Record<string, unknown>) {
     w.dataLayer?.push({ event: name, ...payload });
     w.gtag?.("event", name, payload);
   } catch {
-    /* noop */
+    // Analytics is optional and must never block navigation.
   }
 }
 
 function googleMapsUrl(store: Deal["stores"]): string | null {
-  const dest = buildDestination(store);
-  if (!dest) return null;
-  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest.query)}`;
+  const destination = buildDestination(store);
+  if (!destination) return null;
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination.query)}`;
 }
 
 function wazeUrl(store: Deal["stores"]): string | null {
-  const dest = buildDestination(store);
-  if (!dest) return null;
-  return dest.hasCoords
-    ? `https://www.waze.com/ul?ll=${encodeURIComponent(dest.query)}&navigate=yes`
-    : `https://www.waze.com/ul?q=${encodeURIComponent(dest.query)}&navigate=yes`;
+  const destination = buildDestination(store);
+  if (!destination) return null;
+  return destination.hasCoords
+    ? `https://www.waze.com/ul?ll=${encodeURIComponent(destination.query)}&navigate=yes`
+    : `https://www.waze.com/ul?q=${encodeURIComponent(destination.query)}&navigate=yes`;
 }
 
 export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: Deal; distanceKm?: number; showNavigation?: boolean }) {
@@ -84,101 +84,71 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
   const { data: categories = [] } = useCategories();
   const saved = has(deal.id);
   const store = deal.stores;
+  const h = t.homePages.marketplace;
 
-  const distLabel =
-    typeof distanceKm === "number" && Number.isFinite(distanceKm)
-      ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
-      : null;
+  const distanceLabel = typeof distanceKm === "number" && Number.isFinite(distanceKm)
+    ? formatDistance(distanceKm, t.deals.distanceKm, t.deals.awayLabel)
+    : null;
   const categorySlug = store?.category ?? deal.category;
-  const categoryRow = categories.find((c) => c.slug === categorySlug);
-  const categoryLabel = categoryRow ? localizedCategoryName(categoryRow, lang) : categorySlug;
+  const categoryRow = categories.find((category) => category.slug === categorySlug);
+  const categoryLabel = categoryRow ? localizedCategoryName(categoryRow, lang) : t.deals.category;
   const dealTitle = localizedDealTitle(deal, lang);
-
-  // Discount headline
   const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;
-
-  // Real-time "active now" — re-evaluates as start/end windows pass.
   const isLive = useIsLive(deal.starts_at ?? null, deal.ends_at ?? null, deal.status ?? null);
-
   const countdown = useCountdown(deal.ends_at ?? null);
-  const showCountdown = !!countdown && !countdown.expired && countdown.endingSoon;
-
-  const gUrl = googleMapsUrl(store);
-  const wUrl = wazeUrl(store);
+  const showCountdown = Boolean(countdown && !countdown.expired && countdown.endingSoon);
+  const mapsUrl = googleMapsUrl(store);
+  const wazeLink = wazeUrl(store);
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-[0_2px_10px_-2px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.22)]">
-      {/* HERO 16:9 with overlay */}
-      <Link
-        to="/deals/$id"
-        params={{ id: deal.id }}
-        className="relative block aspect-[16/9] overflow-hidden bg-muted"
-      >
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-lg">
+      <Link to="/deals/$id" params={{ id: deal.id }} className="relative block aspect-[16/10] overflow-hidden bg-muted">
         {deal.cover_image_url ? (
           <img
             src={deal.cover_image_url}
             alt={dealTitle}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-warm" />
+          <div className="grid h-full w-full place-items-center bg-brand-soft">
+            <MapPin className="h-8 w-8 text-primary/30" />
+          </div>
         )}
 
-        {/* Dark gradient for text legibility */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-black/20" />
-
-        {/* TOP ROW: live pill + save */}
-        <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
-          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur ${
-            isLive
-              ? "bg-background/90 text-foreground"
-              : "bg-background/80 text-muted-foreground"
-          }`}>
-            {isLive ? (
-              <>
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                </span>
-                {t.homePages.active}
-              </>
-            ) : (
-              <>
-                <Clock className="h-3 w-3" /> {t.homePages.soon}
-              </>
-            )}
+        <div className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5 sm:left-3 sm:top-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-card/95 px-2 py-1 text-[10px] font-semibold text-foreground shadow-sm backdrop-blur">
+            {isLive ? <span className="h-1.5 w-1.5 rounded-full bg-success" /> : <Clock className="h-3 w-3" />}
+            {isLive ? t.homePages.active : t.homePages.soon}
           </span>
-
-          <button
-            type="button"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(deal.id); }}
-            className="grid h-9 w-9 place-items-center rounded-full bg-background/90 text-foreground shadow-sm backdrop-blur transition hover:scale-105 hover:bg-background"
-            aria-label={saved ? t.deals.saved : t.deals.save}
-          >
-            <Heart className={`h-[18px] w-[18px] ${saved ? "fill-rose-500 text-rose-500" : ""}`} />
-          </button>
         </div>
 
-        {/* GIANT DISCOUNT BOTTOM-LEFT */}
+        <button
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            toggle(deal.id);
+          }}
+          className="absolute right-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full bg-card/95 text-foreground shadow-sm backdrop-blur transition hover:scale-105 sm:right-3 sm:top-3 sm:h-9 sm:w-9"
+          aria-label={saved ? t.deals.saved : t.deals.save}
+        >
+          <Heart className={`h-4 w-4 ${saved ? "fill-primary text-primary" : ""}`} />
+        </button>
+
         {discountHeadline && (
-          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
-            <div className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
-              <div className="text-4xl font-black leading-none tracking-tighter sm:text-5xl">
-                {discountHeadline}
-              </div>
-              <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] opacity-90">
-                Atlaide
-              </div>
-            </div>
-            {showCountdown && (
-              <span className="rounded-full bg-rose-500/95 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
-                {countdown.days > 0
-                  ? `${countdown.days}d ${countdown.hours}h`
-                  : `${String(countdown.hours).padStart(2, "0")}:${String(countdown.minutes).padStart(2, "0")}:${String(countdown.seconds).padStart(2, "0")}`}
-              </span>
-            )}
-          </div>
+          <span className="absolute bottom-2.5 left-2.5 rounded-lg bg-primary px-2.5 py-1.5 text-sm font-extrabold tracking-tight text-primary-foreground shadow-sm sm:bottom-3 sm:left-3 sm:text-base">
+            {discountHeadline}
+            <span className="sr-only"> {h.discountLabel}</span>
+          </span>
+        )}
+
+        {showCountdown && countdown && (
+          <span className="absolute bottom-2.5 right-2.5 rounded-full bg-card/95 px-2 py-1 text-[10px] font-bold text-foreground shadow-sm sm:bottom-3 sm:right-3">
+            {countdown.days > 0
+              ? `${countdown.days}d ${countdown.hours}h`
+              : `${String(countdown.hours).padStart(2, "0")}:${String(countdown.minutes).padStart(2, "0")}`}
+          </span>
         )}
 
         <DealShareButton
@@ -186,29 +156,22 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
           title={dealTitle}
           description={store?.name}
           discountPct={deal.discount_pct}
-          className="absolute bottom-3 right-3 h-9 w-9 min-h-0 min-w-0 rounded-full bg-background/90 backdrop-blur hover:bg-background"
+          className={`absolute right-2.5 h-8 w-8 min-h-0 min-w-0 rounded-full bg-card/95 shadow-sm backdrop-blur hover:bg-card sm:right-3 sm:h-9 sm:w-9 ${showCountdown ? "bottom-11 sm:bottom-14" : "bottom-2.5 sm:bottom-3"}`}
         />
       </Link>
 
-      {/* IDENTITY + CONTENT */}
-      <div className="flex flex-col gap-3 p-4">
-        {/* Business identity row */}
-        <div className="flex items-center gap-3">
+      <div className="flex flex-1 flex-col gap-2.5 p-3 sm:gap-3 sm:p-4">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           <Link
             to="/stores/$id"
             params={{ id: store?.id ?? "" }}
             className="shrink-0"
-            onClick={(e) => { if (!store?.id) e.preventDefault(); }}
+            onClick={(event) => { if (!store?.id) event.preventDefault(); }}
           >
             {store?.logo_url ? (
-              <img
-                src={store.logo_url}
-                alt={store.name}
-                className="h-11 w-11 rounded-full object-cover ring-2 ring-background shadow-sm"
-                loading="lazy"
-              />
+              <img src={store.logo_url} alt="" className="h-7 w-7 rounded-full object-cover ring-1 ring-border sm:h-8 sm:w-8" loading="lazy" />
             ) : (
-              <div className="grid h-11 w-11 place-items-center rounded-full bg-brand-soft text-base font-bold text-primary ring-2 ring-background shadow-sm">
+              <div className="grid h-7 w-7 place-items-center rounded-full bg-brand-soft text-xs font-bold text-primary ring-1 ring-border sm:h-8 sm:w-8">
                 {store?.name?.[0] ?? "•"}
               </div>
             )}
@@ -218,62 +181,55 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
               to="/stores/$id"
               params={{ id: store?.id ?? "" }}
               className="flex items-center gap-1"
-              onClick={(e) => { if (!store?.id) e.preventDefault(); }}
+              onClick={(event) => { if (!store?.id) event.preventDefault(); }}
             >
-              <h3 className="truncate text-[15px] font-bold leading-tight">{store?.name ?? "—"}</h3>
-              {store?.is_verified && (
-                <BadgeCheck className="h-4 w-4 shrink-0 text-sky-500" aria-label="Verificēts partneris" />
-              )}
+              <h3 className="truncate text-[11px] font-bold leading-tight sm:text-xs">{store?.name ?? "—"}</h3>
+              {store?.is_verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-primary" aria-label={h.verified} />}
             </Link>
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">
-              <span>{categoryLabel}</span>
-              {store?.city && <> · {store.city}</>}
-              {distLabel && <> · {distLabel}</>}
+            <p className="mt-0.5 truncate text-[10px] text-muted-foreground sm:text-[11px]">
+              {categoryLabel}
+              {store?.city && <> · {store.city === "Riga" ? t.city.riga : store.city === "Jurmala" ? t.city.jurmala : store.city}</>}
+              {distanceLabel && <> · {distanceLabel}</>}
             </p>
           </div>
         </div>
 
-        {/* Deal title */}
-        <Link to="/deals/$id" params={{ id: deal.id }}>
-          <h4 className="line-clamp-2 text-[15px] font-semibold leading-snug text-foreground/90 transition group-hover:text-primary">
+        <Link to="/deals/$id" params={{ id: deal.id }} className="flex-1">
+          <h4 className="line-clamp-2 min-h-[2.6em] text-[13px] font-semibold leading-[1.3] tracking-[-0.01em] text-foreground transition group-hover:text-primary sm:min-h-[2.8em] sm:text-[15px] sm:leading-[1.4]">
             {dealTitle}
           </h4>
         </Link>
 
-        {/* Price (when not percent) */}
         {(deal.price_sale != null || deal.price_original != null) && (
-          <div className="flex items-baseline gap-2">
-            {deal.price_sale != null && (
-              <span className="text-lg font-bold text-primary">€{deal.price_sale.toFixed(2)}</span>
-            )}
-            {deal.price_original != null && (
-              <span className="text-sm text-muted-foreground line-through">€{deal.price_original.toFixed(2)}</span>
-            )}
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            {deal.price_sale != null && <span className="text-base font-extrabold text-primary sm:text-lg">€{deal.price_sale.toFixed(2)}</span>}
+            {deal.price_original != null && <span className="text-[11px] text-muted-foreground line-through sm:text-xs">€{deal.price_original.toFixed(2)}</span>}
           </div>
         )}
 
-        {/* Primary CTA */}
         <Link
           to="/deals/$id"
           params={{ id: deal.id }}
-          className="inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
+          className="mt-auto inline-flex h-9 w-full items-center justify-center rounded-xl bg-primary text-xs font-semibold text-primary-foreground transition hover:bg-primary/90 active:scale-[0.98] sm:h-10 sm:text-sm"
         >
           {t.deals.viewDeal}
         </Link>
 
-        {/* Navigation buttons */}
-        {showNavigation && (gUrl || wUrl) && (
+        {showNavigation && (mapsUrl || wazeLink) && (
           <div className="grid grid-cols-2 gap-2">
-            {gUrl ? (
+            {mapsUrl ? (
               <a
-                href={gUrl}
+                href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => { e.stopPropagation(); trackEvent("google_maps_clicked", { deal_id: deal.id, store_id: store?.id }); }}
-                aria-label="Atvērt Google Maps navigāciju"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  trackEvent("google_maps_clicked", { deal_id: deal.id, store_id: store?.id });
+                }}
+                aria-label={h.openMaps}
                 className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-xs font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
-                <MapPin className="h-4 w-4 text-[#1A73E8]" aria-hidden="true" />
+                <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
                 <span>Maps</span>
               </a>
             ) : (
@@ -281,16 +237,19 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
                 <MapPin className="h-4 w-4" /> Maps
               </span>
             )}
-            {wUrl ? (
+            {wazeLink ? (
               <a
-                href={wUrl}
+                href={wazeLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => { e.stopPropagation(); trackEvent("waze_clicked", { deal_id: deal.id, store_id: store?.id }); }}
-                aria-label="Atvērt Waze navigāciju"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  trackEvent("waze_clicked", { deal_id: deal.id, store_id: store?.id });
+                }}
+                aria-label={h.openWaze}
                 className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border bg-background text-xs font-semibold transition hover:bg-muted active:scale-[0.98]"
               >
-                <Navigation className="h-4 w-4 text-[#33CCFF]" aria-hidden="true" />
+                <Navigation className="h-4 w-4 text-primary" aria-hidden="true" />
                 <span>Waze</span>
               </a>
             ) : (

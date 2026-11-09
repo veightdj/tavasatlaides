@@ -1,27 +1,35 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { ArrowRight, LocateFixed, MapPin, RefreshCw, Sparkles, Store, Check, Search, Heart, ShieldCheck, Zap } from "lucide-react";
-import { toast } from "sonner";
+import { useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { DealCard } from "@/components/DealCard";
+import { DealCard, type Deal } from "@/components/DealCard";
 import { CategoryCirclesFilter } from "@/components/CategoryCirclesFilter";
-import { PopularStores } from "@/components/PopularStores";
+import { HomeBannerSlider } from "@/components/HomeBannerSlider";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/use-i18n";
-import { HomeBannerSlider } from "@/components/HomeBannerSlider";
-import { getHostAudience } from "@/lib/audience";
+import { localizedCategoryName, useCategories } from "@/lib/categories";
+import {
+  CuratedCollections,
+  HomeHero,
+  HomeSearch,
+  LocalBusinesses,
+  MapDiscovery,
+  SectionHeading,
+} from "@/components/home/HomeSections";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TavasAtlaides — Local store deals in Riga" },
-      { name: "description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga. Browse offers by category, store or on the map." },
-      { property: "og:title", content: "TavasAtlaides — Local store deals in Riga" },
-      { property: "og:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga. Browse offers by category, store or on the map." },
+      { title: "TavasAtlaides — Local deals near you" },
+      { name: "description", content: "Discover local offers, discounts and services from businesses in Riga, Jūrmala and across Latvia." },
+      { property: "og:title", content: "TavasAtlaides — Local deals near you" },
+      { property: "og:description", content: "Discover local offers, discounts and services from businesses in Riga, Jūrmala and across Latvia." },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://tavasatlaides.lv/" },
-      { name: "twitter:title", content: "TavasAtlaides — Local store deals in Riga" },
-      { name: "twitter:description", content: "Find active discounts and promotions from local shops, restaurants and services in Riga. Browse offers by category, store or on the map." },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "TavasAtlaides — Local deals near you" },
+      { name: "twitter:description", content: "Discover local offers, discounts and services from businesses in Riga, Jūrmala and across Latvia." },
     ],
     links: [{ rel: "canonical", href: "https://tavasatlaides.lv/" }],
     scripts: [
@@ -54,299 +62,135 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+const DEAL_COLUMNS = "id,title,title_lv,title_en,title_ru,description_lv,description_en,description_ru,category,discount_pct,price_original,price_sale,cover_image_url,starts_at,status,ends_at,created_at,stores!inner(id,name,city,slug,logo_url,is_verified,category,hours_json,lat,lng,address)";
+
 function Home() {
-  // Single-domain mode: the home page is the app feed (hero + categories + featured).
-  return <Feed />;
-}
+  const { t, lang } = useI18n();
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [city, setCity] = useState("all");
+  const { data: categories = [] } = useCategories();
 
-
-
-function Feed() {
-  const { t } = useI18n();
-  const navigate = useNavigate();
-  const [locating, setLocating] = useState(false);
-
-  const handleNearMe = () => {
-    if (!("geolocation" in navigator)) {
-      toast.error(t.deals.nearError);
-      return;
-    }
-    setLocating(true);
-    const toastId = toast.loading(t.deals.nearLocating);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        toast.dismiss(toastId);
-        setLocating(false);
-        const lat = pos.coords.latitude.toFixed(5);
-        const lng = pos.coords.longitude.toFixed(5);
-        navigate({ to: "/deals", search: { near: `${lat},${lng}` } });
-      },
-      () => {
-        toast.dismiss(toastId);
-        setLocating(false);
-        toast.error(t.deals.nearError);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-    );
-  };
-
-
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-
-  const { data: featured = [] } = useQuery({
-    queryKey: ["featured-deals", selectedCategory],
+  const { data: deals = [], isLoading, isError, isFetching, refetch } = useQuery({
+    queryKey: ["home-marketplace-deals", lang, city, selectedCategory],
     queryFn: async () => {
-      let q = supabase
+      let query = supabase
         .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json,lat,lng,address)")
+        .select(DEAL_COLUMNS)
         .eq("status", "active");
-      if (selectedCategory) q = q.eq("category", selectedCategory);
-      const { data, error } = await q
+      if (selectedCategory) query = query.eq("category", selectedCategory);
+      if (city !== "all") query = query.eq("stores.city", city);
+      const { data, error } = await query
         .order("discount_pct", { ascending: false, nullsFirst: false })
-        .limit(8);
+        .order("created_at", { ascending: false })
+        .limit(32);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as unknown as Deal[];
     },
+    staleTime: 60_000,
   });
 
+  const popularDeals = deals.slice(0, 8);
+  const categorySections = categories
+    .map((category) => ({
+      category,
+      deals: deals.filter((deal) => deal.category === category.slug).slice(0, 4),
+    }))
+    .filter((section) => section.deals.length > 0)
+    .slice(0, 3);
+
   return (
-    <div>
-      <HomeBannerSlider />
-      {/* Hero */}
-      <section className="px-3 md:px-6 pt-3 md:pt-5 pb-3 md:pb-5">
-        <div className="relative overflow-hidden rounded-2xl md:rounded-3xl shadow-xl shadow-black/10">
-          {/* Background image */}
-          <img
-            src="/hero-riga.jpg"
-            alt="Riga cityscape"
-            className="absolute inset-0 h-full w-full object-cover"
-            width={1920}
-            height={1080}
-            fetchPriority="high"
-            decoding="async"
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/25" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          {/* Subtle inner border */}
-          <div className="absolute inset-1.5 rounded-xl md:rounded-2xl border border-white/8 pointer-events-none" />
+    <div className="mx-auto max-w-7xl space-y-10 px-4 py-5 sm:py-7 md:space-y-14 md:py-8">
+      <HomeSearch city={city} onCityChange={setCity} />
 
-          {/* Content */}
-          <div className="relative z-10 mx-auto max-w-6xl px-5 md:px-4 py-16 sm:py-20 md:py-28">
-            <div className="max-w-2xl">
-
-              {/* Headline */}
-              <h1 className="mt-5 text-[2rem] sm:text-5xl md:text-[3.5rem] font-extrabold tracking-tight text-balance leading-[1.08] text-white">
-                {t.home.heroTitle}
-              </h1>
-
-              {/* Subtitle */}
-              <p className="mt-4 md:mt-5 text-base md:text-lg text-white/80 max-w-xl text-balance leading-relaxed">
-                {t.home.heroSub}
-              </p>
-
-              {/* CTAs */}
-              <div className="mt-7 md:mt-9 flex flex-col sm:flex-row flex-wrap gap-3">
-                <Button asChild size="lg" className="rounded-full bg-white text-foreground hover:bg-white/90 w-full sm:w-auto shadow-lg shadow-black/20 font-semibold">
-                  <Link to="/deals">{t.home.heroCtaPrimary} <ArrowRight className="h-4 w-4 ml-1.5" /></Link>
-                </Button>
-                <Button
-                  type="button"
-                  size="lg"
-                  variant="outline"
-                  onClick={handleNearMe}
-                  disabled={locating}
-                  className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm w-full sm:w-auto font-semibold"
-                >
-                  <LocateFixed className={`h-4 w-4 mr-1.5 ${locating ? "animate-pulse" : ""}`} />
-                  {locating ? t.deals.nearLocating : t.home.heroCtaSecondary}
-                </Button>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="mt-8 md:mt-10 flex flex-wrap items-center gap-4 md:gap-6">
-                <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
-                  <Store className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
-                  {t.home.trustLocal}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
-                  <RefreshCw className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
-                  {t.home.trustDaily}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs md:text-sm text-white/70">
-                  <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-white/60" />
-                  {t.home.trustNearby}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories — sticky pill bar */}
-      <section className="sticky top-0 z-30 bg-background/85 backdrop-blur-md border-b border-border/50">
-        <div className="mx-auto max-w-6xl">
+      <section aria-labelledby="home-categories">
+        <SectionHeading
+          id="home-categories"
+          title={t.homePages.marketplace.categoriesTitle}
+          subtitle={t.homePages.marketplace.categoriesSubtitle}
+        />
+        <div className="mt-2">
           <CategoryCirclesFilter activeSlug={selectedCategory} onSelect={setSelectedCategory} />
         </div>
       </section>
 
-      {/* Popular stores */}
-      <PopularStores />
+      <HomeHero />
+      <HomeBannerSlider />
 
+      {!selectedCategory && <CuratedCollections deals={deals} />}
 
-      {/* Featured */}
-      <section className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-        <div className="flex items-end justify-between mb-5 md:mb-6 gap-3">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
-          <Link to="/deals" className="text-sm text-primary font-medium hover:underline shrink-0">{t.home.seeAll} →</Link>
+      <section aria-labelledby="popular-offers">
+        <SectionHeading
+          id="popular-offers"
+          title={t.homePages.marketplace.popularTitle}
+          subtitle={t.homePages.marketplace.popularSubtitle}
+          linkTo="/deals"
+          linkLabel={t.home.seeAll}
+        />
+        <div className="mt-5">
+          {isLoading ? (
+            <DealGridSkeleton />
+          ) : isError ? (
+            <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-card px-6 py-10 text-center">
+              <p className="text-sm text-muted-foreground">{t.common.loadError}</p>
+              <Button variant="outline" className="mt-4 rounded-full" onClick={() => void refetch()} disabled={isFetching}>
+                <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+                {t.common.retry}
+              </Button>
+            </div>
+          ) : popularDeals.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-10 text-center text-sm text-muted-foreground">
+              {t.deals.empty}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+              {popularDeals.map((deal) => (
+                <DealCard key={deal.id} deal={deal} showNavigation={false} />
+              ))}
+            </div>
+          )}
         </div>
-        {featured.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-6 md:p-12 text-center text-muted-foreground">
-            {t.deals.empty}
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((d) => <DealCard key={d.id} deal={d as any} showNavigation={false} />)}
-          </div>
-        )}
       </section>
 
-      {/* Merchant CTA */}
-      <section className="mx-auto max-w-6xl px-4 py-8 md:py-14">
-        <div className="rounded-2xl md:rounded-3xl bg-gradient-warm p-6 md:p-12 text-primary-foreground flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-6 justify-between">
-          <div className="flex items-start gap-4">
-            <Store className="h-8 w-8 md:h-10 md:w-10 shrink-0" />
-            <div className="min-w-0">
-              <h3 className="text-lg md:text-2xl font-bold">{t.home.merchantsCta}</h3>
-              <p className="text-primary-foreground/80 mt-1 text-sm md:text-base">{t.forMerchants.body}</p>
+      {!selectedCategory && categorySections.map(({ category, deals: categoryDeals }) => (
+        <section key={category.id} aria-labelledby={`home-category-${category.slug}`}>
+          <SectionHeading
+            id={`home-category-${category.slug}`}
+            title={localizedCategoryName(category, lang)}
+            linkTo="/deals"
+            linkLabel={t.home.seeAll}
+            linkSearch={{ cat: category.slug }}
+          />
+          <div className="-mx-4 mt-5 overflow-x-auto px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 lg:overflow-visible">
+            <div className="flex gap-4 lg:grid lg:grid-cols-4 lg:gap-5">
+              {categoryDeals.map((deal) => (
+                <div key={deal.id} className="w-[230px] shrink-0 sm:w-[270px] lg:w-auto">
+                  <DealCard deal={deal} showNavigation={false} />
+                </div>
+              ))}
             </div>
           </div>
-          <Button asChild size="lg" variant="secondary" className="rounded-full shrink-0 w-full md:w-auto">
-            <Link to="/signup">{t.forMerchants.cta} <ArrowRight className="h-4 w-4 ml-1" /></Link>
-          </Button>
-        </div>
-      </section>
+        </section>
+      ))}
+
+      <MapDiscovery city={city} />
+      <LocalBusinesses city={city} />
     </div>
   );
 }
 
-function Marketing() {
-  const { t } = useI18n();
-  const { data: featured = [] } = useQuery({
-    queryKey: ["marketing-featured-deals"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("ads")
-        .select("id,title,category,discount_pct,price_original,price_sale,cover_image_url,ends_at,stores(id,name,city,slug,logo_url,is_verified,category,hours_json,lat,lng,address)")
-        .eq("status", "active")
-        .order("discount_pct", { ascending: false, nullsFirst: false })
-        .limit(8);
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
+function DealGridSkeleton() {
   return (
-    <div className="bg-background">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
-        <div className="relative mx-auto max-w-6xl px-5 py-20 md:py-28 text-center">
-          <h1 className="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.05]">
-            {t.home.heroTitle}
-          </h1>
-          <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-balance">
-            {t.home.heroSub}
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Button asChild size="lg" className="rounded-full">
-              <Link to="/deals">
-                {t.home.heroCtaPrimary} <ArrowRight className="h-4 w-4 ml-1.5" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full">
-              <Link to="/for-merchants">{t.forMerchants.cta}</Link>
-            </Button>
+    <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4" aria-hidden="true">
+      {Array.from({ length: 8 }).map((_, index) => (
+        <div key={index} className="overflow-hidden rounded-2xl border border-border/60 bg-card">
+          <div className="aspect-[16/10] animate-pulse bg-muted" />
+          <div className="space-y-3 p-3 sm:p-4">
+            <div className="h-3 w-2/5 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted" />
+            <div className="h-4 w-3/5 animate-pulse rounded bg-muted" />
           </div>
         </div>
-      </section>
-
-      {/* Value props */}
-      <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            { icon: MapPin, title: t.homeValues.nearTitle, body: t.homeValues.nearBody },
-            { icon: Zap, title: t.homeValues.dailyTitle, body: t.homeValues.dailyBody },
-            { icon: ShieldCheck, title: t.homeValues.trustTitle, body: t.homeValues.trustBody },
-          ].map(({ icon: Icon, title, body }) => (
-            <div key={title} className="rounded-2xl border border-border bg-card p-6">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured deals */}
-      <section className="mx-auto max-w-6xl px-5 pb-14 md:pb-20">
-        <div className="flex items-end justify-between mb-6 gap-3">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t.home.featured}</h2>
-          <Link to="/deals" className="text-sm text-primary font-medium hover:underline shrink-0">
-            {t.home.seeAll} →
-          </Link>
-        </div>
-        {featured.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-8 text-center text-muted-foreground">
-            {t.deals.empty}
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((d) => <DealCard key={d.id} deal={d as any} showNavigation={false} />)}
-          </div>
-        )}
-      </section>
-
-      {/* For business */}
-      <section className="mx-auto max-w-6xl px-5 pb-14 md:pb-20">
-
-        <div className="rounded-3xl bg-gradient-warm text-primary-foreground p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold">{t.forMerchants.title}</h2>
-            <p className="mt-3 text-primary-foreground/90">{t.forMerchants.body}</p>
-            <Button asChild size="lg" variant="secondary" className="mt-6 rounded-full">
-              <Link to="/for-merchants">{t.forMerchants.cta} <ArrowRight className="h-4 w-4 ml-1" /></Link>
-            </Button>
-          </div>
-          <ul className="space-y-3">
-            {t.forMerchants.benefits.map((line) => (
-              <li key={line} className="flex items-start gap-2.5">
-                <Check className="h-5 w-5 mt-0.5 shrink-0" />
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Quick links */}
-      <section className="mx-auto max-w-6xl px-5 pb-20">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Link to="/about" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
-            <h3 className="font-bold">{t.nav.about}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.aboutSub}</p>
-          </Link>
-          <Link to="/faq" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
-            <h3 className="font-bold">FAQ</h3>
-            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.faqSub}</p>
-          </Link>
-          <Link to="/contact" className="rounded-2xl border border-border p-5 hover:border-primary transition-colors">
-            <h3 className="font-bold">{t.homeValues.contactTitle}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{t.homeValues.contactSub}</p>
-          </Link>
-        </div>
-      </section>
+      ))}
     </div>
   );
 }

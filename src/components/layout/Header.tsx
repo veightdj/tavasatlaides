@@ -1,116 +1,169 @@
+import { useState, type FormEvent } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
+import {
+  Heart,
+  LayoutDashboard,
+  LogOut,
+  MapPin,
+  Search,
+  Store as StoreIcon,
+  User,
+} from "lucide-react";
 import logoAsset from "@/assets/tavasatlaides-logo.svg.asset.json";
-const logoUrl = logoAsset.url;
-import { MapPin, Heart, Store as StoreIcon, LogOut, LayoutDashboard, Bell, ArrowUpRight, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n, LANGS } from "@/i18n/use-i18n";
-import { getHostAudience, buildAudienceUrl } from "@/lib/audience";
+import { buildAudienceUrl, getHostAudience } from "@/lib/audience";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { CITIES } from "@/lib/categories";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const logoUrl = logoAsset.url;
 
 export function Header() {
   const { t, lang, setLang } = useI18n();
   const { user } = useAuth();
   const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [city, setCity] = useState("all");
   const isMarketing = (typeof window !== "undefined" ? getHostAudience() : null) === "client";
+  const h = t.homePages.marketplace;
 
   const signOut = async () => {
     await supabase.auth.signOut();
     router.navigate({ to: "/" });
   };
 
+  const submitSearch = (event: FormEvent) => {
+    event.preventDefault();
+    const q = query.trim();
+    if (!q) {
+      router.navigate({ to: "/deals" });
+      return;
+    }
+    router.navigate({ to: "/deals", search: { q } });
+  };
+
+  const selectCity = (value: string) => {
+    setCity(value);
+    router.navigate({ to: "/deals", search: { city: value === "all" ? undefined : value } });
+  };
+
   const appUrl = buildAudienceUrl("app", "/");
-
-  const marketingLinks = (
+  const navLinks = isMarketing ? (
     <>
-      <Link to="/about" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>{t.nav.about}</Link>
-      <Link to="/for-merchants" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>{t.nav.forMerchants}</Link>
-      <Link to="/faq" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>FAQ</Link>
-      <Link to="/contact" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>Kontakti</Link>
+      <HeaderLink to="/about">{t.nav.about}</HeaderLink>
+      <HeaderLink to="/for-merchants">{t.nav.forMerchants}</HeaderLink>
+      <HeaderLink to="/faq">FAQ</HeaderLink>
+      <HeaderLink to="/contact">{h.contact}</HeaderLink>
+    </>
+  ) : (
+    <>
+      <HeaderLink to="/deals">{t.nav.deals}</HeaderLink>
+      <HeaderLink to="/stores">{t.nav.stores}</HeaderLink>
+      <HeaderLink to="/nearby">{t.bottomNav.nearMe}</HeaderLink>
+      <HeaderLink to="/map">{t.nav.map}</HeaderLink>
     </>
   );
-
-  const appLinks = (
-    <>
-      <Link to="/deals" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>{t.nav.deals}</Link>
-      <Link to="/stores" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>{t.nav.stores}</Link>
-      <Link to="/nearby" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
-        <span className="inline-flex items-center gap-1"><Bell className="h-4 w-4" /> Near me</span>
-      </Link>
-      <Link to="/map" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
-        <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" /> {t.nav.map}</span>
-      </Link>
-      <Link to="/favorites" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>
-        <span className="inline-flex items-center gap-1"><Heart className="h-4 w-4" /> {t.nav.favorites}</span>
-      </Link>
-      <Link to="/for-merchants" className="text-sm font-medium hover:text-primary transition" activeProps={{ className: "text-primary" }}>{t.nav.forMerchants}</Link>
-    </>
-  );
-
-  const navLinks = isMarketing ? marketingLinks : appLinks;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 pt-[env(safe-area-inset-top)]">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 gap-2">
-        <Link to="/" className="flex items-center gap-2 min-w-0">
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-card/90 pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-card/80">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:px-4 lg:gap-4">
+        <Link to="/" className="flex min-w-0 shrink-0 items-center gap-2">
           <img src={logoUrl} alt={t.appName} className="block h-9 w-9 shrink-0 rounded-xl object-cover" />
-          <span className="text-lg font-bold tracking-tight truncate leading-none">{t.appName}</span>
+          <span className="hidden text-lg font-extrabold tracking-[-0.04em] min-[380px]:inline">{t.appName}</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">{navLinks}</nav>
+        {!isMarketing && (
+          <div className="hidden xl:block">
+            <Select value={city} onValueChange={selectCity}>
+              <SelectTrigger className="h-9 w-[128px] border-0 bg-transparent px-2 text-xs font-semibold shadow-none">
+                <MapPin className="h-4 w-4 text-primary" />
+                <SelectValue placeholder={t.deals.city} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t.city.all}</SelectItem>
+                {CITIES.map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {item === "Riga" ? t.city.riga : t.city.jurmala}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
-        <div className="flex items-center gap-1 md:gap-2">
-          {/* Language switcher — visible on all screen sizes */}
+        <nav className="hidden items-center gap-5 lg:flex">{navLinks}</nav>
+
+        {!isMarketing && (
+          <form onSubmit={submitSearch} role="search" aria-label={h.searchLabel} className="mx-2 hidden min-w-0 flex-1 md:flex">
+            <label className="flex h-10 w-full items-center gap-2 rounded-full border border-border/70 bg-muted/60 px-3 transition focus-within:border-primary/50 focus-within:bg-card">
+              <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={h.searchPlaceholder}
+                className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              />
+            </label>
+          </form>
+        )}
+
+        <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
+          {!isMarketing && (
+            <Button asChild variant="ghost" size="icon" className="hidden rounded-full md:inline-flex" aria-label={t.nav.favorites}>
+              <Link to="/favorites"><Heart className="h-[18px] w-[18px]" /></Link>
+            </Button>
+          )}
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="font-semibold uppercase px-2 md:px-3">{lang}</Button>
+              <Button variant="ghost" size="sm" className="rounded-full px-2 font-semibold uppercase">{lang}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {LANGS.map((l) => (
-                <DropdownMenuItem key={l.code} onClick={() => setLang(l.code)}>{l.label}</DropdownMenuItem>
+              {LANGS.map((item) => (
+                <DropdownMenuItem key={item.code} onClick={() => setLang(item.code)}>{item.label}</DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Desktop-only auth controls */}
-          <div className="hidden md:flex items-center gap-2">
+          <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden" aria-label={user ? t.nav.profile : t.cta.signIn}>
+            <Link to={user ? "/profile" : "/login"}><User className="h-5 w-5" /></Link>
+          </Button>
+
+          <div className="hidden items-center gap-2 md:flex">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm"><User className="h-4 w-4 mr-2" /> {t.nav.profile}</Button>
+                  <Button variant="outline" size="sm" className="rounded-full"><User className="h-4 w-4" />{t.nav.profile}</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
-                    <Link to="/profile"><LayoutDashboard className="h-4 w-4 mr-2" />{t.nav.profile}</Link>
+                    <Link to="/profile"><LayoutDashboard className="h-4 w-4" />{t.nav.profile}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/profile/dashboard"><StoreIcon className="h-4 w-4 mr-2" />{t.merchant.dashboard}</Link>
+                    <Link to="/profile/dashboard"><StoreIcon className="h-4 w-4" />{t.merchant.dashboard}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/favorites"><Heart className="h-4 w-4 mr-2" />{t.nav.favorites}</Link>
+                    <Link to="/favorites"><Heart className="h-4 w-4" />{t.nav.favorites}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />{t.cta.signOut}</DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4" />{t.cta.signOut}</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : isMarketing ? (
-              <>
-                <Button asChild size="sm" className="rounded-full">
-                  <a href={appUrl}>Atvērt lietotni <ArrowUpRight className="h-4 w-4 ml-1" /></a>
-                </Button>
-                <Button asChild variant="outline" size="sm"><Link to="/for-merchants">{t.nav.forMerchants}</Link></Button>
-              </>
+              <Button asChild size="sm" className="rounded-full"><a href={appUrl}>{t.cta.browse}</a></Button>
             ) : (
               <>
-                <Button asChild variant="ghost" size="sm"><Link to="/login">{t.cta.signIn}</Link></Button>
-                <Button asChild size="sm"><Link to="/signup">{t.cta.postAd}</Link></Button>
+                <Button asChild variant="ghost" size="sm" className="rounded-full"><Link to="/login">{t.cta.signIn}</Link></Button>
+                <Button asChild size="sm" className="hidden rounded-full lg:inline-flex"><Link to="/signup">{t.cta.signUp}</Link></Button>
               </>
             )}
           </div>
@@ -120,39 +173,61 @@ export function Header() {
   );
 }
 
+function HeaderLink({ to, children }: { to: "/about" | "/for-merchants" | "/faq" | "/contact" | "/deals" | "/stores" | "/nearby" | "/map"; children: React.ReactNode }) {
+  return (
+    <Link to={to} className="whitespace-nowrap text-[13px] font-semibold text-muted-foreground transition hover:text-primary" activeProps={{ className: "text-primary" }}>
+      {children}
+    </Link>
+  );
+}
+
 export function Footer() {
   const { t } = useI18n();
   const year = new Date().getFullYear();
+  const h = t.homePages.marketplace;
+
   return (
-    <footer className="hidden md:block border-t border-border/60 bg-muted/30 mt-16 pb-[env(safe-area-inset-bottom)]">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.2fr_1fr_1fr] gap-8 md:gap-12">
-          <div className="space-y-3">
+    <footer className="mt-4 hidden border-t border-border/60 bg-card pb-[env(safe-area-inset-bottom)] md:block">
+      <div className="mx-auto max-w-7xl px-4 py-10">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1fr]">
+          <div>
             <Link to="/" className="flex items-center gap-2">
               <img src={logoUrl} alt={t.appName} className="h-9 w-9 rounded-xl object-cover" />
-              <span className="text-base font-bold tracking-tight">{t.appName}</span>
+              <span className="text-base font-extrabold tracking-tight">{t.appName}</span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs">{t.tagline}</p>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{t.tagline}</p>
           </div>
-
-          <nav aria-label={t.nav.about} className="flex flex-col gap-2 text-sm">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-1">{t.appName}</h3>
-            <Link to="/about" className="text-muted-foreground hover:text-foreground transition">{t.nav.about}</Link>
-            <Link to="/for-merchants" className="text-muted-foreground hover:text-foreground transition">{t.nav.forMerchants}</Link>
-          </nav>
-
-          <nav aria-label={t.nav.privacy} className="flex flex-col gap-2 text-sm">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-1">{t.nav.privacy}</h3>
-            <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition">{t.nav.privacy}</Link>
-            <Link to="/terms" className="text-muted-foreground hover:text-foreground transition">{t.nav.terms}</Link>
-            <Link to="/cookie-policy" className="text-muted-foreground hover:text-foreground transition">{t.nav.cookies}</Link>
-          </nav>
+          <FooterColumn title={h.footerDiscovery}>
+            <Link to="/deals" className="hover:text-primary">{t.nav.deals}</Link>
+            <Link to="/stores" className="hover:text-primary">{t.nav.stores}</Link>
+            <Link to="/nearby" className="hover:text-primary">{t.bottomNav.nearMe}</Link>
+            <Link to="/map" className="hover:text-primary">{t.nav.map}</Link>
+          </FooterColumn>
+          <FooterColumn title={h.footerSupport}>
+            <Link to="/about" className="hover:text-primary">{t.nav.about}</Link>
+            <Link to="/faq" className="hover:text-primary">{h.howItWorks}</Link>
+            <Link to="/contact" className="hover:text-primary">{h.contact}</Link>
+            <Link to="/for-merchants" className="hover:text-primary">{t.nav.forMerchants}</Link>
+          </FooterColumn>
+          <FooterColumn title={t.nav.privacy}>
+            <Link to="/privacy" className="hover:text-primary">{t.nav.privacy}</Link>
+            <Link to="/terms" className="hover:text-primary">{t.nav.terms}</Link>
+            <Link to="/cookie-policy" className="hover:text-primary">{t.nav.cookies}</Link>
+          </FooterColumn>
         </div>
-
-        <div className="mt-10 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>© {year} {t.appName}. All rights reserved.</span>
+        <div className="mt-10 border-t border-border/60 pt-6 text-xs text-muted-foreground">
+          © {year} {t.appName}. {h.footerRights}
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <nav className="flex flex-col gap-2.5 text-sm text-muted-foreground">
+      <h3 className="mb-1 text-xs font-bold uppercase tracking-wider text-foreground">{title}</h3>
+      {children}
+    </nav>
   );
 }

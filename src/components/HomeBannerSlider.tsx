@@ -56,12 +56,12 @@ export function HomeBannerSlider() {
   if (banners.length === 0) return null;
 
   return (
-    <section className="relative w-full px-3 md:px-6 pt-3 md:pt-5">
-      <div className="overflow-hidden rounded-2xl md:rounded-3xl shadow-lg shadow-black/10" ref={emblaRef}>
+    <section className="relative w-full">
+      <div className="overflow-hidden rounded-3xl shadow-md" ref={emblaRef}>
         <div className="flex">
           {banners.map((b) => {
             const inner = (
-              <div className="relative h-[260px] sm:h-[360px] md:h-[460px] w-full">
+              <div className="relative h-[220px] sm:h-[240px] md:h-[220px] w-full">
                 <img
                   src={b.image_url}
                   alt={b.title}

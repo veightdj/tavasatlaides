@@ -20,7 +20,7 @@ type Radius = "any" | "1" | "5" | "10";
 const PAGE_SIZE = 24;
 const NEAR_FETCH_CAP = 200; // when sorting by distance we need a wider pool to sort client-side
 
-type DealsSearch = { near?: string };
+type DealsSearch = { near?: string; q?: string; city?: string; cat?: string };
 
 function parseNear(v: unknown): { lat: number; lng: number } | null {
   if (typeof v !== "string") return null;
@@ -34,6 +34,9 @@ function parseNear(v: unknown): { lat: number; lng: number } | null {
 export const Route = createFileRoute("/deals/")({
   validateSearch: (search: Record<string, unknown>): DealsSearch => ({
     near: typeof search.near === "string" ? search.near : undefined,
+    q: typeof search.q === "string" ? search.q : undefined,
+    city: typeof search.city === "string" ? search.city : undefined,
+    cat: typeof search.cat === "string" ? search.cat : undefined,
   }),
   head: () => ({
     meta: [
@@ -53,15 +56,21 @@ export const Route = createFileRoute("/deals/")({
 function DealsPage() {
   const { t, lang } = useI18n();
   const navigate = useNavigate({ from: "/deals/" });
-  const { near } = Route.useSearch();
+  const { near, q: routeQuery = "", city: routeCity = "all", cat: routeCategory = "all" } = Route.useSearch();
   const origin = useMemo(() => parseNear(near), [near]);
 
-  const [q, setQ] = useState("");
-  const [city, setCity] = useState<string>("all");
-  const [cat, setCat] = useState<string>("all");
+  const [q, setQ] = useState(routeQuery);
+  const [city, setCity] = useState<string>(routeCity);
+  const [cat, setCat] = useState<string>(routeCategory);
   const [sort, setSort] = useState<SortMode>("newest");
   const [radius, setRadius] = useState<Radius>("any");
   const { data: categories } = useCategories();
+
+  useEffect(() => {
+    setQ(routeQuery);
+    setCity(routeCity);
+    setCat(routeCategory);
+  }, [routeQuery, routeCity, routeCategory]);
 
   // Debounce the search query for server-side filtering
   const [debouncedQ, setDebouncedQ] = useState("");
@@ -105,7 +114,25 @@ function DealsPage() {
 
       if (cat !== "all") query = query.eq("category", cat);
       if (city !== "all") query = query.eq("stores.city", city);
-      if (debouncedQ) query = query.ilike(`title_${lang}`, `%${debouncedQ}%`);
+      if (debouncedQ) {
+        const term = debouncedQ.replace(/[%,()."\\]/g, " ").replace(/\s+/g, " ").trim();
+        if (term) {
+          const like = `%${term}%`;
+          const filters = [
+            `title_${lang}.ilike.${like}`,
+            `description_${lang}.ilike.${like}`,
+            `stores.name.ilike.${like}`,
+            `stores.address.ilike.${like}`,
+            `stores.city.ilike.${like}`,
+          ];
+          const normalizedTerm = term.toLocaleLowerCase();
+          const matchingCategories = (categories ?? [])
+            .filter((category) => localizedCategoryName(category, lang).toLocaleLowerCase().includes(normalizedTerm))
+            .map((category) => category.slug);
+          if (matchingCategories.length > 0) filters.push(`category.in.(${matchingCategories.join(",")})`);
+          query = query.or(filters.join(","));
+        }
+      }
 
       if (sort === "newest") query = query.order("created_at", { ascending: false });
       else if (sort === "discount") query = query.order("discount_pct", { ascending: false, nullsFirst: false });

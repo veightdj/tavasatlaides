@@ -20,7 +20,7 @@ type Props = {
 };
 
 export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
-  const { lang } = useI18n();
+  const { t, lang } = useI18n();
   const { data: categories = [] } = useCategories();
 
   const items: Array<{ slug: string; label: string; Icon: LucideIcon; color: string }> = [
@@ -36,7 +36,7 @@ export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
     <div
       className="flex gap-4 overflow-x-auto px-4 py-3 snap-x scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       role="tablist"
-      aria-label="Categories"
+      aria-label={t.deals.category}
     >
       {items.map(({ slug, label, Icon, color }) => {
         const isActive = activeSlug === slug;
@@ -46,7 +46,7 @@ export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
             type="button"
             role="tab"
             aria-selected={isActive}
-            onClick={() => onSelect(slug)}
+            onClick={() => onSelect(isActive ? "" : slug)}
             className={cn(
               "snap-start flex flex-col items-center gap-1.5 shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl",
             )}
@@ -64,7 +64,7 @@ export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
                 isActive ? "scale-110" : "hover:scale-105 active:scale-95",
               )}
             >
-              <Icon className="h-7 w-7 text-white" />
+              <Icon className="h-7 w-7 text-primary-foreground" />
             </span>
             <span
               className={cn(
