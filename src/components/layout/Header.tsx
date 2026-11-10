@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import {
   Heart,
   LayoutDashboard,
@@ -31,6 +31,7 @@ export function Header() {
   const { t, lang, setLang } = useI18n();
   const { user } = useAuth();
   const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("all");
   const isMarketing = (typeof window !== "undefined" ? getHostAudience() : null) === "client";
@@ -102,7 +103,7 @@ export function Header() {
 
         <nav className="hidden items-center gap-5 lg:flex">{navLinks}</nav>
 
-        {!isMarketing && (
+        {!isMarketing && pathname !== "/" && (
           <form onSubmit={submitSearch} role="search" aria-label={h.searchLabel} className="mx-2 hidden min-w-0 flex-1 md:flex">
             <label className="flex h-10 w-full items-center gap-2 rounded-full border border-border/70 bg-muted/60 px-3 transition focus-within:border-primary/50 focus-within:bg-card">
               <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
