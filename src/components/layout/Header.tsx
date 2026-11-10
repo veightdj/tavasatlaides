@@ -15,7 +15,7 @@ import { useI18n, LANGS } from "@/i18n/use-i18n";
 import { buildAudienceUrl, getHostAudience } from "@/lib/audience";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-import { CITIES } from "@/lib/categories";
+import { CITIES, localizedCityName } from "@/lib/categories";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,7 +84,7 @@ export function Header() {
         {!isMarketing && (
           <div className="hidden xl:block">
             <Select value={city} onValueChange={selectCity}>
-              <SelectTrigger className="h-9 w-[128px] border-0 bg-transparent px-2 text-xs font-semibold shadow-none">
+              <SelectTrigger className="h-9 w-[142px] border-0 bg-transparent px-2 text-xs font-semibold shadow-none [&>span]:block [&>span]:min-w-0 [&>span]:flex-1 [&>span]:truncate [&>span]:text-left">
                 <MapPin className="h-4 w-4 text-primary" />
                 <SelectValue placeholder={t.deals.city} />
               </SelectTrigger>
@@ -92,7 +92,7 @@ export function Header() {
                 <SelectItem value="all">{t.city.all}</SelectItem>
                 {CITIES.map((item) => (
                   <SelectItem key={item} value={item}>
-                    {item === "Riga" ? t.city.riga : t.city.jurmala}
+                    {localizedCityName(item, lang)}
                   </SelectItem>
                 ))}
               </SelectContent>

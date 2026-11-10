@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DealCard, type Deal } from "@/components/DealCard";
@@ -21,15 +21,15 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TavasAtlaides — Local deals near you" },
-      { name: "description", content: "Discover local offers, discounts and services from businesses in Riga, Jūrmala and across Latvia." },
-      { property: "og:title", content: "TavasAtlaides — Local deals near you" },
-      { property: "og:description", content: "Discover local offers, discounts and services from businesses in Riga, Jūrmala and across Latvia." },
+      { title: "TavasAtlaides — vietējie piedāvājumi tuvumā" },
+      { name: "description", content: "Atklāj vietējos piedāvājumus, atlaides un pakalpojumus Rīgā, Jūrmalā un citās Latvijas pilsētās." },
+      { property: "og:title", content: "TavasAtlaides — vietējie piedāvājumi tuvumā" },
+      { property: "og:description", content: "Atklāj vietējos piedāvājumus, atlaides un pakalpojumus Rīgā, Jūrmalā un citās Latvijas pilsētās." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://tavasatlaides.lv/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "TavasAtlaides — Local deals near you" },
-      { name: "twitter:description", content: "Discover local offers, discounts and services from businesses in Riga, Jūrmala and across Latvia." },
+      { name: "twitter:title", content: "TavasAtlaides — vietējie piedāvājumi tuvumā" },
+      { name: "twitter:description", content: "Atklāj vietējos piedāvājumus, atlaides un pakalpojumus Rīgā, Jūrmalā un citās Latvijas pilsētās." },
     ],
     links: [{ rel: "canonical", href: "https://tavasatlaides.lv/" }],
     scripts: [
@@ -69,6 +69,22 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [city, setCity] = useState("all");
   const { data: categories = [] } = useCategories();
+  const metadata = t.homePages.marketplace;
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.title = metadata.metaTitle;
+    const values: Array<[string, string, string]> = [
+      ["name", "description", metadata.metaDescription],
+      ["property", "og:title", metadata.metaTitle],
+      ["property", "og:description", metadata.metaDescription],
+      ["name", "twitter:title", metadata.metaTitle],
+      ["name", "twitter:description", metadata.metaDescription],
+    ];
+    values.forEach(([attribute, key, content]) => {
+      document.querySelector(`meta[${attribute}="${key}"]`)?.setAttribute("content", content);
+    });
+  }, [lang, metadata.metaTitle, metadata.metaDescription]);
 
   const { data: deals = [], isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ["home-marketplace-deals", lang, city, selectedCategory],

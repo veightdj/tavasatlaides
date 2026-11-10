@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/use-i18n";
-import { CITIES, localizedCategoryName, useCategories } from "@/lib/categories";
+import { CITIES, CITY_CENTERS, localizedCategoryName, localizedCityName, useCategories } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,7 +21,7 @@ import type { Deal } from "@/components/DealCard";
 import heroImage from "@/assets/home-marketplace-hero.jpg";
 
 export function HomeSearch({ city, onCityChange }: { city: string; onCityChange: (city: string) => void }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const h = t.homePages.marketplace;
@@ -54,7 +54,7 @@ export function HomeSearch({ city, onCityChange }: { city: string; onCityChange:
         />
       </label>
       <Select value={city} onValueChange={onCityChange}>
-        <SelectTrigger className="h-11 w-full rounded-xl border-0 bg-muted/70 sm:rounded-full">
+        <SelectTrigger className="h-11 w-full rounded-xl border-0 bg-muted/70 sm:rounded-full [&>span]:block [&>span]:min-w-0 [&>span]:flex-1 [&>span]:truncate [&>span]:text-left">
           <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
           <SelectValue placeholder={t.deals.city} />
         </SelectTrigger>
@@ -62,7 +62,7 @@ export function HomeSearch({ city, onCityChange }: { city: string; onCityChange:
           <SelectItem value="all">{t.city.all}</SelectItem>
           {CITIES.map((item) => (
             <SelectItem key={item} value={item}>
-              {item === "Riga" ? t.city.riga : t.city.jurmala}
+              {localizedCityName(item, lang)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -138,18 +138,18 @@ export function CuratedCollections({ deals }: { deals: Deal[] }) {
       <SectionHeading id="curated-collections" title={h.collectionsTitle} subtitle={h.collectionsSubtitle} />
       <div className="-mx-4 mt-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
         <div className="flex gap-4">
-          {h.collections.map((collection) => {
-            const filter = COLLECTION_FILTERS[collection.id] ?? {};
+          {Object.entries(h.collections).map(([collectionId, collection]) => {
+            const filter = COLLECTION_FILTERS[collectionId] ?? {};
             return (
               <Link
-                key={collection.id}
+                key={collectionId}
                 to="/deals"
                 search={filter}
                 className="group w-[236px] shrink-0 overflow-hidden rounded-2xl border border-border/60 bg-card transition duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg sm:w-[264px]"
               >
                 <div className="aspect-[16/9] overflow-hidden bg-muted">
                   <img
-                    src={collectionImage(collection.id)}
+                    src={collectionImage(collectionId)}
                     alt=""
                     loading="lazy"
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -174,17 +174,16 @@ export function CuratedCollections({ deals }: { deals: Deal[] }) {
 export function MapDiscovery({ city }: { city: string }) {
   const { t } = useI18n();
   const h = t.homePages.marketplace;
-  const isJurmala = city === "Jurmala";
-  const mapUrl = isJurmala
-    ? "https://www.openstreetmap.org/export/embed.html?bbox=23.68%2C56.91%2C23.91%2C57.04&layer=mapnik&marker=56.972%2C23.7893"
-    : "https://www.openstreetmap.org/export/embed.html?bbox=23.96%2C56.88%2C24.25%2C57.03&layer=mapnik&marker=56.9496%2C24.1052";
+  const center = CITY_CENTERS[city as keyof typeof CITY_CENTERS] ?? CITY_CENTERS.Riga;
+  const bbox = [center.lng - 0.15, center.lat - 0.08, center.lng + 0.15, center.lat + 0.08].join(",");
+  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${center.lat}%2C${center.lng}`;
 
   const { data: mappedStores = [] } = useQuery({
     queryKey: ["home-map-stores", city],
     queryFn: async () => {
       let query = supabase
         .from("stores")
-        .select("id")
+        .select("id,ads(id,status)")
         .eq("is_hidden", false)
         .eq("is_blocked", false)
         .not("lat", "is", null)
@@ -192,7 +191,7 @@ export function MapDiscovery({ city }: { city: string }) {
       if (city !== "all") query = query.eq("city", city);
       const { data, error } = await query.limit(100);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []).filter((store) => store.ads?.some((ad) => ad.status === "active"));
     },
     staleTime: 60_000,
   });
@@ -268,9 +267,11 @@ export function LocalBusinesses({ city }: { city: string }) {
         .order("is_verified", { ascending: false })
         .order("created_at", { ascending: false });
       if (city !== "all") query = query.eq("city", city);
-      const { data, error } = await query.limit(4);
+      const { data, error } = await query.limit(12);
       if (error) throw error;
-      return (data ?? []) as Business[];
+      return ((data ?? []) as Business[])
+        .filter((business) => business.ads?.some((ad) => ad.status === "active"))
+        .slice(0, 4);
     },
     staleTime: 60_000,
   });
@@ -313,7 +314,7 @@ export function LocalBusinesses({ city }: { city: string }) {
                   {business.is_verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" aria-label={h.verified} />}
                 </div>
                 <p className="mt-1 truncate text-xs text-muted-foreground">
-                  {category ? localizedCategoryName(category, lang) : t.deals.category} · {business.city === "Riga" ? t.city.riga : business.city === "Jurmala" ? t.city.jurmala : business.city}
+                  {category ? localizedCategoryName(category, lang) : t.deals.category} · {localizedCityName(business.city, lang)}
                 </p>
                 <div className="mt-4 flex items-center justify-between gap-2 text-xs">
                   <span className="font-semibold text-primary">{activeOffers} {h.activeOffers}</span>

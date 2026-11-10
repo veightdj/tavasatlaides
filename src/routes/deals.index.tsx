@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { CITIES, useCategories, localizedCategoryName } from "@/lib/categories";
+import { CITIES, useCategories, localizedCategoryName, localizedCityName } from "@/lib/categories";
 import { distanceKm as haversineKm } from "@/lib/distance";
 
 type SortMode = "newest" | "discount" | "expiring" | "nearest";
@@ -121,10 +121,15 @@ function DealsPage() {
           const filters = [
             `title_${lang}.ilike.${like}`,
             `description_${lang}.ilike.${like}`,
-            `stores.name.ilike.${like}`,
-            `stores.address.ilike.${like}`,
-            `stores.city.ilike.${like}`,
           ];
+          const { data: matchingStores, error: storesError } = await supabase
+            .from("stores")
+            .select("id")
+            .or(`name.ilike.${like},address.ilike.${like},city.ilike.${like}`)
+            .limit(100);
+          if (storesError) throw storesError;
+          const storeIds = (matchingStores ?? []).map((store) => store.id);
+          if (storeIds.length > 0) filters.push(`store_id.in.(${storeIds.join(",")})`);
           const normalizedTerm = term.toLocaleLowerCase();
           const matchingCategories = (categories ?? [])
             .filter((category) => localizedCategoryName(category, lang).toLocaleLowerCase().includes(normalizedTerm))
@@ -202,7 +207,7 @@ function DealsPage() {
           <SelectTrigger className="min-w-[140px]"><SelectValue placeholder={t.deals.city} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.city.all}</SelectItem>
-            {CITIES.map((c) => <SelectItem key={c} value={c}>{c === "Riga" ? t.city.riga : t.city.jurmala}</SelectItem>)}
+            {CITIES.map((c) => <SelectItem key={c} value={c}>{localizedCityName(c, lang)}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={cat} onValueChange={setCat}>

@@ -21,7 +21,7 @@ type Props = {
 
 export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
   const { t, lang } = useI18n();
-  const { data: categories = [] } = useCategories();
+  const { data: categories = [], isLoading } = useCategories();
 
   const items: Array<{ slug: string; label: string; Icon: LucideIcon; color: string }> = [
     ...categories.map((c) => ({
@@ -31,6 +31,19 @@ export function CategoryCirclesFilter({ activeSlug, onSelect }: Props) {
       color: c.color,
     })),
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex gap-4 overflow-hidden px-4 py-3" aria-hidden="true">
+        {Array.from({ length: 8 }).map((_, index) => (
+          <div key={index} className="flex shrink-0 flex-col items-center gap-2">
+            <span className="h-[68px] w-[68px] animate-pulse rounded-full bg-muted" />
+            <span className="h-3 w-14 animate-pulse rounded bg-muted" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div

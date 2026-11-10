@@ -13,7 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/i18n/use-i18n";
-import { CITIES, slugify, useCategories } from "@/lib/categories";
+import { CITIES, localizedCityName, slugify, useCategories } from "@/lib/categories";
 import { LogoUploader } from "@/components/merchant/LogoUploader";
 import { StoreGalleryManager } from "@/components/merchant/StoreGalleryManager";
 import { geocodeAddress } from "@/lib/geocode.functions";
@@ -30,7 +30,7 @@ type Socials = { instagram: string; facebook: string; tiktok: string; youtube: s
 const EMPTY_SOCIALS: Socials = { instagram: "", facebook: "", tiktok: "", youtube: "" };
 
 function StoreEditor() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { user } = useAuth();
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -277,7 +277,7 @@ function StoreEditor() {
           <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {CITIES.map((c) => <SelectItem key={c} value={c}>{c === "Riga" ? t.city.riga : t.city.jurmala}</SelectItem>)}
+              {CITIES.map((c) => <SelectItem key={c} value={c}>{localizedCityName(c, lang)}</SelectItem>)}
             </SelectContent>
           </Select>
         </Field>

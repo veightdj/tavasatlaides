@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Heart, BadgeCheck, MapPin, Navigation, Clock } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/i18n/use-i18n";
-import { useCategories, localizedCategoryName } from "@/lib/categories";
+import { useCategories, localizedCategoryName, localizedCityName } from "@/lib/categories";
 import { localizedDealTitle } from "@/lib/deal-i18n";
 import { formatDistance } from "@/lib/distance";
 import { DealShareButton } from "@/components/DealShareButton";
@@ -92,7 +92,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
   const categorySlug = store?.category ?? deal.category;
   const categoryRow = categories.find((category) => category.slug === categorySlug);
   const categoryLabel = categoryRow ? localizedCategoryName(categoryRow, lang) : t.deals.category;
-  const dealTitle = localizedDealTitle(deal, lang);
+  const dealTitle = localizedDealTitle(deal, lang) || h.translationPending;
   const discountHeadline = deal.discount_pct ? `-${deal.discount_pct}%` : null;
   const isLive = useIsLive(deal.starts_at ?? null, deal.ends_at ?? null, deal.status ?? null);
   const countdown = useCountdown(deal.ends_at ?? null);
@@ -188,7 +188,7 @@ export function DealCard({ deal, distanceKm, showNavigation = true }: { deal: De
             </Link>
             <p className="mt-0.5 truncate text-[10px] text-muted-foreground sm:text-[11px]">
               {categoryLabel}
-              {store?.city && <> · {store.city === "Riga" ? t.city.riga : store.city === "Jurmala" ? t.city.jurmala : store.city}</>}
+              {store?.city && <> · {localizedCityName(store.city, lang)}</>}
               {distanceLabel && <> · {distanceLabel}</>}
             </p>
           </div>

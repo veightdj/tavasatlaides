@@ -17,8 +17,24 @@ export const CATEGORY_SLUGS = [
 
 export type CategorySlug = typeof CATEGORY_SLUGS[number];
 
-export const CITIES = ["Riga", "Jurmala"] as const;
+export const CITIES = ["Riga", "Jurmala", "Liepaja", "Daugavpils", "Jelgava", "Valmiera", "Ventspils"] as const;
 export type City = typeof CITIES[number];
+
+export const CITY_CENTERS: Record<City, { lat: number; lng: number }> = {
+  Riga: { lat: 56.9496, lng: 24.1052 },
+  Jurmala: { lat: 56.9720, lng: 23.7893 },
+  Liepaja: { lat: 56.5053, lng: 21.0108 },
+  Daugavpils: { lat: 55.8747, lng: 26.5362 },
+  Jelgava: { lat: 56.6511, lng: 23.7129 },
+  Valmiera: { lat: 57.5385, lng: 25.4264 },
+  Ventspils: { lat: 57.3939, lng: 21.5647 },
+};
+
+export function localizedCityName(city: string, locale: Locale): string {
+  const key = city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const names = dict[locale].city as unknown as Record<string, string>;
+  return names[key] ?? city;
+}
 
 export function slugify(input: string): string {
   return input

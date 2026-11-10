@@ -1,6 +1,7 @@
-# Project tasks
-- [ ] Redesign the homepage around search, categories, curated offers, nearby discovery and local businesses.
-- [ ] Refresh shared header, footer and offer cards without changing backend or authentication.
-- [ ] Preserve explicit LV/EN/RU translations for every new interface string.
-- [ ] Verify desktop/mobile layouts, search and navigation flows.
-- [ ] Continue the separate full-site translation audit for admin and partner surfaces.
+# Homepage redesign
+- [x] Rebuild the homepage around search, categories, curated offers, nearby discovery and local businesses.
+- [x] Refresh the shared header, footer and offer cards without changing backend or authentication.
+- [x] Add explicit LV/EN/RU translations and localized metadata for every new interface string.
+- [x] Support Riga, Jūrmala, Liepāja, Daugavpils, Jelgava, Valmiera and Ventspils consistently.
+- [x] Verify search, category filters, city filters, maps and desktop/mobile layouts.
+- [x] Pass TypeScript and all 34 project tests.

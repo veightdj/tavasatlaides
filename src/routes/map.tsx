@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/use-i18n";
 import { loadGoogleMaps } from "@/lib/google-maps";
+import { CITY_CENTERS, localizedCityName } from "@/lib/categories";
 
 export const Route = createFileRoute("/map")({
   head: () => ({
@@ -24,11 +25,6 @@ export const Route = createFileRoute("/map")({
 
 declare global { interface Window { google: any; initDealsMap?: () => void } }
 
-const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
-  Riga: { lat: 56.9496, lng: 24.1052 },
-  Jurmala: { lat: 56.9720, lng: 23.7893 },
-};
-
 function escapeHtml(s: string): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -36,7 +32,7 @@ function escapeHtml(s: string): string {
 }
 
 function MapPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
 
@@ -116,7 +112,7 @@ function MapPage() {
               onClick={() => mapRef.current?.panTo(c)}
               className="rounded-full border border-border px-3 py-1 hover:bg-accent"
             >
-              {city === "Riga" ? t.city.riga : t.city.jurmala}
+              {localizedCityName(city, lang)}
             </button>
           ))}
         </div>
